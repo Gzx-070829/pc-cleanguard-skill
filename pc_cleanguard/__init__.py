@@ -10,6 +10,8 @@ from .core.models import (
     RiskLevel,
 )
 from .core.policy_engine import evaluate_target
+from .core.execution_plan_builder import build_execution_plan
+from .core.report_builder import build_report
 
 __all__ = [
     "ClassificationLabel",
@@ -20,6 +22,8 @@ __all__ = [
     "PolicyDecision",
     "RiskLevel",
     "evaluate_target",
+    "build_execution_plan",
+    "build_report",
 ]
 
-__version__ = "0.1.0-pr1"
+__version__ = "0.1.0-pr2"

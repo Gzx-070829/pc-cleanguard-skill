@@ -1,0 +1,184 @@
+{
+  "summary": {
+    "scan_id": "sample-safe-001",
+    "platform": "Windows",
+    "privacy_mode": "offline",
+    "total_findings": 4,
+    "keep_count": 1,
+    "ask_user_count": 0,
+    "safe_remove_count": 1,
+    "startup_off_count": 1,
+    "quarantine_count": 1,
+    "block_count": 0,
+    "high_risk_findings": 1,
+    "ambiguous_items": 0,
+    "destructive_actions_executed": false
+  },
+  "findings": [
+    {
+      "target_id": "SOFTWARE:Microsoft Visual C++ Redistributable",
+      "object_type": "SOFTWARE",
+      "name": "Microsoft Visual C++ Redistributable",
+      "publisher": null,
+      "classification": "KEEP",
+      "risk_level": "LOW",
+      "permission_level": "LEVEL_0_READ_ONLY",
+      "evidence_summary": ["Shared runtime dependency."],
+      "potential_impact": "Modification could break a required or protected component."
+    },
+    {
+      "target_id": "STARTUP_ITEM:Unknown Toolbar Startup",
+      "object_type": "STARTUP_ITEM",
+      "name": "Unknown Toolbar Startup",
+      "publisher": null,
+      "classification": "STARTUP_OFF",
+      "risk_level": "MEDIUM",
+      "permission_level": "LEVEL_2_REVERSIBLE",
+      "evidence_summary": ["Unknown toolbar registered as a startup item."],
+      "potential_impact": "A future startup change could alter expected login behavior."
+    },
+    {
+      "target_id": "SOFTWARE:Known Bloatware With Uninstaller",
+      "object_type": "SOFTWARE",
+      "name": "Known Bloatware With Uninstaller",
+      "publisher": null,
+      "classification": "SAFE_REMOVE",
+      "risk_level": "MEDIUM",
+      "permission_level": "LEVEL_3_STANDARD_UNINSTALL",
+      "evidence_summary": ["Synthetic bloatware rule and standard uninstaller are present."],
+      "potential_impact": "A future uninstall could remove software or dependent functionality."
+    },
+    {
+      "target_id": "FILE:Suspicious Temp File",
+      "object_type": "FILE",
+      "name": "Suspicious Temp File",
+      "publisher": null,
+      "classification": "QUARANTINE",
+      "risk_level": "HIGH",
+      "permission_level": "LEVEL_2_REVERSIBLE",
+      "evidence_summary": ["Synthetic suspicious file located in user temp."],
+      "potential_impact": "A future isolation action could make a file temporarily unavailable."
+    }
+  ],
+  "recommendations": [
+    {
+      "target_id": "SOFTWARE:Microsoft Visual C++ Redistributable",
+      "classification": "KEEP",
+      "risk_level": "LOW",
+      "recommendation": "Preserve the target and report it read-only.",
+      "required_confirmation": false,
+      "rollback_available": false,
+      "why_not_more_aggressive": "The target is protected or should be preserved.",
+      "evidence_chain": [{"source": "synthetic_example", "fact": "Shared runtime dependency.", "reference": null}]
+    },
+    {
+      "target_id": "STARTUP_ITEM:Unknown Toolbar Startup",
+      "classification": "STARTUP_OFF",
+      "risk_level": "MEDIUM",
+      "recommendation": "Review as a reversible startup-disable candidate only.",
+      "required_confirmation": true,
+      "rollback_available": true,
+      "why_not_more_aggressive": "Only a future reversible plan is appropriate; PR2 changes nothing.",
+      "evidence_chain": [{"source": "synthetic_example", "fact": "Unknown toolbar registered as a startup item.", "reference": null}]
+    },
+    {
+      "target_id": "SOFTWARE:Known Bloatware With Uninstaller",
+      "classification": "SAFE_REMOVE",
+      "risk_level": "MEDIUM",
+      "recommendation": "Review as a standard-uninstall candidate only.",
+      "required_confirmation": true,
+      "rollback_available": false,
+      "why_not_more_aggressive": "The label is only a candidate and still requires confirmation and audit.",
+      "evidence_chain": [{"source": "synthetic_example", "fact": "Synthetic bloatware rule and standard uninstaller are present.", "reference": null}]
+    },
+    {
+      "target_id": "FILE:Suspicious Temp File",
+      "classification": "QUARANTINE",
+      "risk_level": "HIGH",
+      "recommendation": "Review as a reversible quarantine candidate only.",
+      "required_confirmation": true,
+      "rollback_available": true,
+      "why_not_more_aggressive": "Isolation must remain reversible and PR2 moves no files.",
+      "evidence_chain": [{"source": "synthetic_example", "fact": "Synthetic suspicious file located in user temp.", "reference": null}]
+    }
+  ],
+  "execution_plan": {
+    "plan_id": "plan:sample-safe-001",
+    "scan_id": "sample-safe-001",
+    "mode": "report_only",
+    "steps": [
+      {
+        "step_id": "step-0001",
+        "action": "REPORT_ONLY",
+        "target_id": "SOFTWARE:Microsoft Visual C++ Redistributable",
+        "permission_level": "LEVEL_0_READ_ONLY",
+        "classification": "KEEP",
+        "preconditions": ["POLICY_DECISION_PRESENT", "EVIDENCE_CHAIN_PRESENT", "AUDIT_PLAN_REQUIRED"],
+        "confirmation_required": false,
+        "rollback_method": null,
+        "audit_event_type": "POLICY_REPORT_KEEP",
+        "blocked": false,
+        "reason": "Shared runtime dependency."
+      },
+      {
+        "step_id": "step-0002",
+        "action": "PLAN_DISABLE_STARTUP",
+        "target_id": "STARTUP_ITEM:Unknown Toolbar Startup",
+        "permission_level": "LEVEL_2_REVERSIBLE",
+        "classification": "STARTUP_OFF",
+        "preconditions": ["POLICY_DECISION_PRESENT", "EVIDENCE_CHAIN_PRESENT", "AUDIT_PLAN_REQUIRED", "EXPLICIT_USER_CONFIRMATION_REQUIRED", "ROLLBACK_PLAN_REQUIRED"],
+        "confirmation_required": true,
+        "rollback_method": "RESTORE_STARTUP_CONFIGURATION",
+        "audit_event_type": "POLICY_PLAN_DISABLE_STARTUP",
+        "blocked": false,
+        "reason": "Candidate only; no startup setting was changed."
+      },
+      {
+        "step_id": "step-0003",
+        "action": "PLAN_STANDARD_UNINSTALL",
+        "target_id": "SOFTWARE:Known Bloatware With Uninstaller",
+        "permission_level": "LEVEL_3_STANDARD_UNINSTALL",
+        "classification": "SAFE_REMOVE",
+        "preconditions": ["POLICY_DECISION_PRESENT", "EVIDENCE_CHAIN_PRESENT", "AUDIT_PLAN_REQUIRED", "EXPLICIT_USER_CONFIRMATION_REQUIRED"],
+        "confirmation_required": true,
+        "rollback_method": "REVIEW_STANDARD_UNINSTALL_RECOVERY",
+        "audit_event_type": "POLICY_PLAN_STANDARD_UNINSTALL",
+        "blocked": false,
+        "reason": "SAFE_REMOVE is a candidate label; no action was executed."
+      },
+      {
+        "step_id": "step-0004",
+        "action": "PLAN_QUARANTINE",
+        "target_id": "FILE:Suspicious Temp File",
+        "permission_level": "LEVEL_2_REVERSIBLE",
+        "classification": "QUARANTINE",
+        "preconditions": ["POLICY_DECISION_PRESENT", "EVIDENCE_CHAIN_PRESENT", "AUDIT_PLAN_REQUIRED", "EXPLICIT_USER_CONFIRMATION_REQUIRED", "ROLLBACK_PLAN_REQUIRED"],
+        "confirmation_required": true,
+        "rollback_method": "RESTORE_QUARANTINED_ITEM",
+        "audit_event_type": "POLICY_PLAN_QUARANTINE",
+        "blocked": false,
+        "reason": "Candidate only; no file was moved."
+      }
+    ],
+    "blocked_steps": [],
+    "managed_mode_compatibility": false
+  },
+  "managed_mode_compatibility": {
+    "status": "FUTURE_ONLY",
+    "automatic_execution_allowed": false,
+    "block_execution_allowed": false,
+    "level_5_execution_allowed": false,
+    "reason": "PR2 produces report-only plans and grants no execution authorization."
+  },
+  "risk_notes": [
+    "PR2 does not execute cleanup.",
+    "Policy decisions are not execution commands.",
+    "SAFE_REMOVE is only a candidate label.",
+    "BLOCK and Level 5 must never run.",
+    "没有执行任何动作；所有非 KEEP 项都需要确认或审计。"
+  ],
+  "audit_notes": [
+    "This report is audit-ready but no audit event was written by PR2.",
+    "Future execution must generate audit events."
+  ]
+}

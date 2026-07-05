@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://pc-cleanguard.example/schemas/execution_plan.schema.json",
   "title": "PC CleanGuard Execution Plan",
-  "description": "A non-executable policy artifact in PR1.",
+  "description": "A non-executable, report-only policy artifact in PR2.",
   "type": "object",
   "required": ["plan_id", "scan_id", "mode", "steps", "blocked_steps", "managed_mode_compatibility"],
   "properties": {
@@ -11,21 +11,24 @@
     "mode": {"enum": ["report_only"]},
     "steps": {"type": "array", "items": {"$ref": "#/$defs/step"}},
     "blocked_steps": {"type": "array", "items": {"$ref": "#/$defs/step"}},
-    "managed_mode_compatibility": {"type": "boolean"}
+    "managed_mode_compatibility": {"const": false}
   },
   "$defs": {
     "step": {
       "type": "object",
-      "required": ["step_id", "action", "target_id", "permission_level", "preconditions", "confirmation_required", "rollback_method", "audit_event_type"],
+      "required": ["step_id", "action", "target_id", "permission_level", "classification", "preconditions", "confirmation_required", "rollback_method", "audit_event_type", "blocked", "reason"],
       "properties": {
         "step_id": {"type": "string", "minLength": 1},
-        "action": {"type": "string", "minLength": 1},
+        "action": {"enum": ["REPORT_ONLY", "ASK_USER_CONFIRMATION", "PLAN_STANDARD_UNINSTALL", "PLAN_DISABLE_STARTUP", "PLAN_QUARANTINE", "BLOCKED_BY_POLICY"]},
         "target_id": {"type": "string", "minLength": 1},
         "permission_level": {"enum": ["LEVEL_0_READ_ONLY", "LEVEL_1_LOW_RISK_CLEANUP", "LEVEL_2_REVERSIBLE", "LEVEL_3_STANDARD_UNINSTALL", "LEVEL_4_HIGH_RISK_SYSTEM_MODIFICATION", "LEVEL_5_FORBIDDEN"]},
+        "classification": {"enum": ["KEEP", "ASK_USER", "SAFE_REMOVE", "STARTUP_OFF", "QUARANTINE", "BLOCK"]},
         "preconditions": {"type": "array", "items": {"type": "string", "minLength": 1}},
         "confirmation_required": {"type": "boolean"},
         "rollback_method": {"type": ["string", "null"]},
-        "audit_event_type": {"type": "string", "minLength": 1}
+        "audit_event_type": {"type": "string", "minLength": 1},
+        "blocked": {"type": "boolean"},
+        "reason": {"type": "string", "minLength": 1}
       },
       "additionalProperties": false
     }

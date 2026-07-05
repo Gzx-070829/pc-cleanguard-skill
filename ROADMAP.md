@@ -5,7 +5,8 @@
 This roadmap keeps stage descriptions in Chinese while retaining English component names for international collaboration.
 
 - **v0.1**：安全扫描 + 报告 + 规则分类基础。
-  - **当前 PR — v0.1 PR1**：仓库骨架、安全契约、schemas、最小 Policy Engine、测试。
+  - **v0.1 PR1**：仓库骨架、安全契约、schemas、最小 Policy Engine、测试。
+  - **当前 PR — v0.1 PR2**：非破坏性 Report Builder、Execution Plan Builder、示例报告和测试。
 - **v0.2**：SQLite 历史 + 用户偏好 + 审计日志实现。
 - **v0.3**：只开放低风险清理的受控执行。
 - **v0.4**：Reputation Engine + 更新管理器。

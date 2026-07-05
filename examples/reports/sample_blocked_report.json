@@ -1,0 +1,115 @@
+{
+  "summary": {
+    "scan_id": "sample-blocked-001",
+    "platform": "Windows",
+    "privacy_mode": "offline",
+    "total_findings": 2,
+    "keep_count": 0,
+    "ask_user_count": 0,
+    "safe_remove_count": 0,
+    "startup_off_count": 0,
+    "quarantine_count": 0,
+    "block_count": 2,
+    "high_risk_findings": 2,
+    "ambiguous_items": 0,
+    "destructive_actions_executed": false
+  },
+  "findings": [
+    {
+      "target_id": "DIRECTORY:C:\\Windows\\System32",
+      "object_type": "DIRECTORY",
+      "name": "C:\\Windows\\System32",
+      "publisher": null,
+      "classification": "BLOCK",
+      "risk_level": "CRITICAL",
+      "permission_level": "LEVEL_5_FORBIDDEN",
+      "evidence_summary": ["Windows System32 is a protected system location."],
+      "potential_impact": "The proposed action could damage protected system or user data."
+    },
+    {
+      "target_id": "DIRECTORY:User Code Repository",
+      "object_type": "DIRECTORY",
+      "name": "User Code Repository",
+      "publisher": null,
+      "classification": "BLOCK",
+      "risk_level": "CRITICAL",
+      "permission_level": "LEVEL_5_FORBIDDEN",
+      "evidence_summary": ["User source-code repositories are protected data."],
+      "potential_impact": "The proposed action could damage protected system or user data."
+    }
+  ],
+  "recommendations": [
+    {
+      "target_id": "DIRECTORY:C:\\Windows\\System32",
+      "classification": "BLOCK",
+      "risk_level": "CRITICAL",
+      "recommendation": "Do not proceed; the proposed action is blocked by policy.",
+      "required_confirmation": false,
+      "rollback_available": false,
+      "why_not_more_aggressive": "BLOCK and Level 5 are absolute execution barriers.",
+      "evidence_chain": [{"source": "hard_rule", "fact": "Windows System32 is a protected system location.", "reference": "policies/windows-sensitive-paths.md"}]
+    },
+    {
+      "target_id": "DIRECTORY:User Code Repository",
+      "classification": "BLOCK",
+      "risk_level": "CRITICAL",
+      "recommendation": "Do not proceed; the proposed action is blocked by policy.",
+      "required_confirmation": false,
+      "rollback_available": false,
+      "why_not_more_aggressive": "BLOCK and Level 5 are absolute execution barriers.",
+      "evidence_chain": [{"source": "hard_rule", "fact": "User source-code repositories are protected data.", "reference": "policies/forbidden-actions.md"}]
+    }
+  ],
+  "execution_plan": {
+    "plan_id": "plan:sample-blocked-001",
+    "scan_id": "sample-blocked-001",
+    "mode": "report_only",
+    "steps": [],
+    "blocked_steps": [
+      {
+        "step_id": "step-0001",
+        "action": "BLOCKED_BY_POLICY",
+        "target_id": "DIRECTORY:C:\\Windows\\System32",
+        "permission_level": "LEVEL_5_FORBIDDEN",
+        "classification": "BLOCK",
+        "preconditions": ["POLICY_DECISION_PRESENT", "EVIDENCE_CHAIN_PRESENT", "AUDIT_PLAN_REQUIRED"],
+        "confirmation_required": false,
+        "rollback_method": null,
+        "audit_event_type": "POLICY_ACTION_BLOCKED",
+        "blocked": true,
+        "reason": "Windows System32 is protected and must never be modified."
+      },
+      {
+        "step_id": "step-0002",
+        "action": "BLOCKED_BY_POLICY",
+        "target_id": "DIRECTORY:User Code Repository",
+        "permission_level": "LEVEL_5_FORBIDDEN",
+        "classification": "BLOCK",
+        "preconditions": ["POLICY_DECISION_PRESENT", "EVIDENCE_CHAIN_PRESENT", "AUDIT_PLAN_REQUIRED"],
+        "confirmation_required": false,
+        "rollback_method": null,
+        "audit_event_type": "POLICY_ACTION_BLOCKED",
+        "blocked": true,
+        "reason": "User source-code repositories are protected and must never be modified."
+      }
+    ],
+    "managed_mode_compatibility": false
+  },
+  "managed_mode_compatibility": {
+    "status": "FUTURE_ONLY",
+    "automatic_execution_allowed": false,
+    "block_execution_allowed": false,
+    "level_5_execution_allowed": false,
+    "reason": "BLOCK and Level 5 cannot run in any managed mode."
+  },
+  "risk_notes": [
+    "PR2 does not execute cleanup.",
+    "Policy decisions are not execution commands.",
+    "SAFE_REMOVE is only a candidate label.",
+    "BLOCK and Level 5 must never run."
+  ],
+  "audit_notes": [
+    "This report is audit-ready but no audit event was written by PR2.",
+    "Future execution must generate audit events."
+  ]
+}
