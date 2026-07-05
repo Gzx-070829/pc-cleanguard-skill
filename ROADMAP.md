@@ -6,7 +6,9 @@ This roadmap keeps stage descriptions in Chinese while retaining English compone
 
 - **v0.1**：安全扫描 + 报告 + 规则分类基础。
   - **v0.1 PR1**：仓库骨架、安全契约、schemas、最小 Policy Engine、测试。
-  - **当前 PR — v0.1 PR2**：非破坏性 Report Builder、Execution Plan Builder、示例报告和测试。
+  - **v0.1 PR2**：非破坏性 Report Builder、Execution Plan Builder、示例报告和测试。
+  - **当前 PR — v0.1 PR3**：AuditEvent、append-only JSONL dry-run logger、示例审计日志和测试。
+  - **v0.1 PR4**：SQLite schema + history/audit store。
 - **v0.2**：SQLite 历史 + 用户偏好 + 审计日志实现。
 - **v0.3**：只开放低风险清理的受控执行。
 - **v0.4**：Reputation Engine + 更新管理器。
@@ -16,3 +18,5 @@ This roadmap keeps stage descriptions in Chinese while retaining English compone
 后续版本仍须遵守 Policy Engine 前置、最小权限、明确确认、可逆优先和审计完整性原则。
 
 Every future milestone remains subject to Policy Engine gating, least privilege, explicit confirmation, reversibility, and audit integrity.
+
+JSONL 管审计，SQLite 管历史。PR3 只记录 dry-run，不代表执行；PR4 才进入 SQLite schema 与 history/audit store。

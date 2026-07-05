@@ -12,6 +12,7 @@ from .core.models import (
 from .core.policy_engine import evaluate_target
 from .core.execution_plan_builder import build_execution_plan
 from .core.report_builder import build_report
+from .audit import AuditEvent, JsonlAuditLogger
 
 __all__ = [
     "ClassificationLabel",
@@ -24,6 +25,8 @@ __all__ = [
     "evaluate_target",
     "build_execution_plan",
     "build_report",
+    "AuditEvent",
+    "JsonlAuditLogger",
 ]
 
-__version__ = "0.1.0-pr2"
+__version__ = "0.1.0-pr3"
