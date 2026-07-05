@@ -27,6 +27,6 @@ An audit log is not execution proof. The logger writes only to an explicit local
 
 Future real execution must pass the Policy Engine, be performed by a governed execution layer, and only then produce an audit event. Any real success event belongs to that future layer, never PR3.
 
-SQLite schema 与 history/audit store 将在 PR4 实现。PR3 不创建数据库，也不维护历史查询。
+SQLite schema 与 history/audit store 从 PR4 开始实现。PR3 本身不创建数据库，也不维护历史查询。
 
-The SQLite schema and history/audit store are reserved for PR4. PR3 creates no database and provides no historical query store.
+The SQLite schema and history/audit store begin in PR4. PR3 itself creates no database and provides no historical query store.

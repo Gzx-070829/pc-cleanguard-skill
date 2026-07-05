@@ -1,0 +1,25 @@
+{
+  "schema_version": "0.1.0-pr4",
+  "synthetic": true,
+  "disclaimer_zh": "这些是 synthetic examples，不是现实软件指控，不能用于真实删除。",
+  "disclaimer_en": "These synthetic examples are not allegations about real software and cannot authorize removal.",
+  "sources": [
+    {"source_id": "source-community-example", "source_name": "Synthetic Community Reports", "source_type": "COMMUNITY_REPORT", "trust_tier": "unverified"},
+    {"source_id": "source-security-example", "source_name": "Synthetic Security Research", "source_type": "SECURITY_VENDOR", "trust_tier": "supporting_evidence"}
+  ],
+  "entries": [
+    {"entry_id": "example-speed-booster", "canonical_name": "Example Speed Booster", "publisher": "Example Software Studio", "category": "FAKE_OPTIMIZER", "suggested_classification": "ASK_USER", "confidence": 0.55, "severity": "medium", "false_positive_risk": "high", "review_status": "NEEDS_REVIEW"},
+    {"entry_id": "example-toolbar-helper", "canonical_name": "Example Toolbar Helper", "publisher": "Example Browser Tools", "category": "POSSIBLE_PUP", "suggested_classification": "STARTUP_OFF", "confidence": 0.6, "severity": "medium", "false_positive_risk": "medium", "review_status": "DISPUTED"},
+    {"entry_id": "example-bundle-offer-manager", "canonical_name": "Example Bundle Offer Manager", "publisher": "Example Bundle Works", "category": "BUNDLED_SOFTWARE", "suggested_classification": "SAFE_REMOVE_CANDIDATE", "confidence": 0.65, "severity": "low", "false_positive_risk": "medium", "review_status": "NEEDS_REVIEW"},
+    {"entry_id": "example-browser-search-assistant", "canonical_name": "Example Browser Search Assistant", "publisher": "Example Search Labs", "category": "ADWARE", "suggested_classification": "QUARANTINE_CANDIDATE", "confidence": 0.5, "severity": "medium", "false_positive_risk": "high", "review_status": "DRAFT"}
+  ],
+  "evidence": [
+    {"evidence_id": "evidence-community-report", "entry_id": "example-speed-booster", "source_id": "source-community-example", "evidence_type": "COMMUNITY_REPORT", "summary": "Synthetic community report requiring independent review."},
+    {"evidence_id": "evidence-security-signal", "entry_id": "example-toolbar-helper", "source_id": "source-security-example", "evidence_type": "SECURITY_VENDOR_SIGNAL", "summary": "Synthetic security vendor signal; not a verdict."},
+    {"evidence_id": "evidence-known-uninstaller", "entry_id": "example-bundle-offer-manager", "source_id": "source-security-example", "evidence_type": "KNOWN_UNINSTALLER", "summary": "A synthetic standard uninstaller is documented; confirmation remains required."},
+    {"evidence_id": "evidence-false-positive-note", "entry_id": "example-browser-search-assistant", "source_id": "source-community-example", "evidence_type": "FALSE_POSITIVE_NOTE", "summary": "Synthetic false-positive note requiring user context."}
+  ],
+  "conflicts": [
+    {"conflict_id": "conflict-user-context", "entry_id": "example-toolbar-helper", "conflict_type": "conflict_requiring_user_context", "positive_summary": "Some synthetic reports describe unwanted startup behavior.", "negative_summary": "A synthetic user may intentionally rely on the helper.", "requires_user_context": true}
+  ]
+}
