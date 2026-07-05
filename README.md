@@ -72,7 +72,7 @@ Normalized Target + Evidence
              |
  Classification + Risk + Permission + Confirmation + Audit
              |
-      Non-executable PR1 report
+      Non-executable PR2 report
 ```
 
 未来 Execution Layer 必须消费 Policy Engine 的结果，不能自行制定或弱化策略。
@@ -95,4 +95,6 @@ PR1 is offline-only: no networking, uploads, raw user-path collection, or cloud 
 
 ## 开发状态
 
-当前里程碑：**v0.1 PR1 — 安全地基**。任何 `SAFE_REMOVE`、`STARTUP_OFF` 或 `QUARANTINE` 都只是带确认要求的建议，不会执行。
+当前里程碑：**v0.1 PR2 — Report Builder and Example Reports**。PR1 安全地基保持不变；PR2 只把 `PolicyDecision` 组织成结构化报告和非执行计划。任何 `SAFE_REMOVE`、`STARTUP_OFF` 或 `QUARANTINE` 都只是带确认要求的建议，不会执行。
+
+Current milestone: **v0.1 PR2 — Report Builder and Example Reports**. PR2 adds structured reports and report-only plans; it introduces no cleanup, deletion, uninstall, networking, or upload capability.

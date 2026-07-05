@@ -1,0 +1,56 @@
+[
+  {
+    "target_id": "SOFTWARE:Microsoft Visual C++ Redistributable",
+    "object_type": "SOFTWARE",
+    "name": "Microsoft Visual C++ Redistributable",
+    "publisher": "Microsoft Corporation",
+    "uninstall_available": true,
+    "user_declared_core": false,
+    "source": "synthetic_example"
+  },
+  {
+    "target_id": "STARTUP_ITEM:Unknown Toolbar Startup",
+    "object_type": "STARTUP_ITEM",
+    "name": "Unknown Toolbar Startup",
+    "publisher": null,
+    "uninstall_available": false,
+    "user_declared_core": false,
+    "source": "synthetic_example"
+  },
+  {
+    "target_id": "SOFTWARE:Known Bloatware With Uninstaller",
+    "object_type": "SOFTWARE",
+    "name": "Known Bloatware With Uninstaller",
+    "publisher": "Example Vendor",
+    "uninstall_available": true,
+    "user_declared_core": false,
+    "source": "synthetic_example"
+  },
+  {
+    "target_id": "FILE:Suspicious Temp File",
+    "object_type": "FILE",
+    "name": "Suspicious Temp File",
+    "publisher": null,
+    "uninstall_available": false,
+    "user_declared_core": false,
+    "source": "synthetic_example"
+  },
+  {
+    "target_id": "DIRECTORY:C:\\Windows\\System32",
+    "object_type": "DIRECTORY",
+    "name": "C:\\Windows\\System32",
+    "publisher": null,
+    "uninstall_available": false,
+    "user_declared_core": false,
+    "source": "synthetic_example"
+  },
+  {
+    "target_id": "DIRECTORY:User Code Repository",
+    "object_type": "DIRECTORY",
+    "name": "User Code Repository",
+    "publisher": null,
+    "uninstall_available": false,
+    "user_declared_core": false,
+    "source": "synthetic_example"
+  }
+]

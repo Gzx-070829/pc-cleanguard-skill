@@ -5,11 +5,11 @@ description: Conservatively assess Windows software, startup items, services, pr
 
 # PC CleanGuard
 
-Act as a safety-first system-governance layer, not as a cleanup executor. In PR1, return policy judgments only. Never modify the system.
+Act as a safety-first system-governance layer, not as a cleanup executor. In PR1 and PR2, return policy judgments and structured reports only. Never modify the system.
 
 ## 中文行为宪法 / Chinese behavioral constitution
 
-`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。PR1 不包含真实执行能力。
+`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。PR1 和 PR2 都不包含真实执行能力。
 
 AI 可以执行，但执行必须被治理。外部权限很大，内部刹车必须更大。先造刹车，再造发动机。
 
@@ -41,7 +41,7 @@ Use only these labels:
 - `ASK_USER`: evidence or intent is insufficient; do not modify.
 - `SAFE_REMOVE`: removal candidate only, never an automatic deletion authorization.
 - `STARTUP_OFF`: reversible startup-disable candidate only.
-- `QUARANTINE`: reversible isolation candidate only; PR1 must not move anything.
+- `QUARANTINE`: reversible isolation candidate only; PR1 and PR2 must not move anything.
 - `BLOCK`: deny the proposed action.
 
 这些标签是治理判断，不是执行命令。`SAFE_REMOVE`、`STARTUP_OFF` 和 `QUARANTINE` 只能表示候选建议。
@@ -69,9 +69,9 @@ Protect Windows system paths, driver stores, recovery partitions, user documents
 
 ## Privacy
 
-Do not hide uploads. Default to no upload. Never upload raw user paths. Never submit user documents, source code, or photos for cloud reputation. PR1 implements Offline Mode only and has no networking or upload capability.
+Do not hide uploads. Default to no upload. Never upload raw user paths. Never submit user documents, source code, or photos for cloud reputation. PR1 and PR2 implement Offline Mode only and have no networking or upload capability.
 
-不得隐藏上传，默认不上传，不上传原始用户路径。用户文档、代码、照片不参与云端声誉查询。PR1 仅实现 Offline Mode，不包含联网或上传能力。
+不得隐藏上传，默认不上传，不上传原始用户路径。用户文档、代码、照片不参与云端声誉查询。PR1 和 PR2 仅实现 Offline Mode，不包含联网或上传能力。
 
 ## Produce output
 
@@ -85,4 +85,4 @@ Return these sections in order:
 6. Risk Notes
 7. Audit Notes
 
-State clearly that PR1 execution plans are non-executable policy artifacts. Include evidence for every non-`KEEP` finding, and include audit requirements for every non-`KEEP` decision.
+State clearly that PR2 execution plans are non-executable policy artifacts. Include evidence for every non-`KEEP` finding, and include audit requirements for every non-`KEEP` decision.
