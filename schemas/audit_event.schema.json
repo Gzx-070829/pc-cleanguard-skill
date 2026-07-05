@@ -1,14 +1,18 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://pc-cleanguard.example/schemas/audit_event.schema.json",
-  "title": "PC CleanGuard Audit Event",
+  "title": "PC CleanGuard PR3 Dry-run Audit Event",
+  "description": "A dry-run-only audit event. PR3 records plans, simulations, refusals, skips, and policy blocks; it does not record successful execution.",
   "type": "object",
-  "required": ["event_id", "timestamp", "actor", "mode", "action", "target_id", "target_name", "classification", "risk_level", "permission_level", "reason", "evidence_refs", "approved_by", "execution_method", "command_summary", "result", "rollback_available", "rollback_method"],
+  "required": ["schema_version", "scan_id", "plan_id", "event_id", "timestamp", "actor", "mode", "action", "target_id", "target_name", "classification", "risk_level", "permission_level", "reason", "evidence_refs", "approved_by", "execution_method", "command_summary", "result", "rollback_available", "rollback_method", "dry_run", "policy_decision_id", "rulepack_version"],
   "properties": {
-    "event_id": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "0.1"},
+    "scan_id": {"type": ["string", "null"], "minLength": 1},
+    "plan_id": {"type": ["string", "null"], "minLength": 1},
+    "event_id": {"type": "string", "format": "uuid"},
     "timestamp": {"type": "string", "format": "date-time"},
     "actor": {"type": "string", "minLength": 1},
-    "mode": {"type": "string", "minLength": 1},
+    "mode": {"const": "safe"},
     "action": {"type": "string", "minLength": 1},
     "target_id": {"type": "string", "minLength": 1},
     "target_name": {"type": "string", "minLength": 1},
@@ -18,11 +22,14 @@
     "reason": {"type": "string", "minLength": 1},
     "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
     "approved_by": {"type": ["string", "null"]},
-    "execution_method": {"type": ["string", "null"]},
-    "command_summary": {"type": ["string", "null"]},
-    "result": {"type": "string", "minLength": 1},
+    "execution_method": {"enum": ["none", "dry_run", "policy_engine", "report_builder"]},
+    "command_summary": {"type": "null"},
+    "result": {"enum": ["planned", "simulated", "blocked", "refused", "skipped"]},
     "rollback_available": {"type": "boolean"},
-    "rollback_method": {"type": ["string", "null"]}
+    "rollback_method": {"type": ["string", "null"]},
+    "dry_run": {"const": true},
+    "policy_decision_id": {"type": ["string", "null"], "minLength": 1},
+    "rulepack_version": {"type": ["string", "null"], "minLength": 1}
   },
   "additionalProperties": false
 }

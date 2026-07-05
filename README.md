@@ -95,6 +95,8 @@ PR1 is offline-only: no networking, uploads, raw user-path collection, or cloud 
 
 ## 开发状态
 
-当前里程碑：**v0.1 PR2 — Report Builder and Example Reports**。PR1 安全地基保持不变；PR2 只把 `PolicyDecision` 组织成结构化报告和非执行计划。任何 `SAFE_REMOVE`、`STARTUP_OFF` 或 `QUARANTINE` 都只是带确认要求的建议，不会执行。
+当前里程碑：**v0.1 PR3 — Audit JSONL dry-run foundation**。PR1/PR2 安全边界保持不变；PR3 只向调用方显式指定的本地路径追加 dry-run JSONL 审计事件，不记录成功执行，也不执行任何系统动作。
 
-Current milestone: **v0.1 PR2 — Report Builder and Example Reports**. PR2 adds structured reports and report-only plans; it introduces no cleanup, deletion, uninstall, networking, or upload capability.
+Current milestone: **v0.1 PR3 — Audit JSONL dry-run foundation**. PR3 appends validated dry-run events only to an explicit local path. It introduces no cleanup, deletion, uninstall, networking, upload, or real system-modification capability.
+
+**JSONL 管审计，SQLite 管历史。PR3 只记录 dry-run，不代表执行。**
