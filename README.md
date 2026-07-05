@@ -95,8 +95,10 @@ PR1 is offline-only: no networking, uploads, raw user-path collection, or cloud 
 
 ## 开发状态
 
-当前里程碑：**v0.1 PR3 — Audit JSONL dry-run foundation**。PR1/PR2 安全边界保持不变；PR3 只向调用方显式指定的本地路径追加 dry-run JSONL 审计事件，不记录成功执行，也不执行任何系统动作。
+当前里程碑：**v0.1 PR4 — SQLite State and Reputation Knowledge Store**。PR4 为显式本地路径提供可查询状态记忆和软件声誉证据库；它不是黑名单，也不产生执行授权。
 
-Current milestone: **v0.1 PR3 — Audit JSONL dry-run foundation**. PR3 appends validated dry-run events only to an explicit local path. It introduces no cleanup, deletion, uninstall, networking, upload, or real system-modification capability.
+Current milestone: **v0.1 PR4 — SQLite State and Reputation Knowledge Store**. PR4 adds explicit-path queryable state and reputation evidence storage. It introduces no scanning, cleanup, deletion, uninstall, networking, upload, or execution authorization.
 
 **JSONL 管审计，SQLite 管历史。PR3 只记录 dry-run，不代表执行。**
+
+**声誉记录不是执行授权；最终仍由 Policy Engine 把关。**
