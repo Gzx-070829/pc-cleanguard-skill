@@ -1,5 +1,7 @@
 # Execution Permissions
 
+> English summary: PR1 has no execution layer. All plans are non-executable policy artifacts.
+
 PR1 不包含执行层，所有计划均为不可执行的策略制品。
 
 未来执行层必须：

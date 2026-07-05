@@ -1,5 +1,7 @@
 # Safety Model
 
+> English summary: Hard rules win, uncertainty is preserved, and every non-`KEEP` decision requires evidence and audit preparation.
+
 ## 决策优先级
 
 1. Level 5 与敏感路径硬规则。

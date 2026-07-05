@@ -1,5 +1,7 @@
 # Open-source Governance
 
+> English summary: Rule changes require evidence, false-positive analysis, independent review, traceability, and a revocation path.
+
 代码、规则和文档使用公开评审流程。规则变更须提供可验证来源、适用版本、误伤分析、反例和撤回条件；紧急规则可加速审查，但只能警告、降级或阻断。
 
 维护者应分离规则作者与批准者角色，保留变更历史，定期复核过期规则。任何利益关系应披露。社区共识不能覆盖 Level 5、隐私承诺或 Policy Engine 前置要求。

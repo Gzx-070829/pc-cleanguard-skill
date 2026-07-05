@@ -1,5 +1,7 @@
 # Vision
 
+> English summary: Govern AI system operations through local-first evidence, least privilege, explicit confirmation, reversibility, and auditability.
+
 PC CleanGuard 的目标是让 AI 参与 PC 治理时先证明“为什么安全”，再讨论“如何操作”。系统以本地优先、证据驱动、保守分类、最小权限、明确确认、可逆优先和全程审计为基本原则。
 
 PR1 只建立安全契约和纯判断模型。成功标准不是释放多少空间，而是危险目标被可靠阻断、不确定目标被保留、每项建议都能解释和审计。

@@ -1,5 +1,7 @@
 # Architecture
 
+> English summary: The Policy Engine is an independent safety brake; the future Execution Layer may consume decisions but may not make policy.
+
 ## 分层
 
 1. **Discovery / Normalization（未来）**：只读采集元数据，形成稳定 target identity。

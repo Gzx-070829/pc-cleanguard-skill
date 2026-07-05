@@ -2,6 +2,8 @@
 
 欢迎贡献，但安全边界优先于功能速度。提交前请运行编译、单元测试、Schema 解析和 `git diff --check`。
 
+Contributions are welcome, but safety boundaries take priority over delivery speed. Code, rules, tests, and documentation must preserve conservative policy behavior.
+
 ## 贡献类型
 
 - 代码贡献：保持 Policy Engine 纯判断、标准库优先，并补充测试。
@@ -33,6 +35,12 @@
 
 社区规则可以提高怀疑程度，可以建议 `ASK_USER`、`STARTUP_OFF` 或 `SAFE_REMOVE candidate`。社区规则不能直接触发删除，也不能绕过 Policy Engine。网络声誉只能作为证据之一，不能替代本地身份核验和用户确认。
 
+不能提交“XX 是垃圾软件，建议删除”这种无证据规则。规则贡献只能增加证据或提高怀疑程度，不能直接触发删除。
+
+Do not submit unsupported claims such as “this is junk software; delete it.” Rule contributions may add evidence or increase suspicion, but they may never directly trigger deletion or bypass the Policy Engine.
+
 ## Pull request 要求
 
 保持变更单一、解释安全影响、列出测试结果。新增分类规则必须说明误伤风险和降级行为；涉及 Level 4/5、安全路径或隐私的变更至少需要安全审查。不得提交真实用户路径、样本文件、访问令牌或遥测数据。
+
+Keep each pull request focused, explain its safety impact, and include verification results. Changes involving Level 4/5, sensitive paths, or privacy require explicit security review.

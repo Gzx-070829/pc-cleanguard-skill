@@ -1,14 +1,34 @@
 # PC CleanGuard Skill
 
-> **PC CleanGuard Skill 不是传统清理软件。**
-> 它是面向 AI Agent 的开源系统治理 Skill。
-> 它未来可以具备受控执行能力，但当前 PR1 不执行任何真实清理。
-> 它不会静默删除，也不会偷偷上传，更不会根据单一声誉来源自动删除。
-> 它要求证据链、风险分类、权限等级、用户确认和审计准备。
+开源、可审计、隐私优先的 AI 系统治理 Skill。
+
+Open-source, auditable, privacy-first AI System Governance Skill.
+
+> **PC CleanGuard 不是传统清理软件。**
+> **It is not a traditional cleaner.**
+>
+> 它面向 AI Agent 建立受治理的系统安全边界；当前 PR1 不执行任何真实清理。
+> It establishes governed safety boundaries for AI agents; PR1 performs no cleanup.
+
+PC CleanGuard 面向 Codex、WorkBuddy、本地 AI Agent 和未来系统级 AI 助手。它的目标不是“一键清理电脑”，而是让 AI Agent 在严格策略、权限分级、证据链、用户确认、隐私保护和审计留痕约束下，安全地分析、分类和规划未来的系统治理操作。
+
+PC CleanGuard is designed for Codex, WorkBuddy, local AI agents, and future system-level assistants. It replaces one-click cleanup with governed analysis, classification, and planning under policy, permission, evidence, consent, privacy, and audit controls.
+
+核心原则 / Core principle:
+
+**AI 可以执行，但执行必须被治理。**
+
+**AI may execute, but execution must be governed.**
+
+**外部权限很大，内部刹车必须更大。**
+
+**External permission is large; internal brakes must be larger.**
 
 ## 项目定位
 
 PC CleanGuard 在 AI 建议与系统操作之间建立可审计的安全门。它先回答“能否做、为何做、需要谁确认”，而不是直接动手。
+
+PC CleanGuard is an auditable safety gate between AI recommendations and system operations. It answers whether an action is permitted, why, and whose confirmation is required before execution is considered.
 
 ## 它是什么
 
@@ -26,11 +46,22 @@ PC CleanGuard 在 AI 建议与系统操作之间建立可审计的安全门。�
 
 ## 安全原则
 
-1. 硬规则先于普通分类，敏感目标直接 `BLOCK`。
-2. 不确定时 `KEEP` 或 `ASK_USER`。
-3. AI、声誉、社区规则和用户偏好都不能单独授权删除。
-4. 所有非 `KEEP` 决策必须有证据链并准备审计。
-5. 用户偏好不能绕过 `BLOCK` 或 Level 5。
+1. 不静默删除。
+2. 不偷偷上传。
+3. 不做黑箱声誉判断。
+4. 不因单一来源自动删除。
+5. 社区规则不能直接触发删除。
+6. AI 判断不能直接触发删除。
+7. 在线声誉不能直接触发删除。
+8. 用户文档、代码、照片不参与云端声誉查询。
+9. 每个操作必须可解释、可记录、可分类。
+10. 硬规则先于普通分类，敏感目标直接 `BLOCK`。
+11. 不确定时 `KEEP` 或 `ASK_USER`。
+12. 用户偏好不能绕过 `BLOCK` 或 Level 5。
+
+In short: no silent deletion, hidden upload, black-box reputation verdict, or automatic removal from a single source. Every proposed action must be explainable, classifiable, consent-aware, and auditable.
+
+**先造刹车，再造发动机。 / Build the brakes before the engine.**
 
 ## 系统架构
 
@@ -46,6 +77,8 @@ Normalized Target + Evidence
 
 未来 Execution Layer 必须消费 Policy Engine 的结果，不能自行制定或弱化策略。
 
+The future Execution Layer may consume policy decisions, but it may never create or weaken them.
+
 ## 风险分类标签
 
 `KEEP`、`ASK_USER`、`SAFE_REMOVE`、`STARTUP_OFF`、`QUARANTINE`、`BLOCK`。候选标签不是执行授权。
@@ -57,6 +90,8 @@ Level 0 只读扫描；Level 1 低风险清理；Level 2 可逆操作；Level 3 
 ## 隐私承诺
 
 PR1 仅实现 Offline Mode：不联网、不上传，不收集原始用户路径，不对用户文档、代码或照片做云端声誉检查。
+
+PR1 is offline-only: no networking, uploads, raw user-path collection, or cloud reputation checks for documents, source code, or photos.
 
 ## 开发状态
 
