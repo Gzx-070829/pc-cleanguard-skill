@@ -95,10 +95,12 @@ PR1 is offline-only: no networking, uploads, raw user-path collection, or cloud 
 
 ## 开发状态
 
-当前里程碑：**v0.1 PR4 — SQLite State and Reputation Knowledge Store**。PR4 为显式本地路径提供可查询状态记忆和软件声誉证据库；它不是黑名单，也不产生执行授权。
+当前里程碑：**v0.1 PR5 — Windows Read-only Installed Apps Collector and Normalizer**。PR5 首次允许独立的只读 PowerShell collector 查看卸载注册表元数据；Python 只归一化调用方提供的数据，不自动执行脚本。
 
-Current milestone: **v0.1 PR4 — SQLite State and Reputation Knowledge Store**. PR4 adds explicit-path queryable state and reputation evidence storage. It introduces no scanning, cleanup, deletion, uninstall, networking, upload, or execution authorization.
+Current milestone: **v0.1 PR5 — Windows Read-only Installed Apps Collector and Normalizer**. PR5 adds a standalone read-only PowerShell collector for uninstall-registry metadata. Python normalizes caller-supplied records and never invokes the script.
 
 **JSONL 管审计，SQLite 管历史。PR3 只记录 dry-run，不代表执行。**
 
 **声誉记录不是执行授权；最终仍由 Policy Engine 把关。**
+
+**卸载字符串只是元数据，不是执行授权。PR5 不清理、不删除、不卸载、不联网、不上传。**

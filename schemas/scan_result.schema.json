@@ -21,10 +21,20 @@
       "required": ["target_id", "name"],
       "properties": {
         "target_id": {"type": "string", "minLength": 1},
+        "id": {"type": "string", "minLength": 1},
+        "app_id": {"type": "string", "minLength": 1},
         "name": {"type": "string", "minLength": 1},
         "publisher": {"type": ["string", "null"]},
         "version": {"type": ["string", "null"]},
-        "path": {"type": ["string", "null"]}
+        "path": {"type": ["string", "null"]},
+        "install_location": {"type": ["string", "null"]},
+        "install_date": {"type": ["string", "null"]},
+        "uninstall_available": {"type": "boolean"},
+        "registry_source": {"type": ["string", "null"]},
+        "registry_key": {"type": ["string", "null"]},
+        "winget_visible": {"type": ["boolean", "null"]},
+        "source": {"type": "string", "minLength": 1},
+        "collected_at": {"type": ["string", "null"], "format": "date-time"}
       },
       "additionalProperties": true
     }
