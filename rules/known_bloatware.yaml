@@ -1,0 +1,3 @@
+schema_version: "0.1"
+policy: "Entries are candidates only and require identity match, standard uninstaller, confirmation, and audit."
+entries: []

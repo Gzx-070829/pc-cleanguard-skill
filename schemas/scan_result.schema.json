@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/scan_result.schema.json",
+  "title": "PC CleanGuard Scan Result",
+  "type": "object",
+  "required": ["scan_id", "timestamp", "platform", "privacy_mode", "software_entries", "startup_items", "services", "processes", "schema_version"],
+  "properties": {
+    "scan_id": {"type": "string", "minLength": 1},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "platform": {"type": "string", "minLength": 1},
+    "privacy_mode": {"enum": ["offline", "metadata", "cloud_deep"]},
+    "software_entries": {"type": "array", "items": {"$ref": "#/$defs/discovered_object"}},
+    "startup_items": {"type": "array", "items": {"$ref": "#/$defs/discovered_object"}},
+    "services": {"type": "array", "items": {"$ref": "#/$defs/discovered_object"}},
+    "processes": {"type": "array", "items": {"$ref": "#/$defs/discovered_object"}},
+    "schema_version": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "discovered_object": {
+      "type": "object",
+      "required": ["target_id", "name"],
+      "properties": {
+        "target_id": {"type": "string", "minLength": 1},
+        "name": {"type": "string", "minLength": 1},
+        "publisher": {"type": ["string", "null"]},
+        "version": {"type": ["string", "null"]},
+        "path": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

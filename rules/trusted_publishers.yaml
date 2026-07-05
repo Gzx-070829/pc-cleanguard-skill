@@ -1,0 +1,11 @@
+schema_version: "0.1"
+policy: "Trust is supporting evidence only and never authorizes removal."
+publishers:
+  - name: "Microsoft Corporation"
+    default_classification: "KEEP"
+  - name: "NVIDIA Corporation"
+    default_classification: "KEEP"
+  - name: "Advanced Micro Devices, Inc."
+    default_classification: "KEEP"
+  - name: "Intel Corporation"
+    default_classification: "KEEP"

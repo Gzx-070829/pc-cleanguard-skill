@@ -1,0 +1,6 @@
+schema_version: "0.1"
+aliases:
+  - canonical: "Microsoft Visual C++ Redistributable"
+    values: ["Microsoft Visual C++ Redistributable", "MSVC Redistributable", "VC++ Redist"]
+  - canonical: ".NET Runtime"
+    values: ["Microsoft .NET Runtime", "Windows Desktop Runtime"]

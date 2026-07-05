@@ -1,0 +1,4 @@
+interface:
+  display_name: "PC CleanGuard"
+  short_description: "Safety-first Windows governance policy skill"
+  default_prompt: "Use $pc-cleanguard-skill to assess Windows objects conservatively before any proposed action."

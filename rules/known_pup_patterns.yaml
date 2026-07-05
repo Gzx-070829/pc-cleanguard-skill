@@ -1,0 +1,6 @@
+schema_version: "0.1"
+policy: "PUP patterns raise suspicion only; they never authorize deletion."
+patterns:
+  - pattern: "*toolbar*"
+    suggested_classification: "ASK_USER"
+    minimum_evidence_sources: 2

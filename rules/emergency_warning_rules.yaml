@@ -1,0 +1,3 @@
+schema_version: "0.1"
+policy: "Emergency rules may warn, downgrade, or block; they never trigger deletion."
+rules: []

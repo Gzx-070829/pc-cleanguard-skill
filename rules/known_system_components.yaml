@@ -1,0 +1,11 @@
+schema_version: "0.1"
+components:
+  - pattern: "Microsoft Visual C++*Redistributable"
+    classification: "KEEP"
+  - pattern: ".NET*Runtime"
+    classification: "KEEP"
+  - pattern: "DirectX*Runtime"
+    classification: "KEEP"
+  - pattern: "*Display Driver*"
+    publishers: ["NVIDIA", "AMD", "Intel"]
+    classification: "KEEP"

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/execution_plan.schema.json",
+  "title": "PC CleanGuard Execution Plan",
+  "description": "A non-executable policy artifact in PR1.",
+  "type": "object",
+  "required": ["plan_id", "scan_id", "mode", "steps", "blocked_steps", "managed_mode_compatibility"],
+  "properties": {
+    "plan_id": {"type": "string", "minLength": 1},
+    "scan_id": {"type": "string", "minLength": 1},
+    "mode": {"enum": ["report_only"]},
+    "steps": {"type": "array", "items": {"$ref": "#/$defs/step"}},
+    "blocked_steps": {"type": "array", "items": {"$ref": "#/$defs/step"}},
+    "managed_mode_compatibility": {"type": "boolean"}
+  },
+  "$defs": {
+    "step": {
+      "type": "object",
+      "required": ["step_id", "action", "target_id", "permission_level", "preconditions", "confirmation_required", "rollback_method", "audit_event_type"],
+      "properties": {
+        "step_id": {"type": "string", "minLength": 1},
+        "action": {"type": "string", "minLength": 1},
+        "target_id": {"type": "string", "minLength": 1},
+        "permission_level": {"enum": ["LEVEL_0_READ_ONLY", "LEVEL_1_LOW_RISK_CLEANUP", "LEVEL_2_REVERSIBLE", "LEVEL_3_STANDARD_UNINSTALL", "LEVEL_4_HIGH_RISK_SYSTEM_MODIFICATION", "LEVEL_5_FORBIDDEN"]},
+        "preconditions": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "confirmation_required": {"type": "boolean"},
+        "rollback_method": {"type": ["string", "null"]},
+        "audit_event_type": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

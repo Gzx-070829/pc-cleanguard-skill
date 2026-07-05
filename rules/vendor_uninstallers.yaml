@@ -1,0 +1,3 @@
+schema_version: "0.1"
+policy: "Metadata only; PR1 never invokes uninstallers."
+vendors: []

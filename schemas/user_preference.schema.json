@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/user_preference.schema.json",
+  "title": "PC CleanGuard User Preference",
+  "description": "Preferences never override BLOCK or Level 5.",
+  "type": "object",
+  "required": ["user_keep_list", "user_remove_list", "user_ignore_list", "user_suspicion_list", "user_core_tools"],
+  "properties": {
+    "user_keep_list": {"$ref": "#/$defs/identities"},
+    "user_remove_list": {"$ref": "#/$defs/identities"},
+    "user_ignore_list": {"$ref": "#/$defs/identities"},
+    "user_suspicion_list": {"$ref": "#/$defs/identities"},
+    "user_core_tools": {"$ref": "#/$defs/identities"}
+  },
+  "$defs": {
+    "identities": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  },
+  "additionalProperties": false
+}
