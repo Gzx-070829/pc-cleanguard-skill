@@ -1,0 +1,44 @@
+[
+  {
+    "task_name": "Example Scheduled Updater",
+    "task_path": "\\Example\\",
+    "state": "Ready",
+    "author": "Example Vendor",
+    "description": "Synthetic updater task metadata.",
+    "uri": "\\Example\\Example Scheduled Updater",
+    "actions_summary": "[{\"Execute\":\"C:\\\\Program Files\\\\Example Vendor\\\\updater.exe\",\"Arguments\":\"--scheduled\",\"WorkingDirectory\":null}]",
+    "triggers_summary": "[{\"StartBoundary\":\"2026-01-01T09:00:00\",\"EndBoundary\":null,\"Enabled\":true}]",
+    "principal_user_id": "SYSTEM",
+    "run_level": "Limited",
+    "source": "windows_scheduled_task",
+    "collected_at": "2026-07-06T00:00:00Z"
+  },
+  {
+    "task_name": "Unknown Scheduled Task",
+    "task_path": "\\ExampleUnknown\\",
+    "state": "Disabled",
+    "author": null,
+    "description": "Synthetic unknown task requiring user review.",
+    "uri": "\\ExampleUnknown\\Unknown Scheduled Task",
+    "actions_summary": "[{\"Execute\":\"%USERPROFILE%\\\\ExampleApps\\\\unknown-task.exe\",\"Arguments\":null,\"WorkingDirectory\":null}]",
+    "triggers_summary": "[{\"StartBoundary\":null,\"EndBoundary\":null,\"Enabled\":false}]",
+    "principal_user_id": "%USERPROFILE%",
+    "run_level": "Limited",
+    "source": "windows_scheduled_task",
+    "collected_at": "2026-07-06T00:00:00Z"
+  },
+  {
+    "task_name": "Microsoft Example Maintenance",
+    "task_path": "\\Microsoft\\Example\\",
+    "state": "Ready",
+    "author": "Microsoft Corporation",
+    "description": "Synthetic Microsoft-style maintenance task.",
+    "uri": "\\Microsoft\\Example\\Microsoft Example Maintenance",
+    "actions_summary": "[{\"Execute\":\"%SystemRoot%\\\\System32\\\\example-maintenance.exe\",\"Arguments\":null,\"WorkingDirectory\":null}]",
+    "triggers_summary": "[{\"StartBoundary\":null,\"EndBoundary\":null,\"Enabled\":true}]",
+    "principal_user_id": "SYSTEM",
+    "run_level": "Highest",
+    "source": "windows_scheduled_task",
+    "collected_at": "2026-07-06T00:00:00Z"
+  }
+]

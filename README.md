@@ -95,12 +95,14 @@ PR1 is offline-only: no networking, uploads, raw user-path collection, or cloud 
 
 ## 开发状态
 
-当前里程碑：**v0.1 PR5 — Windows Read-only Installed Apps Collector and Normalizer**。PR5 首次允许独立的只读 PowerShell collector 查看卸载注册表元数据；Python 只归一化调用方提供的数据，不自动执行脚本。
+当前里程碑：**v0.1 PR6 — Windows Read-only Startup, Services, and Scheduled Tasks Collectors**。PR6 增加启动项、服务和计划任务元数据观察；所有 collector 只向 stdout 输出 JSON，Python 不自动执行脚本。
 
-Current milestone: **v0.1 PR5 — Windows Read-only Installed Apps Collector and Normalizer**. PR5 adds a standalone read-only PowerShell collector for uninstall-registry metadata. Python normalizes caller-supplied records and never invokes the script.
+Current milestone: **v0.1 PR6 — Windows Read-only Startup, Services, and Scheduled Tasks Collectors**. PR6 adds metadata-only observation for startup items, services, and scheduled tasks. Collectors emit JSON to stdout and Python never invokes them.
 
 **JSONL 管审计，SQLite 管历史。PR3 只记录 dry-run，不代表执行。**
 
 **声誉记录不是执行授权；最终仍由 Policy Engine 把关。**
 
 **卸载字符串只是元数据，不是执行授权。PR5 不清理、不删除、不卸载、不联网、不上传。**
+
+**启动命令、服务路径和任务动作只是元数据。PR6 不采集进程，也不修改系统。**
