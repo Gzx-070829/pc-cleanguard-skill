@@ -1,0 +1,41 @@
+[
+  {
+    "name": "Example Toolbar Startup",
+    "command": "\"%USERPROFILE%\\ExampleApps\\Toolbar\\toolbar-helper.exe\" --startup",
+    "location_type": "registry_run",
+    "registry_path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+    "registry_value_name": "ExampleToolbarStartup",
+    "startup_folder_path": null,
+    "file_path": null,
+    "publisher": "Example Browser Tools",
+    "enabled_state": "observed",
+    "source": "windows_registry_run",
+    "collected_at": "2026-07-06T00:00:00Z"
+  },
+  {
+    "name": "Example Updater",
+    "command": "\"C:\\Program Files\\Example Vendor\\updater.exe\" --background",
+    "location_type": "registry_run",
+    "registry_path": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+    "registry_value_name": "ExampleUpdater",
+    "startup_folder_path": null,
+    "file_path": null,
+    "publisher": "Example Vendor",
+    "enabled_state": "observed",
+    "source": "windows_registry_run",
+    "collected_at": "2026-07-06T00:00:00Z"
+  },
+  {
+    "name": "Microsoft Example Startup",
+    "command": null,
+    "location_type": "startup_folder",
+    "registry_path": null,
+    "registry_value_name": null,
+    "startup_folder_path": "%USERPROFILE%\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup",
+    "file_path": "%USERPROFILE%\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Microsoft Example Startup.lnk",
+    "publisher": "Microsoft Corporation",
+    "enabled_state": "observed",
+    "source": "windows_startup_folder",
+    "collected_at": "2026-07-06T00:00:00Z"
+  }
+]

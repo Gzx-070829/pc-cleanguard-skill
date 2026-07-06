@@ -1,0 +1,44 @@
+[
+  {
+    "service_name": "MicrosoftExampleService",
+    "display_name": "Microsoft Example Service",
+    "status": "OK",
+    "start_type": "Auto",
+    "state": "Running",
+    "path_name": "%SystemRoot%\\System32\\svchost.exe -k ExampleGroup",
+    "process_id": 1200,
+    "service_type": "Share Process",
+    "start_name": "LocalSystem",
+    "description": "Synthetic Windows service metadata for documentation and tests.",
+    "source": "windows_cim_service",
+    "collected_at": "2026-07-06T00:00:00Z"
+  },
+  {
+    "service_name": "NVIDIAExampleService",
+    "display_name": "NVIDIA Example Service",
+    "status": "OK",
+    "start_type": "Manual",
+    "state": "Stopped",
+    "path_name": "C:\\Program Files\\NVIDIA Corporation\\Example\\nvexample.exe",
+    "process_id": 0,
+    "service_type": "Own Process",
+    "start_name": "LocalSystem",
+    "description": "Synthetic driver-vendor service metadata; not a real product claim.",
+    "source": "windows_cim_service",
+    "collected_at": "2026-07-06T00:00:00Z"
+  },
+  {
+    "service_name": "ExampleUtilityService",
+    "display_name": "Example Utility Service",
+    "status": "OK",
+    "start_type": "Disabled",
+    "state": "Stopped",
+    "path_name": "C:\\Program Files\\Example Vendor\\utility-service.exe",
+    "process_id": 0,
+    "service_type": "Own Process",
+    "start_name": "LocalService",
+    "description": "Synthetic service entry.",
+    "source": "windows_cim_service",
+    "collected_at": "2026-07-06T00:00:00Z"
+  }
+]
