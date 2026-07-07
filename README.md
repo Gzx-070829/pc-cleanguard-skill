@@ -7,8 +7,8 @@ Open-source, auditable, privacy-first AI System Governance Skill.
 > **PC CleanGuard 不是传统清理软件。**
 > **It is not a traditional cleaner.**
 >
-> 它面向 AI Agent 建立受治理的系统安全边界；当前 PR1 不执行任何真实清理。
-> It establishes governed safety boundaries for AI agents; PR1 performs no cleanup.
+> 它面向 AI Agent 建立受治理的系统安全边界；当前 PR7 只读分析，不执行任何真实清理。
+> It establishes governed safety boundaries for AI agents; PR7 analyzes data read-only and performs no cleanup.
 
 PC CleanGuard 面向 Codex、WorkBuddy、本地 AI Agent 和未来系统级 AI 助手。它的目标不是“一键清理电脑”，而是让 AI Agent 在严格策略、权限分级、证据链、用户确认、隐私保护和审计留痕约束下，安全地分析、分类和规划未来的系统治理操作。
 
@@ -40,9 +40,11 @@ PC CleanGuard is an auditable safety gate between AI recommendations and system 
 
 它不是磁盘清理器、卸载器、杀毒软件、系统优化器或后台监控器。PR1 没有删除、卸载、移动、注册表写入、服务/启动项修改、联网或上传能力。
 
-## v0.1 PR1 当前范围
+## v0.1 PR7 当前范围
 
-本 PR 仅包含仓库骨架、安全契约、规则占位、Draft 2020-12 JSON Schema、Python 标准库数据模型、纯判断型 Policy Engine 和危险场景单元测试。
+PR7 打通可用的只读治理链路：显式 JSON 输入 → normalizer → `GovernanceTarget` → Policy Engine → Report Builder → dry-run Audit。调用方还可显式指定安全本地路径，写出 report JSON 和 audit JSONL；默认不覆盖已有文件。
+
+PR7 completes a useful read-only governance chain from explicit JSON input to normalized targets, policy decisions, reports, and dry-run audit events. Optional artifact writing requires explicit safe local paths and does not overwrite by default.
 
 ## 安全原则
 
@@ -89,15 +91,17 @@ Level 0 只读扫描；Level 1 低风险清理；Level 2 可逆操作；Level 3 
 
 ## 隐私承诺
 
-PR1 仅实现 Offline Mode：不联网、不上传，不收集原始用户路径，不对用户文档、代码或照片做云端声誉检查。
+PR7 仍仅实现 Offline Mode：不联网、不上传，不对用户文档、代码或照片做云端声誉检查。
 
-PR1 is offline-only: no networking, uploads, raw user-path collection, or cloud reputation checks for documents, source code, or photos.
+PR7 is offline-only: no networking, uploads, or cloud reputation checks for documents, source code, or photos.
 
 ## 开发状态
 
-当前里程碑：**v0.1 PR6 — Windows Read-only Startup, Services, and Scheduled Tasks Collectors**。PR6 增加启动项、服务和计划任务元数据观察；所有 collector 只向 stdout 输出 JSON，Python 不自动执行脚本。
+当前里程碑：**v0.1 PR7 — Read-only Scan Pipeline**。PR7 处理调用方显式提供的 JSON，产生归一化计数、目标、策略决策、报告和 dry-run 审计事件。Python 仍不自动执行 PowerShell collector。
 
-Current milestone: **v0.1 PR6 — Windows Read-only Startup, Services, and Scheduled Tasks Collectors**. PR6 adds metadata-only observation for startup items, services, and scheduled tasks. Collectors emit JSON to stdout and Python never invokes them.
+Current milestone: **v0.1 PR7 — Read-only Scan Pipeline**. PR7 processes caller-supplied JSON into normalized counts, targets, policy decisions, a report, and dry-run audit events. Python still never invokes PowerShell collectors.
+
+详细用法见 [只读扫描流水线](docs/readonly-scan-pipeline.md)。
 
 **JSONL 管审计，SQLite 管历史。PR3 只记录 dry-run，不代表执行。**
 

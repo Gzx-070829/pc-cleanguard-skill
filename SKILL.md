@@ -5,11 +5,11 @@ description: Conservatively assess Windows software, startup items, services, pr
 
 # PC CleanGuard
 
-Act as a safety-first system-governance layer, not as a cleanup executor. In PR1 through PR6, return policy judgments, structured reports, dry-run audit records, stored evidence/history, and read-only Windows metadata only. Never modify the system.
+Act as a safety-first system-governance layer, not as a cleanup executor. In PR1 through PR7, return policy judgments, structured reports, dry-run audit records, stored evidence/history, and read-only Windows metadata only. Never modify the system.
 
 ## 中文行为宪法 / Chinese behavioral constitution
 
-`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。PR1 至 PR6 都不包含真实执行能力。
+`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。PR1 至 PR7 都不包含真实执行能力。
 
 AI 可以执行，但执行必须被治理。外部权限很大，内部刹车必须更大。先造刹车，再造发动机。
 
@@ -69,7 +69,7 @@ Protect Windows system paths, driver stores, recovery partitions, user documents
 
 ## Privacy
 
-Do not hide uploads. Default to no upload. Never upload raw user paths. Never submit user documents, source code, or photos for cloud reputation. PR1 through PR6 implement Offline Mode only and have no networking or upload capability.
+Do not hide uploads. Default to no upload. Never upload raw user paths. Never submit user documents, source code, or photos for cloud reputation. PR1 through PR7 implement Offline Mode only and have no networking or upload capability.
 
 不得隐藏上传，默认不上传，不上传原始用户路径。用户文档、代码、照片不参与云端声誉查询。PR1 至 PR6 仅实现 Offline Mode，不包含联网或上传能力。
 
@@ -94,6 +94,16 @@ Allow read-only collectors to observe minimal system metadata, but never let the
 PR6 collectors may observe only approved startup registry/folder metadata, `Win32_Service`, and scheduled-task metadata. Startup commands, service path names, and task actions are metadata only. Do not collect processes in PR6.
 
 PR6 collector 只观察获准的启动注册表/文件夹、`Win32_Service` 和计划任务元数据。启动命令、服务路径和任务动作只是元数据。PR6 不采集进程。
+
+## Read-only scan pipeline / 只读扫描流水线
+
+PR7 accepts only explicit caller-supplied JSON. Run installed-app, startup-item, service, and scheduled-task metadata through their normalizers, create `GovernanceTarget` values, evaluate every target with the Policy Engine, then build a report and dry-run audit events. Recommendations and `PLAN_*` steps are not execution authorization.
+
+PR7 只接收调用方显式提供的 JSON。四类元数据必须依次经过 normalizer、`GovernanceTarget`、Policy Engine、Report Builder 和 dry-run Audit。策略建议和 `PLAN_*` 步骤都不是执行授权。
+
+Optional report JSON and audit JSONL output must use caller-specified safe local paths. Do not discover inputs, auto-run PowerShell, choose hidden default paths, overwrite existing files without an explicit flag, or turn audit output into a claim of execution.
+
+可选的 report JSON 和 audit JSONL 只能写入调用方显式指定的安全本地路径。不得自动发现输入、自动运行 PowerShell、选择隐藏默认路径或把 dry-run 日志宣称为真实执行证明。
 
 ## Produce output
 

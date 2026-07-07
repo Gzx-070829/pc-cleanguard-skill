@@ -1,0 +1,132 @@
+{
+  "scan_id": "scan:pr7-example",
+  "created_at": "2026-07-07T00:00:00Z",
+  "input_summary": {
+    "installed_apps_count": 1,
+    "startup_items_count": 1,
+    "services_count": 1,
+    "scheduled_tasks_count": 1
+  },
+  "normalized_counts": {
+    "installed_apps": 1,
+    "startup_items": 1,
+    "services": 1,
+    "scheduled_tasks": 1,
+    "total_targets": 4
+  },
+  "targets": [
+    {
+      "target_id": "WINDOWS_APP:0f782e0be212438ddc3c",
+      "object_type": "SOFTWARE",
+      "name": "Example Notes",
+      "source": "windows_registry_uninstall"
+    },
+    {
+      "target_id": "STARTUP_ITEM:3b16d90a93954994826a",
+      "object_type": "STARTUP_ITEM",
+      "name": "Example Notes Startup",
+      "source": "windows_registry_run"
+    },
+    {
+      "target_id": "SERVICE:b3a5ed5754db3ca3e746",
+      "object_type": "SERVICE",
+      "name": "Example Notes Service",
+      "source": "windows_cim_service"
+    },
+    {
+      "target_id": "SCHEDULED_TASK:c38639cb47386dd008b8",
+      "object_type": "SCHEDULED_TASK",
+      "name": "Example Notes Metadata Refresh",
+      "source": "windows_scheduled_task"
+    }
+  ],
+  "decisions": [
+    {
+      "target_id": "WINDOWS_APP:0f782e0be212438ddc3c",
+      "classification": "ASK_USER",
+      "permission_level": "LEVEL_0_READ_ONLY",
+      "required_confirmation": true
+    },
+    {
+      "target_id": "STARTUP_ITEM:3b16d90a93954994826a",
+      "classification": "ASK_USER",
+      "permission_level": "LEVEL_0_READ_ONLY",
+      "required_confirmation": true
+    },
+    {
+      "target_id": "SERVICE:b3a5ed5754db3ca3e746",
+      "classification": "ASK_USER",
+      "permission_level": "LEVEL_0_READ_ONLY",
+      "required_confirmation": true
+    },
+    {
+      "target_id": "SCHEDULED_TASK:c38639cb47386dd008b8",
+      "classification": "ASK_USER",
+      "permission_level": "LEVEL_0_READ_ONLY",
+      "required_confirmation": true
+    }
+  ],
+  "report": {
+    "summary": {
+      "scan_id": "scan:pr7-example",
+      "platform": "Windows",
+      "privacy_mode": "offline",
+      "total_findings": 4,
+      "destructive_actions_executed": false
+    },
+    "execution_plan": {
+      "plan_id": "plan:scan:pr7-example",
+      "scan_id": "scan:pr7-example",
+      "dry_run_only": true,
+      "execution_authorized": false
+    },
+    "managed_mode_compatibility": {
+      "status": "FUTURE_ONLY",
+      "automatic_execution_allowed": false
+    },
+    "risk_notes": [
+      "PR7 recommendations are read-only policy artifacts, not execution authorization."
+    ]
+  },
+  "audit_events": [
+    {
+      "target_id": "WINDOWS_APP:0f782e0be212438ddc3c",
+      "action": "POLICY_RECOMMENDATION",
+      "result": "planned",
+      "execution_method": "policy_engine",
+      "command_summary": null,
+      "dry_run": true
+    },
+    {
+      "target_id": "STARTUP_ITEM:3b16d90a93954994826a",
+      "action": "POLICY_RECOMMENDATION",
+      "result": "planned",
+      "execution_method": "policy_engine",
+      "command_summary": null,
+      "dry_run": true
+    },
+    {
+      "target_id": "SERVICE:b3a5ed5754db3ca3e746",
+      "action": "POLICY_RECOMMENDATION",
+      "result": "planned",
+      "execution_method": "policy_engine",
+      "command_summary": null,
+      "dry_run": true
+    },
+    {
+      "target_id": "SCHEDULED_TASK:c38639cb47386dd008b8",
+      "action": "POLICY_RECOMMENDATION",
+      "result": "planned",
+      "execution_method": "policy_engine",
+      "command_summary": null,
+      "dry_run": true
+    }
+  ],
+  "scan_target_records": [
+    {"object_type": "SOFTWARE", "scan_id": "scan:pr7-example"},
+    {"object_type": "STARTUP_ITEM", "scan_id": "scan:pr7-example"},
+    {"object_type": "SERVICE", "scan_id": "scan:pr7-example"},
+    {"object_type": "SCHEDULED_TASK", "scan_id": "scan:pr7-example"}
+  ],
+  "warnings": []
+}

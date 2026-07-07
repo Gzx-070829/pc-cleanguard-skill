@@ -1,0 +1,43 @@
+{
+  "platform": "Windows",
+  "privacy_mode": "offline",
+  "installed_apps": [
+    {
+      "DisplayName": "Example Notes",
+      "Publisher": "Example Vendor",
+      "DisplayVersion": "1.0",
+      "UninstallString": null,
+      "source": "windows_registry_uninstall"
+    }
+  ],
+  "startup_items": [
+    {
+      "name": "Example Notes Startup",
+      "command": "ExampleNotes --startup",
+      "location_type": "registry_run",
+      "publisher": "Example Vendor",
+      "source": "windows_registry_run"
+    }
+  ],
+  "services": [
+    {
+      "service_name": "ExampleNotesService",
+      "display_name": "Example Notes Service",
+      "state": "Running",
+      "start_type": "Auto",
+      "path_name": "C:\\ExampleApps\\ExampleNotesService.exe",
+      "source": "windows_cim_service"
+    }
+  ],
+  "scheduled_tasks": [
+    {
+      "task_name": "Example Notes Metadata Refresh",
+      "task_path": "\\ExampleNotes\\",
+      "state": "Ready",
+      "author": "Example Vendor",
+      "actions_summary": "ExampleNotes --metadata-refresh",
+      "triggers_summary": "daily",
+      "source": "windows_scheduled_task"
+    }
+  ]
+}
