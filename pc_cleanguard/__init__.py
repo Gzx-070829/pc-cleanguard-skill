@@ -94,4 +94,4 @@ __all__ = [
     "write_pipeline_report",
 ]
 
-__version__ = "0.1.0-pr7"
+__version__ = "0.1.0-pr8"
