@@ -37,6 +37,16 @@ from .windows import (
     startup_item_to_governance_target,
     startup_item_to_scan_target_record,
 )
+from .pipeline import (
+    MAX_SCAN_JSON_BYTES,
+    ScanPipelineInput,
+    ScanPipelineResult,
+    load_scan_json_file,
+    load_scan_json_text,
+    run_readonly_scan_pipeline,
+    write_pipeline_audit_jsonl,
+    write_pipeline_report,
+)
 
 __all__ = [
     "ClassificationLabel",
@@ -74,6 +84,14 @@ __all__ = [
     "normalize_startup_items",
     "startup_item_to_governance_target",
     "startup_item_to_scan_target_record",
+    "MAX_SCAN_JSON_BYTES",
+    "ScanPipelineInput",
+    "ScanPipelineResult",
+    "load_scan_json_file",
+    "load_scan_json_text",
+    "run_readonly_scan_pipeline",
+    "write_pipeline_audit_jsonl",
+    "write_pipeline_report",
 ]
 
-__version__ = "0.1.0-pr6"
+__version__ = "0.1.0-pr7"
