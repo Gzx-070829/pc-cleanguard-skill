@@ -1,4 +1,4 @@
-"""Minimal command-line entry point for the offline read-only scan pipeline."""
+"""Minimal command-line entry point for offline read-only governance."""
 
 from __future__ import annotations
 
@@ -8,6 +8,13 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
+from .ai import (
+    DryRunPromptProvider,
+    MockAIProvider,
+    explain_report,
+    load_report_json_file,
+    write_explanation_markdown,
+)
 from .pipeline import (
     load_scan_json_file,
     run_readonly_scan_pipeline,
@@ -34,6 +41,32 @@ def _parser() -> argparse.ArgumentParser:
         "--overwrite",
         action="store_true",
         help="explicitly replace existing report and audit files",
+    )
+    explain = subcommands.add_parser(
+        "explain",
+        help="explain one explicit report through an offline provider",
+    )
+    explain.add_argument(
+        "--report", required=True, type=Path, help="explicit input report .json"
+    )
+    explain.add_argument(
+        "--output", required=True, type=Path, help="output explanation .md"
+    )
+    provider_mode = explain.add_mutually_exclusive_group()
+    provider_mode.add_argument(
+        "--provider",
+        choices=("mock",),
+        help="offline provider; defaults to mock",
+    )
+    provider_mode.add_argument(
+        "--dry-run-prompt",
+        action="store_true",
+        help="write the bounded prompt without a model call",
+    )
+    explain.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="explicitly replace an existing Markdown output",
     )
     return parser
 
@@ -62,6 +95,26 @@ def _run_scan(arguments: argparse.Namespace) -> dict:
     }
 
 
+def _run_explain(arguments: argparse.Namespace) -> dict:
+    report = load_report_json_file(arguments.report)
+    provider = (
+        DryRunPromptProvider() if arguments.dry_run_prompt else MockAIProvider()
+    )
+    explanation = explain_report(report, provider)
+    write_explanation_markdown(
+        arguments.output,
+        explanation,
+        explicit_overwrite=arguments.overwrite,
+    )
+    return {
+        "provider": explanation.provider,
+        "report": str(arguments.report),
+        "output": str(arguments.output),
+        "safety_notice": explanation.safety_notice,
+        "execution_authorized": explanation.execution_authorized,
+    }
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the CLI and return a process exit code."""
 
@@ -70,6 +123,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         if arguments.command == "scan":
             summary = _run_scan(arguments)
+        elif arguments.command == "explain":
+            summary = _run_explain(arguments)
         else:  # pragma: no cover - argparse enforces the available commands.
             parser.error(f"unsupported command: {arguments.command}")
     except (FileExistsError, FileNotFoundError, OSError, TypeError, ValueError) as error:

@@ -29,3 +29,9 @@ All three paths are required. Use `--scan-id` for an explicit identifier. Existi
 - PR7 的 UNC、device path、系统目录、文件大小和扩展名校验继续生效。
 
 The CLI performs no system action and grants no execution authorization. Its only writes are the two explicit, validated output artifacts.
+
+## PR9 explain 子命令 / Explain subcommand
+
+PR9 新增 `explain`，它只读取显式 report JSON，并通过离线 Mock provider 或 dry-run prompt 生成显式 Markdown 输出。详细用法与安全边界见 [AI 报告解释器](ai-report-explainer.md)。
+
+PR9 adds `explain` for explicit report-to-Markdown conversion through offline providers only. It does not connect to a live model.

@@ -12,7 +12,8 @@ This roadmap keeps stage descriptions in Chinese while retaining English compone
   - **v0.1 PR5**：Windows installed apps read-only collector + normalizer。
   - **v0.1 PR6**：Windows startup、services、scheduled tasks read-only collectors + normalizers。
   - **v0.1 PR7**：显式 JSON 输入、四类 metadata normalizer、Policy Engine、Report Builder、dry-run Audit 和可选本地结果写出的只读扫描流水线。
-  - **当前 PR — v0.1 PR8**：包装 PR7 pipeline 的最小只读 CLI，只处理显式 JSON 输入并写出显式 report/audit 路径。
+  - **v0.1 PR8**：包装 PR7 pipeline 的最小只读 CLI，只处理显式 JSON 输入并写出显式 report/audit 路径。
+  - **当前 PR — v0.1 PR9**：离线 AI Report Explainer、安全 prompt、Mock provider、dry-run prompt 和 Markdown 输出。
 - **v0.2**：SQLite 历史 + 用户偏好 + 审计日志实现。
 - **v0.3**：只开放低风险清理的受控执行。
 - **v0.4**：Reputation Engine + 更新管理器。

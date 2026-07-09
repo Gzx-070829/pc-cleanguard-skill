@@ -47,6 +47,17 @@ from .pipeline import (
     write_pipeline_audit_jsonl,
     write_pipeline_report,
 )
+from .ai import (
+    AIProvider,
+    DryRunPromptProvider,
+    MockAIProvider,
+    ReportExplanation,
+    SAFETY_NOTICE,
+    build_report_explanation_prompt,
+    explain_report,
+    load_report_json_file,
+    write_explanation_markdown,
+)
 
 __all__ = [
     "ClassificationLabel",
@@ -92,6 +103,15 @@ __all__ = [
     "run_readonly_scan_pipeline",
     "write_pipeline_audit_jsonl",
     "write_pipeline_report",
+    "AIProvider",
+    "DryRunPromptProvider",
+    "MockAIProvider",
+    "ReportExplanation",
+    "SAFETY_NOTICE",
+    "build_report_explanation_prompt",
+    "explain_report",
+    "load_report_json_file",
+    "write_explanation_markdown",
 ]
 
-__version__ = "0.1.0-pr8"
+__version__ = "0.1.0-pr9"
