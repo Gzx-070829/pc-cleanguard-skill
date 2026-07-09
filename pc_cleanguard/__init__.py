@@ -66,6 +66,15 @@ from .skill import (
     SkillActionResponse,
     invoke_skill_action,
 )
+from .external_tools import (
+    ExternalToolCatalog,
+    ExternalToolInvocationPlan,
+    ExternalToolRecord,
+    ExternalToolType,
+    ToolTrustDecision,
+    ToolTrustPolicy,
+    build_external_tool_invocation_plan,
+)
 
 __all__ = [
     "ClassificationLabel",
@@ -126,6 +135,13 @@ __all__ = [
     "SkillActionRequest",
     "SkillActionResponse",
     "invoke_skill_action",
+    "ExternalToolCatalog",
+    "ExternalToolInvocationPlan",
+    "ExternalToolRecord",
+    "ExternalToolType",
+    "ToolTrustDecision",
+    "ToolTrustPolicy",
+    "build_external_tool_invocation_plan",
 ]
 
 __version__ = "0.1.0"

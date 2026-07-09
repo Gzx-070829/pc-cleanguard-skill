@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/external_tool.schema.json",
+  "title": "PC CleanGuard External Tool Record",
+  "description": "Reviewable metadata for a tool. A record does not authorize download or invocation.",
+  "type": "object",
+  "required": [
+    "tool_id",
+    "name",
+    "tool_type",
+    "official_website",
+    "license",
+    "supported_actions",
+    "risk_level",
+    "required_user_confirmation"
+  ],
+  "properties": {
+    "tool_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,127}$"
+    },
+    "name": {"type": "string", "minLength": 1},
+    "tool_type": {
+      "enum": [
+        "official_uninstaller",
+        "winget",
+        "vendor_cleanup_tool",
+        "trusted_third_party_uninstaller"
+      ]
+    },
+    "official_website": {"type": "string", "format": "uri", "pattern": "^https://"},
+    "license": {"type": "string", "minLength": 1},
+    "supported_actions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "risk_level": {"enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]},
+    "required_user_confirmation": {"type": "boolean"}
+  },
+  "additionalProperties": false
+}
