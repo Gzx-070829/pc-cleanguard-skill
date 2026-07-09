@@ -1,0 +1,41 @@
+{
+  "schema_version": "0.1",
+  "request_id": "request:public-preview-plan",
+  "action": "build_cleanup_plan",
+  "payload": {
+    "plan_id": "cleanup-plan:public-preview-example",
+    "report": {
+      "scan_id": "scan:public-preview-example",
+      "decisions": [
+        {
+          "target_id": "WINDOWS_APP:example-notes",
+          "classification": "SAFE_REMOVE",
+          "risk_level": "MEDIUM",
+          "permission_level": "LEVEL_3_STANDARD_UNINSTALL",
+          "required_confirmation": true,
+          "blocked_by_hard_rule": false,
+          "evidence_chain": {
+            "sources": ["example_json"],
+            "facts": ["Synthetic candidate used only for documentation."],
+            "references": [],
+            "confidence": 0.5
+          }
+        },
+        {
+          "target_id": "STARTUP_ITEM:example-notes-startup",
+          "classification": "STARTUP_OFF",
+          "risk_level": "MEDIUM",
+          "permission_level": "LEVEL_2_REVERSIBLE",
+          "required_confirmation": true,
+          "blocked_by_hard_rule": false,
+          "evidence_chain": {
+            "sources": ["example_json"],
+            "facts": ["Synthetic startup candidate used only for documentation."],
+            "references": [],
+            "confidence": 0.5
+          }
+        }
+      ]
+    }
+  }
+}

@@ -128,4 +128,4 @@ __all__ = [
     "invoke_skill_action",
 ]
 
-__version__ = "0.1.0-pr10"
+__version__ = "0.1.0"
