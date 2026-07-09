@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/skill_action_response.schema.json",
+  "title": "PC CleanGuard PR10 Skill Action Response",
+  "description": "A Level 0 action result that never grants cleanup execution authority.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "request_id",
+    "action",
+    "status",
+    "requires_user_confirmation",
+    "execution_level",
+    "evidence",
+    "execution_authorized",
+    "result"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "request_id": {"type": "string", "minLength": 1},
+    "action": {
+      "enum": [
+        "scan_from_json",
+        "explain_report",
+        "build_cleanup_plan",
+        "write_report",
+        "write_audit"
+      ]
+    },
+    "status": {"enum": ["completed", "planned"]},
+    "requires_user_confirmation": {"type": "boolean"},
+    "execution_level": {"const": "LEVEL_0_READ_ONLY"},
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source", "fact"],
+        "properties": {
+          "source": {"type": "string", "minLength": 1},
+          "fact": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "execution_authorized": {"const": false},
+    "result": {"type": "object"}
+  },
+  "additionalProperties": false
+}

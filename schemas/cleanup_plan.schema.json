@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/cleanup_plan.schema.json",
+  "title": "PC CleanGuard PR10 Non-executable Cleanup Plan",
+  "description": "A plan-only review artifact. It contains no command and grants no execution authorization.",
+  "type": "object",
+  "required": [
+    "plan_id",
+    "source_scan_id",
+    "mode",
+    "execution_level",
+    "requires_user_confirmation",
+    "execution_authorized",
+    "steps"
+  ],
+  "properties": {
+    "plan_id": {"type": "string", "minLength": 1},
+    "source_scan_id": {"type": ["string", "null"], "minLength": 1},
+    "mode": {"const": "plan_only"},
+    "execution_level": {"const": "LEVEL_0_READ_ONLY"},
+    "requires_user_confirmation": {"type": "boolean"},
+    "execution_authorized": {"const": false},
+    "steps": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/review_step"}
+    }
+  },
+  "$defs": {
+    "review_step": {
+      "type": "object",
+      "required": [
+        "step_id",
+        "target_id",
+        "classification",
+        "review_action",
+        "proposed_execution_level",
+        "requires_user_confirmation",
+        "blocked",
+        "evidence",
+        "execution_authorized"
+      ],
+      "properties": {
+        "step_id": {"type": "string", "minLength": 1},
+        "target_id": {"type": "string", "minLength": 1},
+        "classification": {
+          "enum": [
+            "KEEP",
+            "ASK_USER",
+            "SAFE_REMOVE",
+            "STARTUP_OFF",
+            "QUARANTINE",
+            "BLOCK",
+            "UNKNOWN"
+          ]
+        },
+        "review_action": {
+          "enum": [
+            "PRESERVE",
+            "REQUEST_USER_REVIEW",
+            "REVIEW_REMOVAL_CANDIDATE",
+            "REVIEW_STARTUP_CANDIDATE",
+            "REVIEW_ISOLATION_CANDIDATE",
+            "BLOCKED_BY_POLICY"
+          ]
+        },
+        "proposed_execution_level": {
+          "enum": [
+            "LEVEL_0_READ_ONLY",
+            "LEVEL_1_LOW_RISK_CLEANUP",
+            "LEVEL_2_REVERSIBLE",
+            "LEVEL_3_STANDARD_UNINSTALL",
+            "LEVEL_4_HIGH_RISK_SYSTEM_MODIFICATION",
+            "LEVEL_5_FORBIDDEN"
+          ]
+        },
+        "requires_user_confirmation": {"type": "boolean"},
+        "blocked": {"type": "boolean"},
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["source", "fact"],
+            "properties": {
+              "source": {"type": "string", "minLength": 1},
+              "fact": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        },
+        "execution_authorized": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
