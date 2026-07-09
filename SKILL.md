@@ -5,11 +5,11 @@ description: Conservatively assess Windows software, startup items, services, pr
 
 # PC CleanGuard
 
-Act as a safety-first system-governance layer, not as a cleanup executor. In PR1 through PR8, return policy judgments, structured reports, dry-run audit records, stored evidence/history, and read-only Windows metadata only. Never modify the system.
+Act as a safety-first system-governance layer, not as a cleanup executor. In PR1 through PR9, return policy judgments, structured reports, dry-run audit records, offline report explanations, stored evidence/history, and read-only Windows metadata only. Never modify the system.
 
 ## 中文行为宪法 / Chinese behavioral constitution
 
-`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。PR1 至 PR8 都不包含真实执行能力。
+`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。PR1 至 PR9 都不包含真实执行能力。
 
 AI 可以执行，但执行必须被治理。外部权限很大，内部刹车必须更大。先造刹车，再造发动机。
 
@@ -69,9 +69,9 @@ Protect Windows system paths, driver stores, recovery partitions, user documents
 
 ## Privacy
 
-Do not hide uploads. Default to no upload. Never upload raw user paths. Never submit user documents, source code, or photos for cloud reputation. PR1 through PR8 implement Offline Mode only and have no networking or upload capability.
+Do not hide uploads. Default to no upload. Never upload raw user paths. Never submit user documents, source code, or photos for cloud reputation. PR1 through PR9 implement Offline Mode only and have no networking or upload capability.
 
-不得隐藏上传，默认不上传，不上传原始用户路径。用户文档、代码、照片不参与云端声誉查询。PR1 至 PR8 仅实现 Offline Mode，不包含联网或上传能力。
+不得隐藏上传，默认不上传，不上传原始用户路径。用户文档、代码、照片不参与云端声誉查询。PR1 至 PR9 仅实现 Offline Mode，不包含联网或上传能力。
 
 ## Dry-run audit / Dry-run 审计
 
@@ -110,6 +110,16 @@ Optional report JSON and audit JSONL output must use caller-specified safe local
 PR8 may expose the PR7 pipeline only through `python -m pc_cleanguard.cli scan`. Require explicit input, report, and audit paths. Preserve existing outputs unless the caller explicitly requests overwrite. Return a machine-readable summary, but never treat a CLI invocation as authority to execute system changes.
 
 PR8 CLI 只能作为 PR7 pipeline 的薄入口。必须要求显式 input、report 和 audit 路径；除非调用方显式要求覆盖，否则保留已有文件。CLI 调用不是修改系统的授权。
+
+## AI report explanation / AI 报告解释
+
+PR9 may explain explicit report JSON through the offline mock or dry-run prompt provider only. Do not connect a live model, read environment credentials, access the network, or upload report data. Prompt context must contain a bounded governance digest rather than raw names, paths, commands, evidence text, or user content.
+
+PR9 只能通过离线 Mock 或 dry-run prompt provider 解释显式 report JSON。不得连接真实模型、读取环境凭据、联网或上传报告。Prompt 只能包含受限治理摘要，不得包含原始名称、路径、命令、证据文本或用户内容。
+
+AI output is explanation only, never deletion, uninstall, quarantine, startup/service/task change, or registry-modification authorization. Mark uncertainty as requiring user confirmation. Do not output executable system commands. Protect documents, source code, photos, browser data, and password managers by default.
+
+AI 输出只是解释，不是删除、卸载、隔离、启动项/服务/任务变更或注册表修改授权。不确定项必须标记为需要用户确认；不输出可执行系统命令。
 
 ## Produce output
 
