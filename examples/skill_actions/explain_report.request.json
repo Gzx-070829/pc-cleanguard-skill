@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.1",
+  "request_id": "request:public-preview-explain",
+  "action": "explain_report",
+  "payload": {
+    "provider": "mock",
+    "report": {
+      "scan_id": "scan:public-preview-example",
+      "normalized_counts": {
+        "installed_apps": 1,
+        "startup_items": 0,
+        "services": 0,
+        "scheduled_tasks": 0,
+        "total_targets": 1
+      },
+      "decisions": [
+        {
+          "target_id": "WINDOWS_APP:example-notes",
+          "classification": "ASK_USER",
+          "risk_level": "MEDIUM",
+          "permission_level": "LEVEL_0_READ_ONLY",
+          "required_confirmation": true,
+          "blocked_by_hard_rule": false
+        }
+      ]
+    }
+  }
+}

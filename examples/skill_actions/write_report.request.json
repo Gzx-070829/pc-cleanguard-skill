@@ -1,0 +1,15 @@
+{
+  "schema_version": "0.1",
+  "request_id": "request:public-preview-write-report",
+  "action": "write_report",
+  "payload": {
+    "path": "output/public-preview-report.json",
+    "report": {
+      "schema_version": "0.1",
+      "scan_id": "scan:public-preview-example",
+      "mode": "read_only",
+      "destructive_actions_executed": false,
+      "safety_notice": "This report is a governance artifact, not execution authorization."
+    }
+  }
+}

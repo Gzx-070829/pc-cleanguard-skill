@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.1",
+  "request_id": "request:public-preview-write-audit",
+  "action": "write_audit",
+  "payload": {
+    "path": "output/public-preview-audit.jsonl",
+    "events": [
+      {
+        "schema_version": "0.1",
+        "scan_id": "scan:public-preview-example",
+        "plan_id": "cleanup-plan:public-preview-example",
+        "event_id": "00000000-0000-4000-8000-000000000011",
+        "timestamp": "2026-07-10T00:00:00Z",
+        "actor": "pc-cleanguard-skill",
+        "mode": "safe",
+        "action": "POLICY_RECOMMENDATION",
+        "target_id": "WINDOWS_APP:example-notes",
+        "target_name": "Example Notes",
+        "classification": "ASK_USER",
+        "risk_level": "MEDIUM",
+        "permission_level": "LEVEL_0_READ_ONLY",
+        "reason": "Synthetic dry-run event for public preview documentation.",
+        "evidence_refs": [],
+        "approved_by": null,
+        "execution_method": "policy_engine",
+        "command_summary": null,
+        "result": "planned",
+        "rollback_available": false,
+        "rollback_method": null,
+        "dry_run": true,
+        "policy_decision_id": "decision:public-preview-example:1",
+        "rulepack_version": null
+      }
+    ]
+  }
+}

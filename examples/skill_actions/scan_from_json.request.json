@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1",
+  "request_id": "request:public-preview-scan",
+  "action": "scan_from_json",
+  "payload": {
+    "scan_id": "scan:public-preview-example",
+    "input_data": {
+      "platform": "Windows",
+      "privacy_mode": "offline",
+      "installed_apps": [
+        {
+          "DisplayName": "Example Notes",
+          "Publisher": "Example Vendor",
+          "DisplayVersion": "1.0",
+          "UninstallString": null,
+          "source": "example_json"
+        }
+      ],
+      "startup_items": [],
+      "services": [],
+      "scheduled_tasks": []
+    }
+  }
+}

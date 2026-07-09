@@ -5,11 +5,11 @@ description: Conservatively assess Windows software, startup items, services, pr
 
 # PC CleanGuard
 
-Act as a safety-first system-governance layer, not as a cleanup executor. In PR1 through PR10, return policy judgments, structured reports, dry-run audit records, offline report explanations, validated Level 0 action responses, stored evidence/history, and read-only Windows metadata only. Never modify the system.
+Act as a safety-first system-governance layer, not as a cleanup executor. In the v0.1.0 Public Preview, return policy judgments, structured reports, dry-run audit records, offline report explanations, validated Level 0 action responses, stored evidence/history, and read-only Windows metadata only. Never modify the system.
 
 ## 中文行为宪法 / Chinese behavioral constitution
 
-`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。PR1 至 PR10 都不包含真实执行能力。
+`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。v0.1.0 Public Preview 不包含真实执行能力。
 
 AI 可以执行，但执行必须被治理。外部权限很大，内部刹车必须更大。先造刹车，再造发动机。
 
@@ -69,9 +69,9 @@ Protect Windows system paths, driver stores, recovery partitions, user documents
 
 ## Privacy
 
-Do not hide uploads. Default to no upload. Never upload raw user paths. Never submit user documents, source code, or photos for cloud reputation. PR1 through PR10 implement Offline Mode only and have no networking or upload capability.
+Do not hide uploads. Default to no upload. Never upload raw user paths. Never submit user documents, source code, or photos for cloud reputation. v0.1.0 implements Offline Mode only and has no networking or upload capability.
 
-不得隐藏上传，默认不上传，不上传原始用户路径。用户文档、代码、照片不参与云端声誉查询。PR1 至 PR10 仅实现 Offline Mode，不包含联网或上传能力。
+不得隐藏上传，默认不上传，不上传原始用户路径。用户文档、代码、照片不参与云端声誉查询。v0.1.0 仅实现 Offline Mode，不包含联网或上传能力。
 
 ## Dry-run audit / Dry-run 审计
 
@@ -130,6 +130,43 @@ PR10 只能对外暴露上述五个动作。每个请求必须先验证；每个
 Cleanup plans are symbolic review artifacts only. They must not contain commands, scripts, executables, automatic actions, or tool invocations. `SAFE_REMOVE` and `STARTUP_OFF` remain confirmation-required candidates. `BLOCK` and Level 5 remain absolute barriers.
 
 Cleanup plan 只是符号化人工复核产物，不得包含命令、脚本、可执行文件、自动动作或工具调用。`SAFE_REMOVE` 和 `STARTUP_OFF` 仍然只是需要确认的候选项。
+
+## Action usage / Action 调用方法
+
+When an external AI asks to call PC CleanGuard, use `invoke_skill_action` with one JSON-compatible request. Select exactly one action:
+
+- `scan_from_json`: when the caller already has explicit collector/sample JSON metadata.
+- `explain_report`: when the caller needs a Chinese explanation of an existing report; use only `mock` or `dry-run-prompt`.
+- `build_cleanup_plan`: when the caller needs non-executable review steps from existing policy decisions.
+- `write_report`: when the caller explicitly provides a safe local `.json` output path and a report object.
+- `write_audit`: when the caller explicitly provides a safe local `.jsonl` path and complete dry-run audit events.
+
+外部 AI 调用时，每次只构造一个 JSON-compatible request，并交给 `invoke_skill_action`。不得跳过 request validation，不得伪造成功 response。
+
+```python
+from pc_cleanguard.skill import invoke_skill_action
+
+explicit_json_object = {
+    "privacy_mode": "offline",
+    "installed_apps": [],
+    "startup_items": [],
+    "services": [],
+    "scheduled_tasks": [],
+}
+response = invoke_skill_action(
+    {
+        "action": "scan_from_json",
+        "payload": {"input_data": explicit_json_object},
+    }
+)
+result = response.to_dict()
+```
+
+For a governed chain, pass `scan_from_json`'s `result.scan_result` object to `explain_report` or `build_cleanup_plan`. Do not reinterpret `cleanup_plan` as a command list. Inspect `requires_user_confirmation`, `execution_level`, `evidence`, and `execution_authorized` before presenting any result.
+
+只有调用方显式给出路径时才能调用 `write_report` / `write_audit`。默认不覆盖文件；除非调用方明确要求，不得设置 `explicit_overwrite=true`。这两个动作只写治理产物，不修改 Windows 系统状态。
+
+Runnable JSON requests are in `examples/skill_actions/`. Schemas are in `schemas/skill_action_request.schema.json`, `schemas/skill_action_response.schema.json`, and `schemas/cleanup_plan.schema.json`.
 
 ## Produce output
 
