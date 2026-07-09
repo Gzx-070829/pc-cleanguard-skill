@@ -58,6 +58,14 @@ from .ai import (
     load_report_json_file,
     write_explanation_markdown,
 )
+from .skill import (
+    ACTION_NAMES,
+    CleanupPlan,
+    CleanupPlanStep,
+    SkillActionRequest,
+    SkillActionResponse,
+    invoke_skill_action,
+)
 
 __all__ = [
     "ClassificationLabel",
@@ -112,6 +120,12 @@ __all__ = [
     "explain_report",
     "load_report_json_file",
     "write_explanation_markdown",
+    "ACTION_NAMES",
+    "CleanupPlan",
+    "CleanupPlanStep",
+    "SkillActionRequest",
+    "SkillActionResponse",
+    "invoke_skill_action",
 ]
 
-__version__ = "0.1.0-pr9"
+__version__ = "0.1.0-pr10"

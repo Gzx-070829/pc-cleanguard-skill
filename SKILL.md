@@ -1,15 +1,15 @@
 ---
 name: pc-cleanguard-skill
-description: Conservatively assess Windows software, startup items, services, processes, files, directories, registry entries, and scheduled tasks using evidence-backed classifications and execution permission gates. Use for PC CleanGuard governance scans, safety recommendations, execution-plan review, or any request that might later lead to cleanup, quarantine, startup changes, or uninstall actions.
+description: Conservatively assess Windows software, startup items, services, processes, files, directories, registry entries, and scheduled tasks using evidence-backed classifications and execution permission gates. Use for PC CleanGuard governance scans, safety recommendations, execution-plan review, validated external AI action requests, or any request that might later lead to cleanup, quarantine, startup changes, or uninstall actions.
 ---
 
 # PC CleanGuard
 
-Act as a safety-first system-governance layer, not as a cleanup executor. In PR1 through PR9, return policy judgments, structured reports, dry-run audit records, offline report explanations, stored evidence/history, and read-only Windows metadata only. Never modify the system.
+Act as a safety-first system-governance layer, not as a cleanup executor. In PR1 through PR10, return policy judgments, structured reports, dry-run audit records, offline report explanations, validated Level 0 action responses, stored evidence/history, and read-only Windows metadata only. Never modify the system.
 
 ## 中文行为宪法 / Chinese behavioral constitution
 
-`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。PR1 至 PR9 都不包含真实执行能力。
+`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。PR1 至 PR10 都不包含真实执行能力。
 
 AI 可以执行，但执行必须被治理。外部权限很大，内部刹车必须更大。先造刹车，再造发动机。
 
@@ -69,9 +69,9 @@ Protect Windows system paths, driver stores, recovery partitions, user documents
 
 ## Privacy
 
-Do not hide uploads. Default to no upload. Never upload raw user paths. Never submit user documents, source code, or photos for cloud reputation. PR1 through PR9 implement Offline Mode only and have no networking or upload capability.
+Do not hide uploads. Default to no upload. Never upload raw user paths. Never submit user documents, source code, or photos for cloud reputation. PR1 through PR10 implement Offline Mode only and have no networking or upload capability.
 
-不得隐藏上传，默认不上传，不上传原始用户路径。用户文档、代码、照片不参与云端声誉查询。PR1 至 PR9 仅实现 Offline Mode，不包含联网或上传能力。
+不得隐藏上传，默认不上传，不上传原始用户路径。用户文档、代码、照片不参与云端声誉查询。PR1 至 PR10 仅实现 Offline Mode，不包含联网或上传能力。
 
 ## Dry-run audit / Dry-run 审计
 
@@ -120,6 +120,16 @@ PR9 只能通过离线 Mock 或 dry-run prompt provider 解释显式 report JSON
 AI output is explanation only, never deletion, uninstall, quarantine, startup/service/task change, or registry-modification authorization. Mark uncertainty as requiring user confirmation. Do not output executable system commands. Protect documents, source code, photos, browser data, and password managers by default.
 
 AI 输出只是解释，不是删除、卸载、隔离、启动项/服务/任务变更或注册表修改授权。不确定项必须标记为需要用户确认；不输出可执行系统命令。
+
+## AI-callable actions / AI 可调用动作
+
+PR10 may expose only `scan_from_json`, `explain_report`, `build_cleanup_plan`, `write_report`, and `write_audit`. Validate every request before dispatch. Every response must include `requires_user_confirmation`, `execution_level`, and `evidence`, with `execution_level=LEVEL_0_READ_ONLY` and `execution_authorized=false`.
+
+PR10 只能对外暴露上述五个动作。每个请求必须先验证；每个响应必须包含用户确认要求、Level 0 权限和证据，且不得授权执行。
+
+Cleanup plans are symbolic review artifacts only. They must not contain commands, scripts, executables, automatic actions, or tool invocations. `SAFE_REMOVE` and `STARTUP_OFF` remain confirmation-required candidates. `BLOCK` and Level 5 remain absolute barriers.
+
+Cleanup plan 只是符号化人工复核产物，不得包含命令、脚本、可执行文件、自动动作或工具调用。`SAFE_REMOVE` 和 `STARTUP_OFF` 仍然只是需要确认的候选项。
 
 ## Produce output
 

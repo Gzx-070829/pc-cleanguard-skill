@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/skill_action_request.schema.json",
+  "title": "PC CleanGuard PR10 Skill Action Request",
+  "description": "A JSON request for an offline, non-executing PC CleanGuard action.",
+  "type": "object",
+  "required": ["action", "payload"],
+  "properties": {
+    "schema_version": {"const": "0.1", "default": "0.1"},
+    "request_id": {"type": "string", "minLength": 1},
+    "action": {
+      "enum": [
+        "scan_from_json",
+        "explain_report",
+        "build_cleanup_plan",
+        "write_report",
+        "write_audit"
+      ]
+    },
+    "payload": {"type": "object"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"action": {"const": "scan_from_json"}}},
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["input_data"],
+            "properties": {
+              "input_data": {"type": "object"},
+              "scan_id": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"action": {"const": "explain_report"}}},
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["report"],
+            "properties": {
+              "report": {"type": "object"},
+              "provider": {"enum": ["mock", "dry-run-prompt"]}
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"action": {"const": "build_cleanup_plan"}}},
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["report"],
+            "properties": {
+              "report": {"type": "object"},
+              "plan_id": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"action": {"const": "write_report"}}},
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["path", "report"],
+            "properties": {
+              "path": {"type": "string", "minLength": 1},
+              "report": {"type": "object"},
+              "explicit_overwrite": {"type": "boolean", "default": false}
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"action": {"const": "write_audit"}}},
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["path", "events"],
+            "properties": {
+              "path": {"type": "string", "minLength": 1},
+              "events": {
+                "type": "array",
+                "items": {"type": "object"}
+              },
+              "explicit_overwrite": {"type": "boolean", "default": false}
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}
