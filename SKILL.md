@@ -5,11 +5,11 @@ description: Conservatively assess Windows software, startup items, services, pr
 
 # PC CleanGuard
 
-Act as a safety-first system-governance layer, not as a cleanup executor. In v0.2 PR13, return policy judgments, structured reports, dry-run audit records, offline report explanations, validated Level 0 action responses, external-tool trust decisions, invocation plans, and recommendations only. Never modify the system.
+Act as a safety-first system-governance layer, not as a cleanup executor. In v0.2 PR14, return policy judgments, structured reports, dry-run audit records, offline explanations, Level 0 action responses, external-tool recommendations, and metadata-only junk cleanup previews. Never modify the system.
 
 ## 中文行为宪法 / Chinese behavioral constitution
 
-`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。v0.2 PR13 也不包含真实外部工具执行能力。
+`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。v0.2 PR14 仍不包含真实清理或外部工具执行能力。
 
 AI 可以执行，但执行必须被治理。外部权限很大，内部刹车必须更大。先造刹车，再造发动机。
 
@@ -150,6 +150,18 @@ PR13 只能匹配 cleanup plan 中未被阻断的移除候选。官方卸载器�
 Every recommendation must remain `plan_only=true`, `requires_user_confirmation=true`, `blocked_if_untrusted=true`, `execution_level=LEVEL_0_READ_ONLY`, and `execution_authorized=false`. Untrusted matches must be returned as blocked. Recommendations must contain no command, arguments, executable path, silent-run instruction, or download step.
 
 外部工具推荐不是执行授权。AI 只能展示推荐、匹配原因和证据；不得自动下载未知程序，不得静默运行卸载器。真正执行必须等待未来 controlled executor，并重新经过 Policy Engine 与用户确认。
+
+## Junk cleanup preview / 垃圾候选清理预览
+
+PR14 may scan metadata only under one or more caller-supplied local directories. It may classify temporary files, cache files, logs, crash dumps, installer leftovers, and empty-directory candidates, then produce a `CleanupPreview`. It must not discover roots, scan an entire drive, read file contents, follow symbolic links, or change any filesystem object.
+
+PR14 只能扫描调用方显式提供的本地目录，只读取路径、大小、修改时间和扩展名。可以识别临时文件、缓存、日志、崩溃转储、安装残留和空目录候选，但不得自动发现路径、扫描全盘、读取文件内容或修改文件系统对象。
+
+Protect Documents, Desktop, Pictures, Videos, the user home directory, system directories, and code repositories. PR14 provides no override. Apply bounded file-count and total-size limits, and report every protected or truncated scan as a warning.
+
+每个 `JunkCandidate` 必须保持 `LEVEL_0_READ_ONLY`、`requires_user_confirmation=true`、`dry_run_only=true` 和 `execution_authorized=false`。`total_reclaimable_bytes` 只是候选大小估算，不是已经释放的空间。空目录只能作为 candidate，不得清空或移除。
+
+The `clean preview` CLI may write only an explicit JSON report and must preserve existing outputs by default. A cleanup preview is not deletion authorization.
 
 ## Action usage / Action 调用方法
 

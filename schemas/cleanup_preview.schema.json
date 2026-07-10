@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/cleanup_preview.schema.json",
+  "title": "PC CleanGuard Cleanup Preview",
+  "description": "A dry-run summary of metadata candidates and protected paths. It performs no cleanup.",
+  "type": "object",
+  "required": [
+    "total_candidates",
+    "total_reclaimable_bytes",
+    "by_category",
+    "blocked_candidates",
+    "requires_confirmation",
+    "top_candidates",
+    "warnings",
+    "dry_run_only",
+    "execution_authorized"
+  ],
+  "properties": {
+    "total_candidates": {"type": "integer", "minimum": 0},
+    "total_reclaimable_bytes": {"type": "integer", "minimum": 0},
+    "by_category": {
+      "type": "object",
+      "required": [
+        "temp_file",
+        "cache_file",
+        "log_file",
+        "crash_dump",
+        "installer_leftover",
+        "empty_directory_candidate"
+      ],
+      "properties": {
+        "temp_file": {"$ref": "#/$defs/category_summary"},
+        "cache_file": {"$ref": "#/$defs/category_summary"},
+        "log_file": {"$ref": "#/$defs/category_summary"},
+        "crash_dump": {"$ref": "#/$defs/category_summary"},
+        "installer_leftover": {"$ref": "#/$defs/category_summary"},
+        "empty_directory_candidate": {"$ref": "#/$defs/category_summary"}
+      },
+      "additionalProperties": false
+    },
+    "blocked_candidates": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/blocked_candidate"}
+    },
+    "requires_confirmation": {"type": "boolean"},
+    "top_candidates": {
+      "type": "array",
+      "items": {"$ref": "junk_candidate.schema.json"}
+    },
+    "warnings": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "dry_run_only": {"const": true},
+    "execution_authorized": {"const": false}
+  },
+  "$defs": {
+    "category_summary": {
+      "type": "object",
+      "required": ["count", "size_bytes"],
+      "properties": {
+        "count": {"type": "integer", "minimum": 0},
+        "size_bytes": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "blocked_candidate": {
+      "type": "object",
+      "required": ["path", "reason", "evidence", "blocked"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "reason": {"type": "string", "minLength": 1},
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["source", "fact"],
+            "properties": {
+              "source": {"type": "string", "minLength": 1},
+              "fact": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        },
+        "blocked": {"const": true}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,100 @@
+{
+  "total_candidates": 6,
+  "total_reclaimable_bytes": 31744,
+  "by_category": {
+    "temp_file": {"count": 1, "size_bytes": 2048},
+    "cache_file": {"count": 1, "size_bytes": 4096},
+    "log_file": {"count": 1, "size_bytes": 1024},
+    "crash_dump": {"count": 1, "size_bytes": 8192},
+    "installer_leftover": {"count": 1, "size_bytes": 16384},
+    "empty_directory_candidate": {"count": 1, "size_bytes": 0}
+  },
+  "blocked_candidates": [
+    {
+      "path": "C:\\SyntheticUser\\Documents",
+      "reason": "personal or code directory is protected",
+      "evidence": [
+        {
+          "source": "path_protection",
+          "fact": "personal or code directory is protected"
+        }
+      ],
+      "blocked": true
+    }
+  ],
+  "requires_confirmation": true,
+  "top_candidates": [
+    {
+      "path": "C:\\SyntheticScratch\\old-installer.msi",
+      "category": "installer_leftover",
+      "size_bytes": 16384,
+      "reason": "file extension indicates a possible installer leftover",
+      "evidence": [
+        {
+          "source": "filesystem_metadata",
+          "fact": "size_bytes=16384; mtime_epoch=1700000000.000; extension=.msi"
+        },
+        {
+          "source": "junk_rule",
+          "fact": "file extension indicates a possible installer leftover"
+        }
+      ],
+      "confidence": 0.65,
+      "risk_level": "MEDIUM",
+      "execution_level": "LEVEL_0_READ_ONLY",
+      "requires_user_confirmation": true,
+      "dry_run_only": true,
+      "execution_authorized": false
+    },
+    {
+      "path": "C:\\SyntheticScratch\\crash.dmp",
+      "category": "crash_dump",
+      "size_bytes": 8192,
+      "reason": "file extension indicates crash-dump metadata",
+      "evidence": [
+        {
+          "source": "filesystem_metadata",
+          "fact": "size_bytes=8192; mtime_epoch=1700000000.000; extension=.dmp"
+        },
+        {
+          "source": "junk_rule",
+          "fact": "file extension indicates crash-dump metadata"
+        }
+      ],
+      "confidence": 0.9,
+      "risk_level": "LOW",
+      "execution_level": "LEVEL_0_READ_ONLY",
+      "requires_user_confirmation": true,
+      "dry_run_only": true,
+      "execution_authorized": false
+    },
+    {
+      "path": "C:\\SyntheticScratch\\cache\\blob.bin",
+      "category": "cache_file",
+      "size_bytes": 4096,
+      "reason": "path or extension indicates cached data",
+      "evidence": [
+        {
+          "source": "filesystem_metadata",
+          "fact": "size_bytes=4096; mtime_epoch=1700000000.000; extension=.bin"
+        },
+        {
+          "source": "junk_rule",
+          "fact": "path or extension indicates cached data"
+        }
+      ],
+      "confidence": 0.75,
+      "risk_level": "LOW",
+      "execution_level": "LEVEL_0_READ_ONLY",
+      "requires_user_confirmation": true,
+      "dry_run_only": true,
+      "execution_authorized": false
+    }
+  ],
+  "warnings": [
+    "blocked path: C:\\SyntheticUser\\Documents: personal or code directory is protected",
+    "top candidate limit applied; showing 3 of 6"
+  ],
+  "dry_run_only": true,
+  "execution_authorized": false
+}

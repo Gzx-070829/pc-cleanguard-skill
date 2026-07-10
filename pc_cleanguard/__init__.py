@@ -79,6 +79,19 @@ from .external_tools import (
     ToolRecommender,
     build_external_tool_invocation_plan,
 )
+from .cleanup import (
+    BlockedCandidate,
+    CleanupPreview,
+    JunkCandidate,
+    JunkCategory,
+    JunkRule,
+    JunkScanner,
+    JunkScanResult,
+    ScanLimits,
+    build_cleanup_preview,
+    default_junk_rules,
+    match_junk_rule,
+)
 
 __all__ = [
     "ClassificationLabel",
@@ -150,6 +163,17 @@ __all__ = [
     "ToolMatcher",
     "ToolRecommender",
     "build_external_tool_invocation_plan",
+    "BlockedCandidate",
+    "CleanupPreview",
+    "JunkCandidate",
+    "JunkCategory",
+    "JunkRule",
+    "JunkScanner",
+    "JunkScanResult",
+    "ScanLimits",
+    "build_cleanup_preview",
+    "default_junk_rules",
+    "match_junk_rule",
 ]
 
 __version__ = "0.1.0"
