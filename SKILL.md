@@ -5,11 +5,11 @@ description: Conservatively assess Windows software, startup items, services, pr
 
 # PC CleanGuard
 
-Act as a safety-first system-governance layer. In v0.2 PR15, one controlled L1 path may remove ordinary temp, cache, or log files only after explicit confirmation, preview validation, allow-root containment, protected-path checks, runtime revalidation, and audit setup. All other capabilities remain non-executing.
+Act as a safety-first system-governance layer. In v0.2 PR16, the tryable demo and reporting layer reuse the PR15 controlled L1 path: ordinary temp, cache, or log files may be removed only after explicit confirmation, preview validation, allow-root containment, protected-path checks, runtime revalidation, and audit setup. All other capabilities remain non-executing.
 
 ## 中文行为宪法 / Chinese behavioral constitution
 
-`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。v0.2 PR15 只开放受控 L1 临时/缓存/日志文件清理，不开放其他真实执行能力。
+`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。v0.2 PR16 的 demo 与报告层只复用 PR15 受控 L1 临时/缓存/日志文件清理，不开放其他真实执行能力。
 
 AI 可以执行，但执行必须被治理。外部权限很大，内部刹车必须更大。先造刹车，再造发动机。
 
@@ -172,6 +172,16 @@ PR15 只能消费结构完整的 PR14 cleanup preview。默认 `clean execute` �
 `crash_dump`, `installer_leftover`, and `empty_directory_candidate` must remain `skipped`. Never remove directories, browser profiles, user documents/media, code repositories, system directories, or Program Files. Each result must include evidence and an embedded audit event; actual reclaimed bytes are reported only after a successful bounded file removal.
 
 CLI 输出冲突必须在任何真实清理前被发现。PR15 不向 AI Skill action 暴露自动执行能力；AI 建议、外部工具推荐和 preview candidate 都不是执行授权。
+
+## Tryable cleanup demo and reporting / 可试用清理 Demo 与报告
+
+PR16 `demo init-cleanup` may create synthetic files only below one caller-supplied safe local root. Mark the root explicitly, refuse existing roots by default, and permit `--force` only when the existing marker matches that exact root. Never seed a protected, system, network, or symbolic-link path.
+
+PR16 `demo init-cleanup` 只能在调用方显式指定的安全本地 root 下创建合成测试文件。root 必须带专用 marker；默认不覆盖，`--force` 也只能刷新 marker 与当前 root 完全匹配的 demo。
+
+`demo run-cleanup` must require that marker and keep output outside the demo root. Default to dry-run. If `--confirm` is present, pass only unchanged manifest entries under that marked root to the PR15 confirmation and executor gates. Block user-added or modified files. Do not add another deletion mechanism; crash dumps, installer leftovers, and directories remain skipped.
+
+`clean report` only combines explicit preview/result JSON into a summary and Markdown file. Reporting is not execution authorization, does not scan paths, and must preserve existing output by default.
 
 ## Action usage / Action 调用方法
 
