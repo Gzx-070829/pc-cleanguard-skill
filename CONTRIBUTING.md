@@ -1,8 +1,19 @@
 # Contributing
 
-欢迎贡献，但安全边界优先于功能速度。提交前请运行编译、单元测试、Schema 解析和 `git diff --check`。
+欢迎贡献。项目从 v0.2 起采用 Sprint PR 加速交付用户可见价值，同时保持安全底线不变。提交前请运行编译、单元测试、Schema 解析和 `git diff --check`。
 
 Contributions are welcome, but safety boundaries take priority over delivery speed. Code, rules, tests, and documentation must preserve conservative policy behavior.
+
+## Sprint PR 贡献方式
+
+- 每个 PR 应提供用户可见能力，可包含多个组成同一用户链路的强相关模块。
+- 允许先提交 80% 可用版本，并用 issue 与用户反馈跟踪不阻断核心路径的小缺陷。
+- 文档保持必要、准确、可维护，不为每个只读模块重复撰写长篇安全论证。
+- 测试覆盖核心路径、失败路径和安全不变量，不以测试数量作为目标。
+- 只读、计划、预览和推荐能力应快速推进；真实执行从受治理的 Level 1 低风险能力开始。
+- PR 不打 tag，只有正式版本创建 tag；commit message 使用中文。
+
+详细原则见 [`docs/development-principles.md`](docs/development-principles.md)。
 
 ## 贡献类型
 
@@ -41,6 +52,8 @@ Do not submit unsupported claims such as “this is junk software; delete it.”
 
 ## Pull request 要求
 
-保持变更单一、解释安全影响、列出测试结果。新增分类规则必须说明误伤风险和降级行为；涉及 Level 4/5、安全路径或隐私的变更至少需要安全审查。不得提交真实用户路径、样本文件、访问令牌或遥测数据。
+保持变更目标内聚、解释安全影响、列出测试结果。一个 Sprint PR 可以包含多个强相关模块，但不得混入无关重构。新增分类规则必须说明误伤风险和降级行为；涉及 Level 4/5、安全路径或隐私的变更至少需要安全审查。不得提交真实用户路径、样本文件、访问令牌或遥测数据。
 
-Keep each pull request focused, explain its safety impact, and include verification results. Changes involving Level 4/5, sensitive paths, or privacy require explicit security review.
+Keep each Sprint PR cohesive, explain its safety impact, and include verification results. Closely related modules may ship together; unrelated changes should not. Changes involving Level 4/5, sensitive paths, or privacy require explicit security review.
+
+安全底线始终包括：不静默删除、不绕过用户确认、不联网上传用户数据、不做黑箱判断、不因单一来源自动删除。AI 建议和外部工具推荐都不是执行授权；AI 可以执行，但执行必须被治理。

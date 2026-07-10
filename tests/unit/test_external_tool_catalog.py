@@ -83,6 +83,17 @@ class ExternalToolCatalogTest(unittest.TestCase):
                 required_user_confirmation=True,
             )
 
+    def test_record_from_dict_requires_actions_array(self) -> None:
+        data = make_record().to_dict()
+        data["supported_actions"] = "standard_uninstall"
+        with self.assertRaises(TypeError):
+            ExternalToolRecord.from_dict(data)
+
+    def test_catalog_from_dict_round_trips(self) -> None:
+        catalog = ExternalToolCatalog((make_record(),))
+        parsed = ExternalToolCatalog.from_dict(catalog.to_dict())
+        self.assertEqual(catalog.to_dict(), parsed.to_dict())
+
 
 if __name__ == "__main__":
     unittest.main()

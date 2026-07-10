@@ -18,6 +18,7 @@ class SkillActionSchemasTest(unittest.TestCase):
             "skill_action_request.schema.json",
             "skill_action_response.schema.json",
             "cleanup_plan.schema.json",
+            "external_tool_recommendation.schema.json",
         ):
             with self.subTest(name=name):
                 schema = self._schema(name)
@@ -70,6 +71,18 @@ class SkillActionSchemasTest(unittest.TestCase):
         schema = self._schema("skill_action_response.schema.json")
         self.assertTrue(set(schema["required"]).issubset(response))
         self.assertFalse(response["execution_authorized"])
+
+    def test_external_tool_recommendation_schema_is_non_executing(self) -> None:
+        schema = self._schema("external_tool_recommendation.schema.json")
+        properties = schema["properties"]
+        self.assertTrue(properties["plan_only"]["const"])
+        self.assertTrue(properties["requires_user_confirmation"]["const"])
+        self.assertTrue(properties["blocked_if_untrusted"]["const"])
+        self.assertFalse(properties["execution_authorized"]["const"])
+        self.assertEqual("LEVEL_0_READ_ONLY", properties["execution_level"]["const"])
+        serialized = json.dumps(schema).casefold()
+        self.assertNotIn('"command"', serialized)
+        self.assertNotIn('"arguments"', serialized)
 
 
 if __name__ == "__main__":

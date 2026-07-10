@@ -6,7 +6,9 @@ Open-source, auditable, privacy-first AI System Governance Skill.
 
 **v0.1.0 Public Preview**
 
-v0.1.0 已发布。当前 `main` 已进入 v0.2 PR12 开发：外部工具适配层仍只生成信任和调用计划，不下载、不执行。
+v0.1.0 已发布。当前 `main` 已进入 v0.2 PR13 开发：外部工具推荐仍是 Level 0 计划，不下载、不执行。
+
+从 v0.2 起项目采用 [Sprint PR 加速研发原则](docs/development-principles.md)，以用户可见价值为导向，同时保持安全底线不变。
 
 > **PC CleanGuard 不是传统清理软件。**
 > **It is not a traditional cleaner.**
@@ -73,7 +75,15 @@ response = invoke_skill_action(request)
 print(json.dumps(response.to_dict(), ensure_ascii=False, indent=2))
 ```
 
-五个 action 的完整 request 见 [`examples/skill_actions/`](examples/skill_actions/README.md)。所有 action response 均固定为 Level 0，且 `execution_authorized=false`。
+六个 action 的完整 request 见 [`examples/skill_actions/`](examples/skill_actions/README.md)。所有 action response 均固定为 Level 0，且 `execution_authorized=false`。
+
+### 4. 推荐外部工具复核路径 / Recommend external-tool review paths
+
+```powershell
+python -m pc_cleanguard.cli tools recommend --input examples/skill_actions/recommend_external_tools_request.json --output output/recommendations.json
+```
+
+输入必须显式包含 cleanup plan 或 report summary、工具 catalog 和 allowlist。输出只包含结构化建议，不包含真实命令；已有输出默认不覆盖。
 
 ## 项目定位
 
@@ -106,6 +116,8 @@ PR10 新增 AI 可调用的五个动作：`scan_from_json`、`explain_report`、
 PR11 整理公开快速开始、AI action usage、可运行示例、Public Preview 说明和 v0.1.0 release checklist，不新增执行能力。
 
 PR12 开始 v0.2 的外部工具适配层基础：显式 catalog、allowlist trust policy 和无命令的 invocation plan。它仍不下载、不启动或执行任何工具。
+
+PR13 增加证据驱动的外部工具 matcher/recommender、`recommend_external_tools` Skill action 和 `tools recommend` CLI。每条建议都要求用户确认，未受信工具会被阻断。
 
 ## 安全原则
 
@@ -158,9 +170,9 @@ v0.1.0 is offline-only: no live model API, networking, uploads, or environment c
 
 ## 开发状态
 
-当前里程碑：**v0.2 PR12 — External Tool Adapter Foundation**。PR12 只建立显式工具目录、信任策略和非执行计划。
+当前里程碑：**v0.2 PR13 — External Tool Recommender and Skill Integration**。PR13 只生成结构化 Level 0 推荐。
 
-Current milestone: **v0.2 PR12 — External Tool Adapter Foundation**. PR12 builds catalog, trust, and plan artifacts only; it does not execute tools.
+Current milestone: **v0.2 PR13 — External Tool Recommender and Skill Integration**. Recommendations are plan-only and non-executing.
 
 详细用法见 [只读扫描流水线](docs/readonly-scan-pipeline.md)。
 
@@ -173,6 +185,8 @@ Skill 动作接口见 [AI 可调用 Skill 动作接口](docs/skill-action-interf
 Public Preview 说明见 [v0.1.0 Public Preview](docs/public-preview.md)；发布门禁见 [v0.1.0 release checklist](docs/v0.1.0-release-checklist.md)。
 
 外部工具适配层见 [External Tool Adapter Foundation](docs/external-tool-adapter.md)。
+
+外部工具推荐器见 [External Tool Recommender](docs/external-tool-recommender.md)。
 
 **JSONL 管审计，SQLite 管历史。PR3 只记录 dry-run，不代表执行。**
 

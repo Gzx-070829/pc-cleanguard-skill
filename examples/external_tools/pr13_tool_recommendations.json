@@ -1,0 +1,36 @@
+{
+  "mode": "plan_only",
+  "recommendations": [
+    {
+      "tool_id": "example-official-uninstaller",
+      "tool_name": "Example Official Uninstaller",
+      "tool_type": "official_uninstaller",
+      "matched_reason": "official uninstaller is the preferred review path for a software candidate",
+      "matched_target_ids": ["SOFTWARE:example-notes"],
+      "evidence": [
+        {
+          "source": "cleanup_plan",
+          "fact": "matched 1 unblocked removal candidate(s)"
+        },
+        {
+          "source": "tool_trust_policy",
+          "fact": "exact tool ID and type are allowlisted"
+        }
+      ],
+      "confidence": 0.9,
+      "risk_level": "HIGH",
+      "execution_level": "LEVEL_0_READ_ONLY",
+      "requires_user_confirmation": true,
+      "plan_only": true,
+      "blocked_if_untrusted": true,
+      "trusted": true,
+      "blocked": false,
+      "notes_for_ai": "Show the official uninstaller as a review option; do not launch it.",
+      "execution_authorized": false
+    }
+  ],
+  "recommendation_count": 1,
+  "trusted_count": 1,
+  "blocked_count": 0,
+  "execution_authorized": false
+}

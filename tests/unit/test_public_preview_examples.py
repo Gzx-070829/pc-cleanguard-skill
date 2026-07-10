@@ -19,10 +19,10 @@ class PublicPreviewExamplesTest(unittest.TestCase):
         self.assertEqual("0.1.0", pc_cleanguard.__version__)
 
     def test_examples_cover_every_public_action(self) -> None:
-        actions = {
-            self._request(path.name)["action"]
-            for path in EXAMPLES.glob("*.request.json")
-        }
+        request_paths = list(EXAMPLES.glob("*.request.json")) + list(
+            EXAMPLES.glob("*_request.json")
+        )
+        actions = {self._request(path.name)["action"] for path in request_paths}
         self.assertEqual(set(ACTION_NAMES), actions)
 
     def test_scan_example_runs(self) -> None:

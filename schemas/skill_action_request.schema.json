@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://pc-cleanguard.example/schemas/skill_action_request.schema.json",
-  "title": "PC CleanGuard PR10 Skill Action Request",
+  "title": "PC CleanGuard Skill Action Request through PR13",
   "description": "A JSON request for an offline, non-executing PC CleanGuard action.",
   "type": "object",
   "required": ["action", "payload"],
@@ -14,7 +14,8 @@
         "explain_report",
         "build_cleanup_plan",
         "write_report",
-        "write_audit"
+        "write_audit",
+        "recommend_external_tools"
       ]
     },
     "payload": {"type": "object"}
@@ -63,6 +64,62 @@
               "report": {"type": "object"},
               "plan_id": {"type": "string", "minLength": 1}
             },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"action": {"const": "recommend_external_tools"}}},
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["catalog", "allowlisted_tool_ids"],
+            "properties": {
+              "cleanup_plan": {"type": "object"},
+              "report_summary": {"type": "object"},
+              "catalog": {
+                "type": "object",
+                "required": ["records"],
+                "properties": {
+                  "records": {
+                    "type": "array",
+                    "items": {"$ref": "external_tool.schema.json"}
+                  }
+                },
+                "additionalProperties": false
+              },
+              "allowlisted_tool_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {"type": "string", "minLength": 1}
+              },
+              "governance_decisions": {
+                "type": "array",
+                "items": {"type": "object"}
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["source", "fact"],
+                  "properties": {
+                    "source": {"type": "string", "minLength": 1},
+                    "fact": {"type": "string", "minLength": 1}
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "installed_apps": {
+                "type": "array",
+                "items": {"type": "object"}
+              }
+            },
+            "oneOf": [
+              {"required": ["cleanup_plan"], "not": {"required": ["report_summary"]}},
+              {"required": ["report_summary"], "not": {"required": ["cleanup_plan"]}}
+            ],
             "additionalProperties": false
           }
         }

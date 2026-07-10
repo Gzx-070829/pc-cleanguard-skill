@@ -33,7 +33,7 @@ class SkillActionsTest(unittest.TestCase):
     def tearDown(self) -> None:
         self.directory.cleanup()
 
-    def test_action_names_are_exactly_pr10_scope(self) -> None:
+    def test_action_names_include_pr13_recommender_scope(self) -> None:
         self.assertEqual(
             {
                 "scan_from_json",
@@ -41,6 +41,7 @@ class SkillActionsTest(unittest.TestCase):
                 "build_cleanup_plan",
                 "write_report",
                 "write_audit",
+                "recommend_external_tools",
             },
             set(ACTION_NAMES),
         )
