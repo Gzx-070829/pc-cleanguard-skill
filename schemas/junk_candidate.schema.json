@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/junk_candidate.schema.json",
+  "title": "PC CleanGuard Junk Candidate",
+  "description": "A metadata-only, confirmation-required cleanup candidate. It is not deletion authority.",
+  "type": "object",
+  "required": [
+    "path",
+    "category",
+    "size_bytes",
+    "reason",
+    "evidence",
+    "confidence",
+    "risk_level",
+    "execution_level",
+    "requires_user_confirmation",
+    "dry_run_only",
+    "execution_authorized"
+  ],
+  "properties": {
+    "path": {"type": "string", "minLength": 1},
+    "category": {
+      "enum": [
+        "temp_file",
+        "cache_file",
+        "log_file",
+        "crash_dump",
+        "installer_leftover",
+        "empty_directory_candidate"
+      ]
+    },
+    "size_bytes": {"type": "integer", "minimum": 0},
+    "reason": {"type": "string", "minLength": 1},
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source", "fact"],
+        "properties": {
+          "source": {"type": "string", "minLength": 1},
+          "fact": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "risk_level": {"enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]},
+    "execution_level": {"const": "LEVEL_0_READ_ONLY"},
+    "requires_user_confirmation": {"const": true},
+    "dry_run_only": {"const": true},
+    "execution_authorized": {"const": false}
+  },
+  "additionalProperties": false
+}

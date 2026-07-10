@@ -15,6 +15,7 @@ from .ai import (
     load_report_json_file,
     write_explanation_markdown,
 )
+from .cleanup import JunkScanner, build_cleanup_preview
 from .pipeline import (
     load_scan_json_file,
     run_readonly_scan_pipeline,
@@ -95,6 +96,34 @@ def _parser() -> argparse.ArgumentParser:
         action="store_true",
         help="explicitly replace an existing recommendations file",
     )
+    clean = subcommands.add_parser(
+        "clean",
+        help="build dry-run cleanup previews from explicit local paths",
+    )
+    clean_commands = clean.add_subparsers(dest="clean_command", required=True)
+    preview = clean_commands.add_parser(
+        "preview",
+        help="scan explicit directories and write a non-executing preview",
+    )
+    preview.add_argument(
+        "--path",
+        dest="paths",
+        required=True,
+        action="append",
+        type=Path,
+        help="explicit local directory; may be supplied multiple times",
+    )
+    preview.add_argument(
+        "--output",
+        required=True,
+        type=Path,
+        help="output cleanup preview .json",
+    )
+    preview.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="explicitly replace an existing preview file",
+    )
     return parser
 
 
@@ -162,6 +191,27 @@ def _run_tools_recommend(arguments: argparse.Namespace) -> dict:
     }
 
 
+def _run_cleanup_preview(arguments: argparse.Namespace) -> dict:
+    scan_result = JunkScanner().scan(arguments.paths)
+    preview = build_cleanup_preview(scan_result)
+    serialized = preview.to_dict()
+    write_report(
+        arguments.output,
+        serialized,
+        explicit_overwrite=arguments.overwrite,
+    )
+    return {
+        "paths": [str(path) for path in arguments.paths],
+        "output": str(arguments.output),
+        "total_candidates": preview.total_candidates,
+        "total_reclaimable_bytes": preview.total_reclaimable_bytes,
+        "blocked_candidates": len(preview.blocked_candidates),
+        "requires_confirmation": preview.requires_confirmation,
+        "dry_run_only": True,
+        "execution_authorized": False,
+    }
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the CLI and return a process exit code."""
 
@@ -174,6 +224,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             summary = _run_explain(arguments)
         elif arguments.command == "tools" and arguments.tools_command == "recommend":
             summary = _run_tools_recommend(arguments)
+        elif arguments.command == "clean" and arguments.clean_command == "preview":
+            summary = _run_cleanup_preview(arguments)
         else:  # pragma: no cover - argparse enforces the available commands.
             parser.error(f"unsupported command: {arguments.command}")
     except (FileExistsError, FileNotFoundError, OSError, TypeError, ValueError) as error:
