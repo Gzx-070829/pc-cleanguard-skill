@@ -27,7 +27,7 @@ from .cleanup import (
     write_cleanup_execution_report,
     write_cleanup_report_markdown,
 )
-from .demo import init_cleanup_demo, run_cleanup_demo
+from .demo import init_cleanup_demo, quickstart_cleanup_demo, run_cleanup_demo
 from .pipeline import (
     load_scan_json_file,
     run_readonly_scan_pipeline,
@@ -244,6 +244,22 @@ def _parser() -> argparse.ArgumentParser:
         action="store_true",
         help="confirm only L1 files inside the marked demo root",
     )
+    demo_quickstart = demo_commands.add_parser(
+        "quickstart",
+        help="initialize a synthetic demo and run the full loop in dry-run mode",
+    )
+    demo_quickstart.add_argument(
+        "--root",
+        required=True,
+        type=Path,
+        help="new explicit safe demo directory",
+    )
+    demo_quickstart.add_argument(
+        "--output",
+        required=True,
+        type=Path,
+        help="new explicit directory for dry-run artifacts",
+    )
     return parser
 
 
@@ -419,6 +435,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 arguments.output,
                 confirm=arguments.confirm,
             )
+        elif arguments.command == "demo" and arguments.demo_command == "quickstart":
+            summary = quickstart_cleanup_demo(arguments.root, arguments.output)
         else:  # pragma: no cover - argparse enforces the available commands.
             parser.error(f"unsupported command: {arguments.command}")
     except (FileExistsError, FileNotFoundError, OSError, TypeError, ValueError) as error:

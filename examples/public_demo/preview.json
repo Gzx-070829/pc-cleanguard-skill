@@ -1,0 +1,49 @@
+{
+  "total_candidates": 2,
+  "total_reclaimable_bytes": 76,
+  "by_category": {
+    "temp_file": {"count": 1, "size_bytes": 34},
+    "cache_file": {"count": 0, "size_bytes": 0},
+    "log_file": {"count": 0, "size_bytes": 0},
+    "crash_dump": {"count": 1, "size_bytes": 42},
+    "installer_leftover": {"count": 0, "size_bytes": 0},
+    "empty_directory_candidate": {"count": 0, "size_bytes": 0}
+  },
+  "blocked_candidates": [],
+  "requires_confirmation": true,
+  "top_candidates": [
+    {
+      "path": "C:\\SyntheticDemo\\dumps\\example.dmp",
+      "category": "crash_dump",
+      "size_bytes": 42,
+      "reason": "file extension indicates crash-dump metadata",
+      "evidence": [
+        {"source": "filesystem_metadata", "fact": "synthetic demo metadata; size_bytes=42; extension=.dmp"}
+      ],
+      "confidence": 0.9,
+      "risk_level": "LOW",
+      "execution_level": "LEVEL_0_READ_ONLY",
+      "requires_user_confirmation": true,
+      "dry_run_only": true,
+      "execution_authorized": false
+    },
+    {
+      "path": "C:\\SyntheticDemo\\temp\\example.tmp",
+      "category": "temp_file",
+      "size_bytes": 34,
+      "reason": "file extension indicates temporary data",
+      "evidence": [
+        {"source": "filesystem_metadata", "fact": "synthetic demo metadata; size_bytes=34; extension=.tmp"}
+      ],
+      "confidence": 0.85,
+      "risk_level": "LOW",
+      "execution_level": "LEVEL_0_READ_ONLY",
+      "requires_user_confirmation": true,
+      "dry_run_only": true,
+      "execution_authorized": false
+    }
+  ],
+  "warnings": [],
+  "dry_run_only": true,
+  "execution_authorized": false
+}

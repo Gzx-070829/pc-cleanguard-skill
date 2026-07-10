@@ -1,0 +1,39 @@
+name: Bug report / 缺陷报告
+description: Report a reproducible PC CleanGuard defect without sharing private data.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请移除真实用户名、路径、token、机器名和私人文件内容。Never upload private cleanup data.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit / 版本或提交
+      placeholder: v0.2.0 or commit hash
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction / 复现步骤
+      description: Include the explicit command with sanitized paths and the expected/actual result.
+    validations:
+      required: true
+  - type: textarea
+    id: safety_impact
+    attributes:
+      label: Safety impact / 安全影响
+      description: State whether confirmation, allow-root, protected paths, audit, or dry-run behavior was affected.
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy_confirmation
+    attributes:
+      label: Privacy confirmation / 隐私确认
+      options:
+        - label: I removed private paths, credentials, tokens, and file contents.
+          required: true
+    validations:
+      required: true

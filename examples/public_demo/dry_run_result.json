@@ -1,0 +1,70 @@
+{
+  "schema_version": "0.2",
+  "mode": "dry_run",
+  "confirmed": false,
+  "execution_level": "LEVEL_1_LOW_RISK_CLEANUP",
+  "allow_roots": ["C:\\SyntheticDemo"],
+  "audit_path": "examples/public_demo/audit.jsonl",
+  "summary": {
+    "total_results": 2,
+    "would_clean": 1,
+    "cleaned": 0,
+    "blocked": 0,
+    "skipped": 1,
+    "failed": 0,
+    "bytes_reclaimed": 0,
+    "execution_performed": false
+  },
+  "results": [
+    {
+      "path": "C:\\SyntheticDemo\\dumps\\example.dmp",
+      "category": "crash_dump",
+      "action": "skip",
+      "status": "skipped",
+      "reason": "category is outside the PR15 L1 allowlist",
+      "bytes_reclaimed": 0,
+      "evidence": [{"source": "l1_allowlist", "fact": "crash_dump is not an L1 cleanup category"}],
+      "audit_event": {
+        "event_id": "17000000-0000-4000-8000-000000000001",
+        "timestamp": "2026-07-10T12:00:00Z",
+        "actor": "pc-cleanguard-skill",
+        "path": "C:\\SyntheticDemo\\dumps\\example.dmp",
+        "category": "crash_dump",
+        "action": "skip",
+        "status": "skipped",
+        "reason": "category is outside the PR15 L1 allowlist",
+        "bytes_reclaimed": 0,
+        "evidence": [{"source": "l1_allowlist", "fact": "crash_dump is not an L1 cleanup category"}],
+        "confirmed": false,
+        "dry_run": true,
+        "execution_method": "none",
+        "execution_level": "LEVEL_1_LOW_RISK_CLEANUP"
+      }
+    },
+    {
+      "path": "C:\\SyntheticDemo\\temp\\example.tmp",
+      "category": "temp_file",
+      "action": "delete_file",
+      "status": "would_clean",
+      "reason": "explicit confirmation is absent; no file change was performed",
+      "bytes_reclaimed": 0,
+      "evidence": [{"source": "confirmation", "fact": "confirm flag is false"}],
+      "audit_event": {
+        "event_id": "17000000-0000-4000-8000-000000000002",
+        "timestamp": "2026-07-10T12:00:01Z",
+        "actor": "pc-cleanguard-skill",
+        "path": "C:\\SyntheticDemo\\temp\\example.tmp",
+        "category": "temp_file",
+        "action": "delete_file",
+        "status": "would_clean",
+        "reason": "explicit confirmation is absent; no file change was performed",
+        "bytes_reclaimed": 0,
+        "evidence": [{"source": "confirmation", "fact": "confirm flag is false"}],
+        "confirmed": false,
+        "dry_run": true,
+        "execution_method": "none",
+        "execution_level": "LEVEL_1_LOW_RISK_CLEANUP"
+      }
+    }
+  ]
+}

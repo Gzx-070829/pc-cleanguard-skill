@@ -1,0 +1,45 @@
+name: Cleanup false positive / 清理误报
+description: Report a file or directory that should not have been offered as a cleanup candidate.
+title: "[Cleanup false positive] "
+labels: ["false-positive", "safety"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        不要上传原文件。仅提供脱敏后的扩展名、类别、规则证据和结果状态。
+  - type: dropdown
+    id: category
+    attributes:
+      label: Candidate category / 候选类别
+      options:
+        - temp_file
+        - cache_file
+        - log_file
+        - crash_dump
+        - installer_leftover
+        - empty_directory_candidate
+    validations:
+      required: true
+  - type: textarea
+    id: sanitized_context
+    attributes:
+      label: Sanitized context / 脱敏上下文
+      description: Use a synthetic path and explain why the candidate must be kept or blocked.
+    validations:
+      required: true
+  - type: textarea
+    id: confirmation_state
+    attributes:
+      label: Confirmation and outcome / 确认与结果
+      description: State whether --confirm was present and whether the result was would_clean, blocked, skipped, cleaned, or failed.
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy_confirmation
+    attributes:
+      label: Privacy confirmation / 隐私确认
+      options:
+        - label: I did not include private paths, credentials, or file contents.
+          required: true
+    validations:
+      required: true

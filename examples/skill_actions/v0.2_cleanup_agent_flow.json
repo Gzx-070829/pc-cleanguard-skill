@@ -1,0 +1,45 @@
+{
+  "schema_version": "0.2",
+  "title": "PC CleanGuard v0.2 cleanup agent flow",
+  "mode": "illustrative_offline_workflow",
+  "requires_user_confirmation": true,
+  "execution_authorized": false,
+  "safety_notice": "AI orchestration is not cleanup authorization. Dry-run is the default and real L1 cleanup requires a separate explicit confirmation.",
+  "steps": [
+    {
+      "id": "clean_preview",
+      "entrypoint": "cli",
+      "invocation": "python -m pc_cleanguard.cli clean preview --path <explicit-root> --output preview.json",
+      "purpose": "Read bounded metadata and create cleanup candidates.",
+      "execution_authorized": false
+    },
+    {
+      "id": "clean_execute_dry_run",
+      "entrypoint": "cli",
+      "invocation": "python -m pc_cleanguard.cli clean execute --preview preview.json --allow-root <explicit-root> --result result.json --audit audit.jsonl",
+      "purpose": "Produce would_clean/skipped/blocked decisions without --confirm.",
+      "execution_authorized": false
+    },
+    {
+      "id": "clean_report",
+      "entrypoint": "cli",
+      "invocation": "python -m pc_cleanguard.cli clean report --preview preview.json --result result.json --output cleanup-report.md",
+      "purpose": "Render a human-readable Markdown summary.",
+      "execution_authorized": false
+    },
+    {
+      "id": "explain",
+      "entrypoint": "cli",
+      "invocation": "python -m pc_cleanguard.cli explain --report governance-report.json --output explanation.md --provider mock",
+      "purpose": "Explain a governance report through the offline mock provider.",
+      "execution_authorized": false
+    },
+    {
+      "id": "skill_action_chain",
+      "entrypoint": "python_api",
+      "actions": ["scan_from_json", "explain_report", "build_cleanup_plan", "recommend_external_tools"],
+      "purpose": "Let an AI Agent request structured analysis and plan-only recommendations.",
+      "execution_authorized": false
+    }
+  ]
+}

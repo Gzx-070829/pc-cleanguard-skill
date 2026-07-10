@@ -1,0 +1,70 @@
+{
+  "schema_version": "0.2",
+  "mode": "confirmed_l1",
+  "confirmed": true,
+  "execution_level": "LEVEL_1_LOW_RISK_CLEANUP",
+  "allow_roots": ["C:\\SyntheticDemo"],
+  "audit_path": "C:\\SyntheticOutput\\confirmed-audit.jsonl",
+  "summary": {
+    "total_results": 2,
+    "would_clean": 0,
+    "cleaned": 1,
+    "blocked": 0,
+    "skipped": 1,
+    "failed": 0,
+    "bytes_reclaimed": 34,
+    "execution_performed": true
+  },
+  "results": [
+    {
+      "path": "C:\\SyntheticDemo\\dumps\\example.dmp",
+      "category": "crash_dump",
+      "action": "skip",
+      "status": "skipped",
+      "reason": "category is outside the PR15 L1 allowlist",
+      "bytes_reclaimed": 0,
+      "evidence": [{"source": "l1_allowlist", "fact": "crash_dump is not an L1 cleanup category"}],
+      "audit_event": {
+        "event_id": "17000000-0000-4000-8000-000000000003",
+        "timestamp": "2026-07-10T12:01:00Z",
+        "actor": "pc-cleanguard-skill",
+        "path": "C:\\SyntheticDemo\\dumps\\example.dmp",
+        "category": "crash_dump",
+        "action": "skip",
+        "status": "skipped",
+        "reason": "category is outside the PR15 L1 allowlist",
+        "bytes_reclaimed": 0,
+        "evidence": [{"source": "l1_allowlist", "fact": "crash_dump is not an L1 cleanup category"}],
+        "confirmed": true,
+        "dry_run": false,
+        "execution_method": "none",
+        "execution_level": "LEVEL_1_LOW_RISK_CLEANUP"
+      }
+    },
+    {
+      "path": "C:\\SyntheticDemo\\temp\\example.tmp",
+      "category": "temp_file",
+      "action": "delete_file",
+      "status": "cleaned",
+      "reason": "confirmed L1 file cleanup completed",
+      "bytes_reclaimed": 34,
+      "evidence": [{"source": "confirmation", "fact": "all L1 gates passed for this synthetic example"}],
+      "audit_event": {
+        "event_id": "17000000-0000-4000-8000-000000000004",
+        "timestamp": "2026-07-10T12:01:01Z",
+        "actor": "pc-cleanguard-skill",
+        "path": "C:\\SyntheticDemo\\temp\\example.tmp",
+        "category": "temp_file",
+        "action": "delete_file",
+        "status": "cleaned",
+        "reason": "confirmed L1 file cleanup completed",
+        "bytes_reclaimed": 34,
+        "evidence": [{"source": "confirmation", "fact": "all L1 gates passed for this synthetic example"}],
+        "confirmed": true,
+        "dry_run": false,
+        "execution_method": "pathlib_unlink",
+        "execution_level": "LEVEL_1_LOW_RISK_CLEANUP"
+      }
+    }
+  ]
+}

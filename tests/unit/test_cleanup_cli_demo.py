@@ -86,6 +86,45 @@ class CleanupCliDemoTest(unittest.TestCase):
         self.assertTrue((self.root / "dumps" / "example.dmp").exists())
         self.assertTrue((self.root / "installers" / "example.old").exists())
 
+    def test_demo_quickstart_initializes_and_runs_dry_run_only(self) -> None:
+        code, stdout, stderr = self._run(
+            [
+                "demo",
+                "quickstart",
+                "--root",
+                str(self.root),
+                "--output",
+                str(self.output),
+            ]
+        )
+
+        self.assertEqual(0, code)
+        self.assertEqual("", stderr)
+        summary = json.loads(stdout)
+        self.assertTrue(summary["quickstart"])
+        self.assertFalse(summary["confirmed"])
+        self.assertFalse(summary["execution_performed"])
+        self.assertTrue((self.output / "preview.json").is_file())
+        self.assertTrue((self.output / "cleanup_report.md").is_file())
+        self.assertTrue((self.root / "temp" / "example.tmp").is_file())
+
+    def test_demo_quickstart_has_no_confirm_option(self) -> None:
+        arguments = [
+            "demo",
+            "quickstart",
+            "--root",
+            str(self.root),
+            "--output",
+            str(self.output),
+            "--confirm",
+        ]
+
+        with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as context:
+            main(arguments)
+
+        self.assertEqual(2, context.exception.code)
+        self.assertFalse(self.root.exists())
+
 
 if __name__ == "__main__":
     unittest.main()

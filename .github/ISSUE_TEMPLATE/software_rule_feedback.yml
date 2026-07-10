@@ -1,0 +1,43 @@
+name: Software rule feedback / 软件规则反馈
+description: Provide evidence-backed feedback for a software classification or recommendation rule.
+title: "[Rule feedback] "
+labels: ["rules", "needs-evidence"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        规则反馈只能增加证据或提高怀疑程度，不能直接授权删除。请勿提交私人路径或用户数据。
+  - type: input
+    id: software_name
+    attributes:
+      label: Software name / 软件名称
+    validations:
+      required: true
+  - type: input
+    id: publisher_version
+    attributes:
+      label: Publisher and version range / 发布者与版本范围
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Behavior evidence and sources / 行为证据与来源
+      description: Explain the observed behavior, source quality, and why one source is insufficient.
+    validations:
+      required: true
+  - type: textarea
+    id: risk_and_recovery
+    attributes:
+      label: False-positive risk and recovery / 误伤风险与恢复说明
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy_confirmation
+    attributes:
+      label: Privacy and confirmation / 隐私与确认
+      options:
+        - label: I removed private data and understand this report is not execution authorization.
+          required: true
+    validations:
+      required: true
