@@ -15,8 +15,9 @@ This roadmap keeps stage descriptions in Chinese while retaining English compone
   - **v0.1 PR8**：包装 PR7 pipeline 的最小只读 CLI，只处理显式 JSON 输入并写出显式 report/audit 路径。
   - **v0.1 PR9**：离线 AI Report Explainer、安全 prompt、Mock provider、dry-run prompt 和 Markdown 输出。
   - **v0.1 PR10**：AI 可调用的 Level 0 Skill 动作契约与非执行 cleanup review plan。
-  - **当前 PR — v0.1 PR11**：v0.1.0 Public Preview 快速开始、action 示例、公开说明与 release checklist。
-- **v0.2**：SQLite 历史 + 用户偏好 + 审计日志实现。
+  - **v0.1 PR11**：v0.1.0 Public Preview 快速开始、action 示例、公开说明与 release checklist。
+- **v0.2**：受控 cleanup planning + external tool adapter foundations。
+  - **当前 PR — v0.2 PR12**：显式 external tool catalog、allowlist trust policy、无命令 invocation plan。
 - **v0.3**：只开放低风险清理的受控执行。
 - **v0.4**：Reputation Engine + 更新管理器。
 - **v0.5**：Quarantine + Restore Manager。

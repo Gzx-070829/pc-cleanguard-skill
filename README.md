@@ -6,6 +6,8 @@ Open-source, auditable, privacy-first AI System Governance Skill.
 
 **v0.1.0 Public Preview**
 
+v0.1.0 已发布。当前 `main` 已进入 v0.2 PR12 开发：外部工具适配层仍只生成信任和调用计划，不下载、不执行。
+
 > **PC CleanGuard 不是传统清理软件。**
 > **It is not a traditional cleaner.**
 >
@@ -103,6 +105,8 @@ PR10 新增 AI 可调用的五个动作：`scan_from_json`、`explain_report`、
 
 PR11 整理公开快速开始、AI action usage、可运行示例、Public Preview 说明和 v0.1.0 release checklist，不新增执行能力。
 
+PR12 开始 v0.2 的外部工具适配层基础：显式 catalog、allowlist trust policy 和无命令的 invocation plan。它仍不下载、不启动或执行任何工具。
+
 ## 安全原则
 
 1. 不静默删除。
@@ -154,9 +158,9 @@ v0.1.0 is offline-only: no live model API, networking, uploads, or environment c
 
 ## 开发状态
 
-当前里程碑：**v0.1.0 Public Preview**。PR11 专注公开展示、开发者快速开始和 AI action 调用说明。
+当前里程碑：**v0.2 PR12 — External Tool Adapter Foundation**。PR12 只建立显式工具目录、信任策略和非执行计划。
 
-Current milestone: **v0.1.0 Public Preview**. PR11 focuses on public documentation, runnable examples, and release readiness.
+Current milestone: **v0.2 PR12 — External Tool Adapter Foundation**. PR12 builds catalog, trust, and plan artifacts only; it does not execute tools.
 
 详细用法见 [只读扫描流水线](docs/readonly-scan-pipeline.md)。
 
@@ -167,6 +171,8 @@ AI 解释器见 [AI 报告解释器](docs/ai-report-explainer.md)。
 Skill 动作接口见 [AI 可调用 Skill 动作接口](docs/skill-action-interface.md)。
 
 Public Preview 说明见 [v0.1.0 Public Preview](docs/public-preview.md)；发布门禁见 [v0.1.0 release checklist](docs/v0.1.0-release-checklist.md)。
+
+外部工具适配层见 [External Tool Adapter Foundation](docs/external-tool-adapter.md)。
 
 **JSONL 管审计，SQLite 管历史。PR3 只记录 dry-run，不代表执行。**
 
