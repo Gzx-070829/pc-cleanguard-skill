@@ -1,0 +1,55 @@
+{
+  "total_candidates": 6,
+  "total_reclaimable_bytes": 178,
+  "cleaned_count": 0,
+  "cleaned_bytes": 0,
+  "would_clean_count": 3,
+  "skipped_count": 3,
+  "blocked_count": 0,
+  "by_category": {
+    "temp_file": {"count": 1, "size_bytes": 34},
+    "cache_file": {"count": 1, "size_bytes": 30},
+    "log_file": {"count": 1, "size_bytes": 29},
+    "crash_dump": {"count": 1, "size_bytes": 42},
+    "installer_leftover": {"count": 1, "size_bytes": 43},
+    "empty_directory_candidate": {"count": 1, "size_bytes": 0}
+  },
+  "by_status": {
+    "cleaned": 0,
+    "would_clean": 3,
+    "skipped": 3,
+    "blocked": 0,
+    "failed": 0
+  },
+  "top_items": [
+    {
+      "path": "C:\\SyntheticDemo\\installers\\example.old",
+      "category": "installer_leftover",
+      "status": "skipped",
+      "size_bytes": 43,
+      "bytes_reclaimed": 0,
+      "reason": "category is outside the PR15 L1 allowlist"
+    },
+    {
+      "path": "C:\\SyntheticDemo\\dumps\\example.dmp",
+      "category": "crash_dump",
+      "status": "skipped",
+      "size_bytes": 42,
+      "bytes_reclaimed": 0,
+      "reason": "category is outside the PR15 L1 allowlist"
+    },
+    {
+      "path": "C:\\SyntheticDemo\\temp\\example.tmp",
+      "category": "temp_file",
+      "status": "would_clean",
+      "size_bytes": 34,
+      "bytes_reclaimed": 0,
+      "reason": "explicit confirmation is absent; no file change was performed"
+    }
+  ],
+  "safety_notes": [
+    "报告用于展示预览与执行结果，不构成新的清理授权。",
+    "只有显式确认且通过 allow-root 与 L1 安全门的文件才能由现有执行器处理。",
+    "crash dump、installer leftover 与目录候选不会被 L1 执行器删除。"
+  ]
+}

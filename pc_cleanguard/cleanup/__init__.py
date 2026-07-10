@@ -33,6 +33,11 @@ from .executor import (
     validate_cleanup_preview,
     write_cleanup_execution_report,
 )
+from .reporting import (
+    build_cleanup_summary,
+    render_cleanup_report_markdown,
+    write_cleanup_report_markdown,
+)
 
 __all__ = [
     "JUNK_CATEGORIES",
@@ -57,6 +62,9 @@ __all__ = [
     "preflight_cleanup_artifacts",
     "validate_cleanup_preview",
     "write_cleanup_execution_report",
+    "build_cleanup_summary",
+    "render_cleanup_report_markdown",
+    "write_cleanup_report_markdown",
     "default_junk_rules",
     "match_junk_rule",
 ]

@@ -20,10 +20,14 @@ from .cleanup import (
     CleanupExecutor,
     JunkScanner,
     build_cleanup_preview,
+    build_cleanup_summary,
     load_cleanup_preview_json,
     preflight_cleanup_artifacts,
+    render_cleanup_report_markdown,
     write_cleanup_execution_report,
+    write_cleanup_report_markdown,
 )
+from .demo import init_cleanup_demo, run_cleanup_demo
 from .pipeline import (
     load_scan_json_file,
     run_readonly_scan_pipeline,
@@ -172,6 +176,74 @@ def _parser() -> argparse.ArgumentParser:
         action="store_true",
         help="explicitly replace existing result and audit artifacts",
     )
+    report = clean_commands.add_parser(
+        "report",
+        help="render a Markdown summary from explicit preview and result JSON",
+    )
+    report.add_argument(
+        "--preview",
+        required=True,
+        type=Path,
+        help="explicit PR14 cleanup preview .json",
+    )
+    report.add_argument(
+        "--result",
+        required=True,
+        type=Path,
+        help="explicit PR15 cleanup execution result .json",
+    )
+    report.add_argument(
+        "--output",
+        required=True,
+        type=Path,
+        help="output cleanup report .md",
+    )
+    report.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="explicitly replace an existing Markdown report",
+    )
+    demo = subcommands.add_parser(
+        "demo",
+        help="create and run a bounded synthetic cleanup experience",
+    )
+    demo_commands = demo.add_subparsers(dest="demo_command", required=True)
+    demo_init = demo_commands.add_parser(
+        "init-cleanup",
+        help="create synthetic junk under one explicit safe demo root",
+    )
+    demo_init.add_argument(
+        "--root",
+        required=True,
+        type=Path,
+        help="explicit demo directory to create",
+    )
+    demo_init.add_argument(
+        "--force",
+        action="store_true",
+        help="refresh only a root already marked by demo init",
+    )
+    demo_run = demo_commands.add_parser(
+        "run-cleanup",
+        help="run preview, controlled execution, audit, and report for a demo root",
+    )
+    demo_run.add_argument(
+        "--root",
+        required=True,
+        type=Path,
+        help="explicit root previously created by demo init-cleanup",
+    )
+    demo_run.add_argument(
+        "--output",
+        required=True,
+        type=Path,
+        help="new explicit directory for demo artifacts",
+    )
+    demo_run.add_argument(
+        "--confirm",
+        action="store_true",
+        help="confirm only L1 files inside the marked demo root",
+    )
     return parser
 
 
@@ -292,6 +364,35 @@ def _run_cleanup_execute(arguments: argparse.Namespace) -> dict:
     }
 
 
+def _run_cleanup_report(arguments: argparse.Namespace) -> dict:
+    preview = load_cleanup_preview_json(arguments.preview)
+    execution_result = load_scan_json_file(arguments.result)
+    summary = build_cleanup_summary(preview, execution_result)
+    write_cleanup_report_markdown(
+        arguments.output,
+        render_cleanup_report_markdown(summary),
+        explicit_overwrite=arguments.overwrite,
+    )
+    return {
+        "preview": str(arguments.preview),
+        "result": str(arguments.result),
+        "output": str(arguments.output),
+        **{
+            key: summary[key]
+            for key in (
+                "total_candidates",
+                "total_reclaimable_bytes",
+                "cleaned_count",
+                "cleaned_bytes",
+                "would_clean_count",
+                "skipped_count",
+                "blocked_count",
+            )
+        },
+        "report_only": True,
+    }
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the CLI and return a process exit code."""
 
@@ -308,6 +409,16 @@ def main(argv: Sequence[str] | None = None) -> int:
             summary = _run_cleanup_preview(arguments)
         elif arguments.command == "clean" and arguments.clean_command == "execute":
             summary = _run_cleanup_execute(arguments)
+        elif arguments.command == "clean" and arguments.clean_command == "report":
+            summary = _run_cleanup_report(arguments)
+        elif arguments.command == "demo" and arguments.demo_command == "init-cleanup":
+            summary = init_cleanup_demo(arguments.root, force=arguments.force)
+        elif arguments.command == "demo" and arguments.demo_command == "run-cleanup":
+            summary = run_cleanup_demo(
+                arguments.root,
+                arguments.output,
+                confirm=arguments.confirm,
+            )
         else:  # pragma: no cover - argparse enforces the available commands.
             parser.error(f"unsupported command: {arguments.command}")
     except (FileExistsError, FileNotFoundError, OSError, TypeError, ValueError) as error:

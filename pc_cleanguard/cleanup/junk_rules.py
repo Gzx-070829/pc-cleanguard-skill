@@ -83,7 +83,7 @@ def default_junk_rules() -> Tuple[JunkRule, ...]:
             reason="file extension indicates a possible installer leftover",
             confidence=0.65,
             risk_level=RiskLevel.MEDIUM,
-            extensions=(".msi", ".msp"),
+            extensions=(".msi", ".msp", ".old"),
         ),
         JunkRule(
             category=JunkCategory.TEMP_FILE,

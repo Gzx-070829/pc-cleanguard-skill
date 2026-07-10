@@ -6,7 +6,7 @@ Open-source, auditable, privacy-first AI System Governance Skill.
 
 **v0.1.0 Public Preview**
 
-v0.1.0 已发布。当前开发已进入 v0.2 PR15：在显式确认、allow-root 和审计门禁下清理 L1 临时/缓存/日志文件。
+v0.1.0 已发布。当前开发已进入 v0.2 PR16：提供可试用的合成垃圾 demo、完整清理闭环与 Markdown 报告展示；真实清理仍受 PR15 的 L1 门禁约束。
 
 从 v0.2 起项目采用 [Sprint PR 加速研发原则](docs/development-principles.md)，以用户可见价值为导向，同时保持安全底线不变。
 
@@ -101,6 +101,23 @@ python -m pc_cleanguard.cli clean execute --preview output\cleanup-preview.json 
 
 默认只输出 `would_clean`。只有额外传入 `--confirm`，并且 preview、L1 category、当前路径、protected dirs 和 allow-root 全部复核通过时，才会删除 temp/cache/log 普通文件；每项结果都会写入 audit JSONL。
 
+### 7. 五分钟试用完整闭环 / Try the full loop in five minutes
+
+```powershell
+python -m pc_cleanguard.cli demo init-cleanup --root .pcg-demo
+python -m pc_cleanguard.cli demo run-cleanup --root .pcg-demo --output .pcg-demo-output
+```
+
+第一条命令只在显式 demo root 中创建合成垃圾；第二条默认以 dry-run 依次生成 preview、execution result、audit JSONL 和 Markdown 报告，不删除文件。完整教程见 [5 分钟试用清理 Demo](docs/quick-try-cleanup-demo.md)。
+
+### 8. 导出清理报告 / Export a cleanup report
+
+```powershell
+python -m pc_cleanguard.cli clean report --preview output\cleanup-preview.json --result output\cleanup-result.json --output output\cleanup-report.md
+```
+
+报告层只聚合显式 JSON，不执行清理；已有 Markdown 默认不覆盖。
+
 ## 项目定位
 
 PC CleanGuard 在 AI 建议与系统操作之间建立可审计的安全门。它先回答“能否做、为何做、需要谁确认”，而不是直接动手。
@@ -138,6 +155,8 @@ PR13 增加证据驱动的外部工具 matcher/recommender、`recommend_external
 PR14 增加显式路径垃圾候选扫描、保护目录阻断、资源上限、清理预览汇总和 `clean preview` CLI。所有候选都要求用户确认且仅为 dry-run。
 
 PR15 增加第一条 L1 受控执行路径：默认 dry-run，显式确认后仅清理 allow-root 内重新验证通过的 temp/cache/log 文件，并强制写 result JSON 与 audit JSONL。
+
+PR16 增加可试用的合成垃圾目录、preview → execute → audit → report demo、清理摘要和 Markdown 报告。demo 默认 dry-run；`--confirm` 仍只复用 PR15 的 L1 执行器。
 
 ## 安全原则
 
@@ -190,9 +209,9 @@ v0.1.0 is offline-only: no live model API, networking, uploads, or environment c
 
 ## 开发状态
 
-当前里程碑：**v0.2 PR15 — L1 Controlled Cleaner**。真实删除仅限显式确认且全部门禁通过的低风险文件。
+当前里程碑：**v0.2 PR16 — Tryable Cleanup Experience**。开发者可在合成 demo 目录体验完整闭环；真实删除仍仅限显式确认且全部门禁通过的低风险文件。
 
-Current milestone: **v0.2 PR15 — L1 Controlled Cleaner**. Dry-run is the default; confirmed execution is narrowly bounded and audited.
+Current milestone: **v0.2 PR16 — Tryable Cleanup Experience**. Dry-run remains the default; confirmed execution is narrowly bounded and audited.
 
 详细用法见 [只读扫描流水线](docs/readonly-scan-pipeline.md)。
 
@@ -211,6 +230,8 @@ Public Preview 说明见 [v0.1.0 Public Preview](docs/public-preview.md)；发�
 垃圾候选与清理预览见 [Junk Cleanup Preview](docs/junk-cleanup-preview.md)。
 
 L1 受控清理见 [L1 Controlled Cleaner](docs/l1-controlled-cleaner.md)。
+
+可试用 demo 与报告展示见 [Quick Try Cleanup Demo](docs/quick-try-cleanup-demo.md) 和 [Cleanup Report Showcase](docs/cleanup-report-showcase.md)。
 
 **JSONL 管审计，SQLite 管历史。PR3 只记录 dry-run，不代表执行。**
 
