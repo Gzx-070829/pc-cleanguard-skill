@@ -65,14 +65,18 @@ from .skill import (
     SkillActionRequest,
     SkillActionResponse,
     invoke_skill_action,
+    recommend_external_tools,
 )
 from .external_tools import (
     ExternalToolCatalog,
     ExternalToolInvocationPlan,
     ExternalToolRecord,
+    ExternalToolRecommendation,
     ExternalToolType,
     ToolTrustDecision,
     ToolTrustPolicy,
+    ToolMatcher,
+    ToolRecommender,
     build_external_tool_invocation_plan,
 )
 
@@ -135,12 +139,16 @@ __all__ = [
     "SkillActionRequest",
     "SkillActionResponse",
     "invoke_skill_action",
+    "recommend_external_tools",
     "ExternalToolCatalog",
     "ExternalToolInvocationPlan",
     "ExternalToolRecord",
+    "ExternalToolRecommendation",
     "ExternalToolType",
     "ToolTrustDecision",
     "ToolTrustPolicy",
+    "ToolMatcher",
+    "ToolRecommender",
     "build_external_tool_invocation_plan",
 ]
 

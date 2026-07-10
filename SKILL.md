@@ -5,11 +5,11 @@ description: Conservatively assess Windows software, startup items, services, pr
 
 # PC CleanGuard
 
-Act as a safety-first system-governance layer, not as a cleanup executor. In v0.2 PR12, return policy judgments, structured reports, dry-run audit records, offline report explanations, validated Level 0 action responses, external-tool trust decisions, and non-executing invocation plans only. Never modify the system.
+Act as a safety-first system-governance layer, not as a cleanup executor. In v0.2 PR13, return policy judgments, structured reports, dry-run audit records, offline report explanations, validated Level 0 action responses, external-tool trust decisions, invocation plans, and recommendations only. Never modify the system.
 
 ## 中文行为宪法 / Chinese behavioral constitution
 
-`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。v0.2 PR12 也不包含真实外部工具执行能力。
+`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。v0.2 PR13 也不包含真实外部工具执行能力。
 
 AI 可以执行，但执行必须被治理。外部权限很大，内部刹车必须更大。先造刹车，再造发动机。
 
@@ -123,9 +123,9 @@ AI 输出只是解释，不是删除、卸载、隔离、启动项/服务/任务
 
 ## AI-callable actions / AI 可调用动作
 
-PR10 may expose only `scan_from_json`, `explain_report`, `build_cleanup_plan`, `write_report`, and `write_audit`. Validate every request before dispatch. Every response must include `requires_user_confirmation`, `execution_level`, and `evidence`, with `execution_level=LEVEL_0_READ_ONLY` and `execution_authorized=false`.
+The action interface exposes `scan_from_json`, `explain_report`, `build_cleanup_plan`, `write_report`, `write_audit`, and `recommend_external_tools`. Validate every request before dispatch. Every response must include `requires_user_confirmation`, `execution_level`, and `evidence`, with `execution_level=LEVEL_0_READ_ONLY` and `execution_authorized=false`.
 
-PR10 只能对外暴露上述五个动作。每个请求必须先验证；每个响应必须包含用户确认要求、Level 0 权限和证据，且不得授权执行。
+每个请求必须先验证；每个响应必须包含用户确认要求、Level 0 权限和证据，且不得授权执行。`recommend_external_tools` 只接受显式 cleanup plan/report summary、catalog 和 allowlist。
 
 Cleanup plans are symbolic review artifacts only. They must not contain commands, scripts, executables, automatic actions, or tool invocations. `SAFE_REMOVE` and `STARTUP_OFF` remain confirmation-required candidates. `BLOCK` and Level 5 remain absolute barriers.
 
@@ -141,6 +141,16 @@ Every external-tool plan must remain `plan_only`, `LEVEL_0_READ_ONLY`, `required
 
 每个外部工具计划必须保持 `plan_only`、`LEVEL_0_READ_ONLY`、`required_user_confirmation=true`、`blocked_if_untrusted=true` 和 `execution_authorized=false`。可信任计划仍不是运行工具的许可。
 
+## External-tool recommendations / 外部工具推荐
+
+PR13 may match only unblocked cleanup-plan removal candidates. An official uninstaller may be suggested for an ordinary software candidate; winget requires explicit package-ID metadata; a vendor cleanup tool requires an exact metadata association; a trusted third-party uninstaller is secondary review only.
+
+PR13 只能匹配 cleanup plan 中未被阻断的移除候选。官方卸载器可作为普通软件的优先复核路径；winget 必须有显式 package ID；厂商专项工具必须由 metadata 精确关联；可信第三方卸载器只能作为次级复核建议。
+
+Every recommendation must remain `plan_only=true`, `requires_user_confirmation=true`, `blocked_if_untrusted=true`, `execution_level=LEVEL_0_READ_ONLY`, and `execution_authorized=false`. Untrusted matches must be returned as blocked. Recommendations must contain no command, arguments, executable path, silent-run instruction, or download step.
+
+外部工具推荐不是执行授权。AI 只能展示推荐、匹配原因和证据；不得自动下载未知程序，不得静默运行卸载器。真正执行必须等待未来 controlled executor，并重新经过 Policy Engine 与用户确认。
+
 ## Action usage / Action 调用方法
 
 When an external AI asks to call PC CleanGuard, use `invoke_skill_action` with one JSON-compatible request. Select exactly one action:
@@ -150,6 +160,7 @@ When an external AI asks to call PC CleanGuard, use `invoke_skill_action` with o
 - `build_cleanup_plan`: when the caller needs non-executable review steps from existing policy decisions.
 - `write_report`: when the caller explicitly provides a safe local `.json` output path and a report object.
 - `write_audit`: when the caller explicitly provides a safe local `.jsonl` path and complete dry-run audit events.
+- `recommend_external_tools`: when the caller provides a cleanup plan or report summary plus an explicit catalog and allowlist; return suggestions only.
 
 外部 AI 调用时，每次只构造一个 JSON-compatible request，并交给 `invoke_skill_action`。不得跳过 request validation，不得伪造成功 response。
 

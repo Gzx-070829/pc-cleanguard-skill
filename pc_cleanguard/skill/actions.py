@@ -13,6 +13,7 @@ from ..ai import (
     MockAIProvider,
     explain_report as explain_report_offline,
 )
+from ..external_tools import ExternalToolCatalog, ToolRecommender, ToolTrustPolicy
 from ..pipeline import run_readonly_scan_pipeline
 from ..pipeline.input_loader import _validated_explicit_local_path
 from .cleanup_plan import READ_ONLY_EXECUTION_LEVEL, build_cleanup_plan_from_report
@@ -24,6 +25,7 @@ ACTION_NAMES = (
     "build_cleanup_plan",
     "write_report",
     "write_audit",
+    "recommend_external_tools",
 )
 
 _AUDIT_RESULTS = {"planned", "simulated", "blocked", "refused", "skipped"}
@@ -279,6 +281,71 @@ def build_cleanup_plan(
     )
 
 
+def recommend_external_tools(
+    *,
+    catalog: dict,
+    allowlisted_tool_ids: list[str] | tuple[str, ...],
+    cleanup_plan: dict | None = None,
+    report_summary: dict | None = None,
+    governance_decisions: list[dict] | tuple[dict, ...] = (),
+    evidence: list[dict] | tuple[dict, ...] = (),
+    installed_apps: list[dict] | tuple[dict, ...] = (),
+    request_id: str | None = None,
+) -> SkillActionResponse:
+    """Recommend cataloged tool review paths without commands or execution."""
+
+    if (cleanup_plan is None) == (report_summary is None):
+        raise ValueError("provide exactly one of cleanup_plan or report_summary")
+    if not isinstance(catalog, dict):
+        raise TypeError("catalog must be a dict")
+    if not isinstance(allowlisted_tool_ids, (list, tuple)) or any(
+        not isinstance(tool_id, str) or not tool_id.strip()
+        for tool_id in allowlisted_tool_ids
+    ):
+        raise TypeError("allowlisted_tool_ids must contain strings")
+    if report_summary is not None:
+        if not isinstance(report_summary, dict):
+            raise TypeError("report_summary must be a dict")
+        cleanup_plan = build_cleanup_plan_from_report(report_summary).to_dict()
+    if not isinstance(cleanup_plan, dict):
+        raise TypeError("cleanup_plan must be a dict")
+
+    parsed_catalog = ExternalToolCatalog.from_dict(catalog)
+    policy = ToolTrustPolicy(tuple(allowlisted_tool_ids))
+    recommendations = ToolRecommender(parsed_catalog, policy).recommend(
+        cleanup_plan,
+        governance_decisions=governance_decisions,
+        evidence=evidence,
+        installed_apps=installed_apps,
+    )
+    serialized = [item.to_dict() for item in recommendations]
+    trusted_count = sum(item["trusted"] is True for item in serialized)
+    blocked_count = sum(item["blocked"] is True for item in serialized)
+    return _response(
+        action="recommend_external_tools",
+        request_id=request_id,
+        status="planned",
+        requires_user_confirmation=True,
+        evidence=(
+            {
+                "source": "external_tool_recommender",
+                "fact": (
+                    f"produced {len(serialized)} Level 0 recommendation(s); "
+                    f"{blocked_count} blocked by trust policy"
+                ),
+            },
+        ),
+        result={
+            "mode": "plan_only",
+            "recommendations": serialized,
+            "recommendation_count": len(serialized),
+            "trusted_count": trusted_count,
+            "blocked_count": blocked_count,
+            "execution_authorized": False,
+        },
+    )
+
+
 def write_report(
     path: str | Path,
     report: dict,
@@ -422,6 +489,28 @@ def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionRespon
         return build_cleanup_plan(
             payload["report"],
             plan_id=payload.get("plan_id"),
+            request_id=request.request_id,
+        )
+    if request.action == "recommend_external_tools":
+        _validated_payload(
+            payload,
+            {"catalog", "allowlisted_tool_ids"},
+            {
+                "cleanup_plan",
+                "report_summary",
+                "governance_decisions",
+                "evidence",
+                "installed_apps",
+            },
+        )
+        return recommend_external_tools(
+            cleanup_plan=payload.get("cleanup_plan"),
+            report_summary=payload.get("report_summary"),
+            catalog=payload["catalog"],
+            allowlisted_tool_ids=payload["allowlisted_tool_ids"],
+            governance_decisions=payload.get("governance_decisions", ()),
+            evidence=payload.get("evidence", ()),
+            installed_apps=payload.get("installed_apps", ()),
             request_id=request.request_id,
         )
     if request.action == "write_report":

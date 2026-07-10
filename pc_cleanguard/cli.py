@@ -21,6 +21,7 @@ from .pipeline import (
     write_pipeline_audit_jsonl,
     write_pipeline_report,
 )
+from .skill import invoke_skill_action, write_report
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -67,6 +68,32 @@ def _parser() -> argparse.ArgumentParser:
         "--overwrite",
         action="store_true",
         help="explicitly replace an existing Markdown output",
+    )
+    tools = subcommands.add_parser(
+        "tools",
+        help="build offline external-tool recommendations without execution",
+    )
+    tool_commands = tools.add_subparsers(dest="tools_command", required=True)
+    recommend = tool_commands.add_parser(
+        "recommend",
+        help="recommend cataloged tools from an explicit cleanup-plan input",
+    )
+    recommend.add_argument(
+        "--input",
+        required=True,
+        type=Path,
+        help="explicit recommendation request .json",
+    )
+    recommend.add_argument(
+        "--output",
+        required=True,
+        type=Path,
+        help="output recommendations .json",
+    )
+    recommend.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="explicitly replace an existing recommendations file",
     )
     return parser
 
@@ -115,6 +142,26 @@ def _run_explain(arguments: argparse.Namespace) -> dict:
     }
 
 
+def _run_tools_recommend(arguments: argparse.Namespace) -> dict:
+    payload = load_scan_json_file(arguments.input)
+    response = invoke_skill_action(
+        {"action": "recommend_external_tools", "payload": payload}
+    )
+    write_report(
+        arguments.output,
+        response.result,
+        explicit_overwrite=arguments.overwrite,
+    )
+    return {
+        "input": str(arguments.input),
+        "output": str(arguments.output),
+        "recommendations": response.result["recommendation_count"],
+        "trusted": response.result["trusted_count"],
+        "blocked": response.result["blocked_count"],
+        "execution_authorized": False,
+    }
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the CLI and return a process exit code."""
 
@@ -125,6 +172,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             summary = _run_scan(arguments)
         elif arguments.command == "explain":
             summary = _run_explain(arguments)
+        elif arguments.command == "tools" and arguments.tools_command == "recommend":
+            summary = _run_tools_recommend(arguments)
         else:  # pragma: no cover - argparse enforces the available commands.
             parser.error(f"unsupported command: {arguments.command}")
     except (FileExistsError, FileNotFoundError, OSError, TypeError, ValueError) as error:

@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/external_tool_recommendation.schema.json",
+  "title": "PC CleanGuard External Tool Recommendation",
+  "description": "A Level 0, confirmation-required tool suggestion with no invocation material.",
+  "type": "object",
+  "required": [
+    "tool_id",
+    "tool_name",
+    "tool_type",
+    "matched_reason",
+    "matched_target_ids",
+    "evidence",
+    "confidence",
+    "risk_level",
+    "execution_level",
+    "requires_user_confirmation",
+    "plan_only",
+    "blocked_if_untrusted",
+    "trusted",
+    "blocked",
+    "notes_for_ai",
+    "execution_authorized"
+  ],
+  "properties": {
+    "tool_id": {"type": "string", "minLength": 1},
+    "tool_name": {"type": "string", "minLength": 1},
+    "tool_type": {
+      "enum": [
+        "official_uninstaller",
+        "winget",
+        "vendor_cleanup_tool",
+        "trusted_third_party_uninstaller"
+      ]
+    },
+    "matched_reason": {"type": "string", "minLength": 1},
+    "matched_target_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source", "fact"],
+        "properties": {
+          "source": {"type": "string", "minLength": 1},
+          "fact": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "risk_level": {"enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]},
+    "execution_level": {"const": "LEVEL_0_READ_ONLY"},
+    "requires_user_confirmation": {"const": true},
+    "plan_only": {"const": true},
+    "blocked_if_untrusted": {"const": true},
+    "trusted": {"type": "boolean"},
+    "blocked": {"type": "boolean"},
+    "notes_for_ai": {"type": "string", "minLength": 1},
+    "execution_authorized": {"const": false}
+  },
+  "additionalProperties": false
+}

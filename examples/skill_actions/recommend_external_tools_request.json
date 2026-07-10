@@ -1,0 +1,74 @@
+{
+  "schema_version": "0.1",
+  "request_id": "request:pr13-tool-recommendation",
+  "action": "recommend_external_tools",
+  "payload": {
+    "cleanup_plan": {
+      "plan_id": "cleanup-plan:pr13-example",
+      "source_scan_id": "scan:pr13-example",
+      "mode": "plan_only",
+      "execution_level": "LEVEL_0_READ_ONLY",
+      "requires_user_confirmation": true,
+      "execution_authorized": false,
+      "steps": [
+        {
+          "step_id": "review-0001",
+          "target_id": "SOFTWARE:example-notes",
+          "classification": "SAFE_REMOVE",
+          "review_action": "REVIEW_REMOVAL_CANDIDATE",
+          "proposed_execution_level": "LEVEL_3_STANDARD_UNINSTALL",
+          "requires_user_confirmation": true,
+          "blocked": false,
+          "evidence": [
+            {
+              "source": "synthetic_policy_decision",
+              "fact": "synthetic removal candidate for documentation"
+            }
+          ],
+          "execution_authorized": false
+        }
+      ]
+    },
+    "catalog": {
+      "records": [
+        {
+          "tool_id": "example-official-uninstaller",
+          "name": "Example Official Uninstaller",
+          "tool_type": "official_uninstaller",
+          "official_website": "https://tools.example.invalid/official",
+          "license": "Example License",
+          "supported_actions": ["standard_uninstall"],
+          "risk_level": "HIGH",
+          "required_user_confirmation": true
+        },
+        {
+          "tool_id": "example-package-manager",
+          "name": "Example Package Manager Adapter",
+          "tool_type": "winget",
+          "official_website": "https://tools.example.invalid/package-manager",
+          "license": "Example License",
+          "supported_actions": ["package_uninstall"],
+          "risk_level": "HIGH",
+          "required_user_confirmation": true
+        }
+      ]
+    },
+    "allowlisted_tool_ids": [
+      "example-official-uninstaller",
+      "example-package-manager"
+    ],
+    "governance_decisions": [],
+    "evidence": [
+      {
+        "source": "documentation_example",
+        "fact": "all names and metadata are synthetic"
+      }
+    ],
+    "installed_apps": [
+      {
+        "target_id": "SOFTWARE:example-notes",
+        "package_id": "Example.Notes"
+      }
+    ]
+  }
+}

@@ -81,3 +81,5 @@ print(plan.to_dict())
 - 不删除文件、不卸载软件、不修改注册表或 Windows 系统状态。
 
 Schemas: [`external_tool.schema.json`](../schemas/external_tool.schema.json) and [`external_tool_invocation_plan.schema.json`](../schemas/external_tool_invocation_plan.schema.json).
+
+PR13 在此基础上增加证据匹配与推荐，但仍只输出 Level 0、需要用户确认的结构化建议。详见 [External Tool Recommender](external-tool-recommender.md)。

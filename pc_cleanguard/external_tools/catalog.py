@@ -74,6 +74,35 @@ class ExternalToolRecord:
             "required_user_confirmation": self.required_user_confirmation,
         }
 
+    @classmethod
+    def from_dict(cls, data: dict) -> "ExternalToolRecord":
+        if not isinstance(data, dict):
+            raise TypeError("external tool record must be a dict")
+        fields = {
+            "tool_id",
+            "name",
+            "tool_type",
+            "official_website",
+            "license",
+            "supported_actions",
+            "risk_level",
+            "required_user_confirmation",
+        }
+        if set(data) != fields:
+            raise ValueError("external tool record fields do not match the schema")
+        if not isinstance(data["supported_actions"], list):
+            raise TypeError("supported_actions must be a list")
+        return cls(
+            tool_id=data["tool_id"],
+            name=data["name"],
+            tool_type=ExternalToolType(data["tool_type"]),
+            official_website=data["official_website"],
+            license=data["license"],
+            supported_actions=tuple(data["supported_actions"]),
+            risk_level=RiskLevel(data["risk_level"]),
+            required_user_confirmation=data["required_user_confirmation"],
+        )
+
 
 @dataclass(frozen=True, slots=True)
 class ExternalToolCatalog:
@@ -103,3 +132,12 @@ class ExternalToolCatalog:
 
     def to_dict(self) -> dict:
         return {"records": [record.to_dict() for record in self.records]}
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "ExternalToolCatalog":
+        if not isinstance(data, dict) or set(data) != {"records"}:
+            raise ValueError("catalog must contain only a records field")
+        records = data["records"]
+        if not isinstance(records, list):
+            raise TypeError("catalog records must be a list")
+        return cls(tuple(ExternalToolRecord.from_dict(item) for item in records))

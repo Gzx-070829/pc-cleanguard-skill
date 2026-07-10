@@ -1,0 +1,98 @@
+{
+  "schema_version": "0.1",
+  "request_id": "request:pr13-tool-recommendation",
+  "action": "recommend_external_tools",
+  "status": "planned",
+  "requires_user_confirmation": true,
+  "execution_level": "LEVEL_0_READ_ONLY",
+  "evidence": [
+    {
+      "source": "external_tool_recommender",
+      "fact": "produced 2 Level 0 recommendation(s); 0 blocked by trust policy"
+    }
+  ],
+  "execution_authorized": false,
+  "result": {
+    "mode": "plan_only",
+    "recommendations": [
+      {
+        "tool_id": "example-official-uninstaller",
+        "tool_name": "Example Official Uninstaller",
+        "tool_type": "official_uninstaller",
+        "matched_reason": "official uninstaller is the preferred review path for a software candidate",
+        "matched_target_ids": ["SOFTWARE:example-notes"],
+        "evidence": [
+          {
+            "source": "cleanup_plan",
+            "fact": "matched 1 unblocked removal candidate(s)"
+          },
+          {
+            "source": "synthetic_policy_decision",
+            "fact": "synthetic removal candidate for documentation"
+          },
+          {
+            "source": "tool_trust_policy",
+            "fact": "exact tool ID and type are allowlisted"
+          },
+          {
+            "source": "documentation_example",
+            "fact": "all names and metadata are synthetic"
+          }
+        ],
+        "confidence": 0.9,
+        "risk_level": "HIGH",
+        "execution_level": "LEVEL_0_READ_ONLY",
+        "requires_user_confirmation": true,
+        "plan_only": true,
+        "blocked_if_untrusted": true,
+        "trusted": true,
+        "blocked": false,
+        "notes_for_ai": "Show the official uninstaller as a review option; do not launch it.",
+        "execution_authorized": false
+      },
+      {
+        "tool_id": "example-package-manager",
+        "tool_name": "Example Package Manager Adapter",
+        "tool_type": "winget",
+        "matched_reason": "package metadata includes a package ID suitable for a winget review",
+        "matched_target_ids": ["SOFTWARE:example-notes"],
+        "evidence": [
+          {
+            "source": "cleanup_plan",
+            "fact": "matched 1 unblocked removal candidate(s)"
+          },
+          {
+            "source": "synthetic_policy_decision",
+            "fact": "synthetic removal candidate for documentation"
+          },
+          {
+            "source": "installed_app_metadata",
+            "fact": "package ID is present"
+          },
+          {
+            "source": "tool_trust_policy",
+            "fact": "exact tool ID and type are allowlisted"
+          },
+          {
+            "source": "documentation_example",
+            "fact": "all names and metadata are synthetic"
+          }
+        ],
+        "confidence": 0.85,
+        "risk_level": "HIGH",
+        "execution_level": "LEVEL_0_READ_ONLY",
+        "requires_user_confirmation": true,
+        "plan_only": true,
+        "blocked_if_untrusted": true,
+        "trusted": true,
+        "blocked": false,
+        "notes_for_ai": "Show the package-manager option only; do not generate or run a command.",
+        "execution_authorized": false
+      }
+    ],
+    "recommendation_count": 2,
+    "trusted_count": 2,
+    "blocked_count": 0,
+    "execution_authorized": false
+  }
+}
