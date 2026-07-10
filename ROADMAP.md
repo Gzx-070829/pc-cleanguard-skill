@@ -21,7 +21,8 @@ This roadmap keeps stage descriptions in Chinese while retaining English compone
 - **v0.2**：受控 cleanup planning + external tool adapter foundations。
   - **v0.2 PR12**：显式 external tool catalog、allowlist trust policy、无命令 invocation plan。
   - **v0.2 PR13**：证据驱动 external tool recommender、cleanup plan 集成、Skill action 和只读 CLI。
-  - **当前 PR — v0.2 PR14**：显式路径 junk candidate scanner、保护目录阻断、cleanup preview 和 dry-run CLI。
+  - **v0.2 PR14**：显式路径 junk candidate scanner、保护目录阻断、cleanup preview 和 dry-run CLI。
+  - **当前 PR — v0.2 PR15**：默认 dry-run、显式确认、allow-root 和强制审计约束下的 L1 temp/cache/log 文件清理。
   - 后续优先快速推进只读、计划、预览和推荐闭环，并从 Level 1 低风险能力开始建设受控执行，不无限推迟真实价值验证。
 - **v0.3**：只开放低风险清理的受控执行。
 - **v0.4**：Reputation Engine + 更新管理器。

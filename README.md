@@ -6,7 +6,7 @@ Open-source, auditable, privacy-first AI System Governance Skill.
 
 **v0.1.0 Public Preview**
 
-v0.1.0 已发布。当前开发已进入 v0.2 PR14：从显式路径生成垃圾候选清理预览，仍不删除任何文件。
+v0.1.0 已发布。当前开发已进入 v0.2 PR15：在显式确认、allow-root 和审计门禁下清理 L1 临时/缓存/日志文件。
 
 从 v0.2 起项目采用 [Sprint PR 加速研发原则](docs/development-principles.md)，以用户可见价值为导向，同时保持安全底线不变。
 
@@ -93,6 +93,14 @@ python -m pc_cleanguard.cli clean preview --path C:\Explicit\Temp --output outpu
 
 可以重复传入 `--path`。CLI 只读取路径、大小、修改时间和扩展名，并默认阻断个人目录、代码仓库和系统目录；输出是 dry-run JSON，不删除文件。
 
+### 6. L1 受控清理 / Controlled L1 cleanup
+
+```powershell
+python -m pc_cleanguard.cli clean execute --preview output\cleanup-preview.json --allow-root C:\Explicit\Temp --result output\cleanup-result.json --audit output\cleanup-audit.jsonl
+```
+
+默认只输出 `would_clean`。只有额外传入 `--confirm`，并且 preview、L1 category、当前路径、protected dirs 和 allow-root 全部复核通过时，才会删除 temp/cache/log 普通文件；每项结果都会写入 audit JSONL。
+
 ## 项目定位
 
 PC CleanGuard 在 AI 建议与系统操作之间建立可审计的安全门。它先回答“能否做、为何做、需要谁确认”，而不是直接动手。
@@ -128,6 +136,8 @@ PR12 开始 v0.2 的外部工具适配层基础：显式 catalog、allowlist tru
 PR13 增加证据驱动的外部工具 matcher/recommender、`recommend_external_tools` Skill action 和 `tools recommend` CLI。每条建议都要求用户确认，未受信工具会被阻断。
 
 PR14 增加显式路径垃圾候选扫描、保护目录阻断、资源上限、清理预览汇总和 `clean preview` CLI。所有候选都要求用户确认且仅为 dry-run。
+
+PR15 增加第一条 L1 受控执行路径：默认 dry-run，显式确认后仅清理 allow-root 内重新验证通过的 temp/cache/log 文件，并强制写 result JSON 与 audit JSONL。
 
 ## 安全原则
 
@@ -180,9 +190,9 @@ v0.1.0 is offline-only: no live model API, networking, uploads, or environment c
 
 ## 开发状态
 
-当前里程碑：**v0.2 PR14 — Junk Candidate Scan and Cleanup Preview**。PR14 只生成 Level 0 dry-run 预览。
+当前里程碑：**v0.2 PR15 — L1 Controlled Cleaner**。真实删除仅限显式确认且全部门禁通过的低风险文件。
 
-Current milestone: **v0.2 PR14 — Junk Candidate Scan and Cleanup Preview**. It reads metadata and performs no cleanup.
+Current milestone: **v0.2 PR15 — L1 Controlled Cleaner**. Dry-run is the default; confirmed execution is narrowly bounded and audited.
 
 详细用法见 [只读扫描流水线](docs/readonly-scan-pipeline.md)。
 
@@ -199,6 +209,8 @@ Public Preview 说明见 [v0.1.0 Public Preview](docs/public-preview.md)；发�
 外部工具推荐器见 [External Tool Recommender](docs/external-tool-recommender.md)。
 
 垃圾候选与清理预览见 [Junk Cleanup Preview](docs/junk-cleanup-preview.md)。
+
+L1 受控清理见 [L1 Controlled Cleaner](docs/l1-controlled-cleaner.md)。
 
 **JSONL 管审计，SQLite 管历史。PR3 只记录 dry-run，不代表执行。**
 

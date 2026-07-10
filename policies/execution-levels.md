@@ -2,8 +2,8 @@
 
 - **Level 0 — 只读扫描**：读取最小元数据并生成报告。PR1 唯一实现等级。
   **Read-only scan:** read minimal metadata and produce a report. This is the only level implemented by PR1.
-- **Level 1 — 低风险清理**：未来可处理严格白名单、可再生成数据；仍需策略与审计。
-  **Low-risk cleanup:** reserved for future strictly allowlisted, reproducible data; policy and audit remain mandatory.
+- **Level 1 — 低风险清理**：PR15 仅开放 cleanup preview 中的 temp/cache/log 普通文件；必须显式确认、位于 allow-root、通过保护路径与当前元数据复核，并逐项审计。其他对象不属于 Level 1 执行范围。
+  **Low-risk cleanup:** PR15 permits only previewed temp/cache/log regular files after explicit confirmation, allow-root containment, protected-path and current-metadata checks, with per-item audit records.
 - **Level 2 — 可逆操作**：未来启动项关闭或隔离；必须确认、回滚和审计。
   **Reversible operation:** reserved for future startup changes or quarantine; confirmation, rollback, and audit are mandatory.
 - **Level 3 — 标准卸载**：未来仅使用已验证标准卸载器；必须确认和审计。
