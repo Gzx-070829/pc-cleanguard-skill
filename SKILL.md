@@ -183,6 +183,10 @@ PR16 `demo init-cleanup` 只能在调用方显式指定的安全本地 root 下�
 
 `clean report` only combines explicit preview/result JSON into a summary and Markdown file. Reporting is not execution authorization, does not scan paths, and must preserve existing output by default.
 
+PR17 `demo quickstart` is a convenience wrapper for a new synthetic demo root plus PR16 dry-run reporting. It must not accept or infer confirmation, and it must always call the demo runner with `confirm=false`. Quickstart output is evidence for review, never execution authorization.
+
+PR17 `demo quickstart` 只能创建新的合成 demo root 并运行默认 dry-run；不得接受、推断或转发确认。它生成的 preview、audit 和 report 仅供审阅，不能授权真实清理。
+
 ## Action usage / Action 调用方法
 
 When an external AI asks to call PC CleanGuard, use `invoke_skill_action` with one JSON-compatible request. Select exactly one action:

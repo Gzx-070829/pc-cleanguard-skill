@@ -29,6 +29,8 @@ The write examples use explicit paths under `output/` and preserve existing file
 
 PR13 的 `recommend_external_tools_request.json` 展示 cleanup plan、显式 catalog、allowlist 与 installed-app metadata 的组合输入。对应 response 只包含 plan-only recommendations。
 
+`v0.2_cleanup_agent_flow.json` 展示 cleanup preview、dry-run execute、Markdown report、离线 explain 与 Skill action 的推荐编排顺序。它是说明性 workflow，不是执行请求，也不授权删除。
+
 ## 响应约束 / Response contract
 
 每个成功响应都包含 `requires_user_confirmation`、`execution_level`、`evidence`、`execution_authorized` 和 `result`。Public Preview 中 `execution_level` 始终为 `LEVEL_0_READ_ONLY`，`execution_authorized` 始终为 `false`。

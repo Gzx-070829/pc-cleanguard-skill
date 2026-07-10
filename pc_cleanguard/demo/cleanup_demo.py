@@ -247,3 +247,19 @@ def run_cleanup_demo(
         ),
         "summary": summary,
     }
+
+
+def quickstart_cleanup_demo(root: str | Path, output: str | Path) -> dict:
+    """Initialize a new demo root and run the complete loop in dry-run mode."""
+
+    demo_root = _explicit_demo_root(root)
+    if demo_root.exists():
+        raise FileExistsError(f"demo root already exists: {demo_root}")
+    output_root = _explicit_output_root(output, demo_root)
+    initialized = init_cleanup_demo(demo_root)
+    result = run_cleanup_demo(demo_root, output_root, confirm=False)
+    return {
+        **result,
+        "quickstart": True,
+        "initialized": initialized["safe_demo_only"],
+    }
