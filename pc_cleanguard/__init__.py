@@ -81,7 +81,13 @@ from .external_tools import (
 )
 from .cleanup import (
     BlockedCandidate,
+    CleanupConfirmation,
+    CleanupExecutionAuditEvent,
+    CleanupExecutionItem,
+    CleanupExecutionReport,
+    CleanupExecutor,
     CleanupPreview,
+    ConfirmationDecision,
     JunkCandidate,
     JunkCategory,
     JunkRule,
@@ -90,7 +96,11 @@ from .cleanup import (
     ScanLimits,
     build_cleanup_preview,
     default_junk_rules,
+    load_cleanup_preview_json,
     match_junk_rule,
+    preflight_cleanup_artifacts,
+    validate_cleanup_preview,
+    write_cleanup_execution_report,
 )
 
 __all__ = [
@@ -164,7 +174,13 @@ __all__ = [
     "ToolRecommender",
     "build_external_tool_invocation_plan",
     "BlockedCandidate",
+    "CleanupConfirmation",
+    "CleanupExecutionAuditEvent",
+    "CleanupExecutionItem",
+    "CleanupExecutionReport",
+    "CleanupExecutor",
     "CleanupPreview",
+    "ConfirmationDecision",
     "JunkCandidate",
     "JunkCategory",
     "JunkRule",
@@ -173,7 +189,11 @@ __all__ = [
     "ScanLimits",
     "build_cleanup_preview",
     "default_junk_rules",
+    "load_cleanup_preview_json",
     "match_junk_rule",
+    "preflight_cleanup_artifacts",
+    "validate_cleanup_preview",
+    "write_cleanup_execution_report",
 ]
 
 __version__ = "0.1.0"

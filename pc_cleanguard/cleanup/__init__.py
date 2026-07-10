@@ -15,6 +15,24 @@ from .junk_scanner import (
     ScanLimits,
 )
 from .preview import CleanupPreview, build_cleanup_preview
+from .confirmation import (
+    L1_ALLOWED_CATEGORIES,
+    CleanupConfirmation,
+    ConfirmationDecision,
+)
+from .execution_result import (
+    L1_EXECUTION_LEVEL,
+    CleanupExecutionAuditEvent,
+    CleanupExecutionItem,
+    CleanupExecutionReport,
+)
+from .executor import (
+    CleanupExecutor,
+    load_cleanup_preview_json,
+    preflight_cleanup_artifacts,
+    validate_cleanup_preview,
+    write_cleanup_execution_report,
+)
 
 __all__ = [
     "JUNK_CATEGORIES",
@@ -27,6 +45,18 @@ __all__ = [
     "BlockedCandidate",
     "CleanupPreview",
     "build_cleanup_preview",
+    "L1_ALLOWED_CATEGORIES",
+    "CleanupConfirmation",
+    "ConfirmationDecision",
+    "L1_EXECUTION_LEVEL",
+    "CleanupExecutionAuditEvent",
+    "CleanupExecutionItem",
+    "CleanupExecutionReport",
+    "CleanupExecutor",
+    "load_cleanup_preview_json",
+    "preflight_cleanup_artifacts",
+    "validate_cleanup_preview",
+    "write_cleanup_execution_report",
     "default_junk_rules",
     "match_junk_rule",
 ]

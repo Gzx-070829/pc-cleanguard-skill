@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/cleanup_execution_result.schema.json",
+  "title": "PC CleanGuard L1 Cleanup Execution Result",
+  "description": "A result and audit envelope for dry-run or explicitly confirmed L1 file cleanup.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "mode",
+    "confirmed",
+    "execution_level",
+    "allow_roots",
+    "audit_path",
+    "summary",
+    "results"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.2"},
+    "mode": {"enum": ["dry_run", "confirmed_l1"]},
+    "confirmed": {"type": "boolean"},
+    "execution_level": {"const": "LEVEL_1_LOW_RISK_CLEANUP"},
+    "allow_roots": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "audit_path": {"type": "string", "minLength": 1},
+    "summary": {"$ref": "#/$defs/summary"},
+    "results": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/execution_item"}
+    }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source", "fact"],
+        "properties": {
+          "source": {"type": "string", "minLength": 1},
+          "fact": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "total_results",
+        "would_clean",
+        "cleaned",
+        "blocked",
+        "skipped",
+        "failed",
+        "bytes_reclaimed",
+        "execution_performed"
+      ],
+      "properties": {
+        "total_results": {"type": "integer", "minimum": 0},
+        "would_clean": {"type": "integer", "minimum": 0},
+        "cleaned": {"type": "integer", "minimum": 0},
+        "blocked": {"type": "integer", "minimum": 0},
+        "skipped": {"type": "integer", "minimum": 0},
+        "failed": {"type": "integer", "minimum": 0},
+        "bytes_reclaimed": {"type": "integer", "minimum": 0},
+        "execution_performed": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "execution_item": {
+      "type": "object",
+      "required": [
+        "path",
+        "category",
+        "action",
+        "status",
+        "reason",
+        "bytes_reclaimed",
+        "evidence",
+        "audit_event"
+      ],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "category": {
+          "enum": [
+            "temp_file",
+            "cache_file",
+            "log_file",
+            "crash_dump",
+            "installer_leftover",
+            "empty_directory_candidate"
+          ]
+        },
+        "action": {"enum": ["delete_file", "skip"]},
+        "status": {
+          "enum": ["would_clean", "cleaned", "blocked", "skipped", "failed"]
+        },
+        "reason": {"type": "string", "minLength": 1},
+        "bytes_reclaimed": {"type": "integer", "minimum": 0},
+        "evidence": {"$ref": "#/$defs/evidence"},
+        "audit_event": {"$ref": "#/$defs/audit_event"}
+      },
+      "additionalProperties": false
+    },
+    "audit_event": {
+      "type": "object",
+      "required": [
+        "event_id",
+        "timestamp",
+        "actor",
+        "path",
+        "category",
+        "action",
+        "status",
+        "reason",
+        "bytes_reclaimed",
+        "evidence",
+        "confirmed",
+        "dry_run",
+        "execution_method",
+        "execution_level"
+      ],
+      "properties": {
+        "event_id": {"type": "string", "minLength": 1},
+        "timestamp": {"type": "string", "format": "date-time"},
+        "actor": {"const": "pc-cleanguard-skill"},
+        "path": {"type": "string", "minLength": 1},
+        "category": {
+          "enum": [
+            "temp_file",
+            "cache_file",
+            "log_file",
+            "crash_dump",
+            "installer_leftover",
+            "empty_directory_candidate"
+          ]
+        },
+        "action": {"enum": ["delete_file", "skip"]},
+        "status": {
+          "enum": ["would_clean", "cleaned", "blocked", "skipped", "failed"]
+        },
+        "reason": {"type": "string", "minLength": 1},
+        "bytes_reclaimed": {"type": "integer", "minimum": 0},
+        "evidence": {"$ref": "#/$defs/evidence"},
+        "confirmed": {"type": "boolean"},
+        "dry_run": {"type": "boolean"},
+        "execution_method": {"enum": ["none", "pathlib_unlink"]},
+        "execution_level": {"const": "LEVEL_1_LOW_RISK_CLEANUP"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

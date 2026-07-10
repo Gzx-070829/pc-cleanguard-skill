@@ -1,4 +1,4 @@
-"""Minimal command-line entry point for offline read-only governance."""
+"""Command-line entry point for offline governance and controlled L1 cleanup."""
 
 from __future__ import annotations
 
@@ -15,7 +15,15 @@ from .ai import (
     load_report_json_file,
     write_explanation_markdown,
 )
-from .cleanup import JunkScanner, build_cleanup_preview
+from .cleanup import (
+    CleanupConfirmation,
+    CleanupExecutor,
+    JunkScanner,
+    build_cleanup_preview,
+    load_cleanup_preview_json,
+    preflight_cleanup_artifacts,
+    write_cleanup_execution_report,
+)
 from .pipeline import (
     load_scan_json_file,
     run_readonly_scan_pipeline,
@@ -28,7 +36,7 @@ from .skill import invoke_skill_action, write_report
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="python -m pc_cleanguard.cli",
-        description="PC CleanGuard offline, read-only governance CLI",
+        description="PC CleanGuard offline governance CLI with controlled L1 cleanup",
     )
     subcommands = parser.add_subparsers(dest="command", required=True)
     scan = subcommands.add_parser(
@@ -124,6 +132,46 @@ def _parser() -> argparse.ArgumentParser:
         action="store_true",
         help="explicitly replace an existing preview file",
     )
+    execute = clean_commands.add_parser(
+        "execute",
+        help="dry-run or explicitly confirm bounded L1 file cleanup",
+    )
+    execute.add_argument(
+        "--preview",
+        required=True,
+        type=Path,
+        help="explicit PR14 cleanup preview .json",
+    )
+    execute.add_argument(
+        "--allow-root",
+        dest="allow_roots",
+        required=True,
+        action="append",
+        type=Path,
+        help="explicit cleanup root; may be supplied multiple times",
+    )
+    execute.add_argument(
+        "--result",
+        required=True,
+        type=Path,
+        help="output cleanup execution result .json",
+    )
+    execute.add_argument(
+        "--audit",
+        required=True,
+        type=Path,
+        help="output cleanup execution audit .jsonl",
+    )
+    execute.add_argument(
+        "--confirm",
+        action="store_true",
+        help="explicitly permit L1 file cleanup after all gates pass",
+    )
+    execute.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="explicitly replace existing result and audit artifacts",
+    )
     return parser
 
 
@@ -212,6 +260,38 @@ def _run_cleanup_preview(arguments: argparse.Namespace) -> dict:
     }
 
 
+def _run_cleanup_execute(arguments: argparse.Namespace) -> dict:
+    preview = load_cleanup_preview_json(arguments.preview)
+    confirmation = CleanupConfirmation(
+        arguments.confirm,
+        tuple(arguments.allow_roots),
+    )
+    result_path, audit_path = preflight_cleanup_artifacts(
+        arguments.result,
+        arguments.audit,
+        explicit_overwrite=arguments.overwrite,
+    )
+    report = CleanupExecutor().execute(
+        preview,
+        confirmation,
+        audit_path=audit_path,
+        explicit_overwrite=arguments.overwrite,
+    )
+    write_cleanup_execution_report(
+        result_path,
+        report,
+        explicit_overwrite=arguments.overwrite,
+    )
+    return {
+        "preview": str(arguments.preview),
+        "result": str(result_path),
+        "audit": str(audit_path),
+        "confirmed": report.confirmed,
+        "mode": report.mode,
+        **report.summary,
+    }
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the CLI and return a process exit code."""
 
@@ -226,6 +306,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             summary = _run_tools_recommend(arguments)
         elif arguments.command == "clean" and arguments.clean_command == "preview":
             summary = _run_cleanup_preview(arguments)
+        elif arguments.command == "clean" and arguments.clean_command == "execute":
+            summary = _run_cleanup_execute(arguments)
         else:  # pragma: no cover - argparse enforces the available commands.
             parser.error(f"unsupported command: {arguments.command}")
     except (FileExistsError, FileNotFoundError, OSError, TypeError, ValueError) as error:
