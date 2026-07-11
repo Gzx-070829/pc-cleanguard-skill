@@ -42,6 +42,9 @@ class SkillActionsTest(unittest.TestCase):
                 "write_report",
                 "write_audit",
                 "recommend_external_tools",
+                "quarantine_file",
+                "list_quarantine_items",
+                "restore_quarantine_item",
             },
             set(ACTION_NAMES),
         )

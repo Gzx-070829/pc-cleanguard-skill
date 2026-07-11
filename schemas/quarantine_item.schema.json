@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/quarantine_item.schema.json",
+  "title": "PC CleanGuard Quarantine Item",
+  "type": "object",
+  "required": ["item_id", "original_path", "quarantine_path", "sha256", "size_bytes", "original_mtime", "reason", "evidence", "created_at", "restored_at", "status"],
+  "properties": {
+    "item_id": {"type": "string", "minLength": 1},
+    "original_path": {"type": "string", "minLength": 1},
+    "quarantine_path": {"type": "string", "minLength": 1},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "size_bytes": {"type": "integer", "minimum": 0},
+    "original_mtime": {"type": "number"},
+    "reason": {"type": "string", "minLength": 1},
+    "evidence": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["source", "fact"], "properties": {"source": {"type": "string", "minLength": 1}, "fact": {"type": "string", "minLength": 1}}, "additionalProperties": false}},
+    "created_at": {"type": "string", "format": "date-time"},
+    "restored_at": {"type": ["string", "null"], "format": "date-time"},
+    "status": {"enum": ["active", "restored"]}
+  },
+  "additionalProperties": false
+}

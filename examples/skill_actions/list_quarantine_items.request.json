@@ -1,0 +1,6 @@
+{
+  "schema_version": "0.1",
+  "request_id": "synthetic-pr19-list",
+  "action": "list_quarantine_items",
+  "payload": {"root": "C:\\SyntheticScratch\\quarantine"}
+}

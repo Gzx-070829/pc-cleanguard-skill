@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/quarantine_restore_result.schema.json",
+  "title": "PC CleanGuard Quarantine Restore Result",
+  "type": "object",
+  "required": ["item_id", "status", "restored_path", "restored_at", "overwrite_performed", "evidence"],
+  "properties": {
+    "item_id": {"type": "string", "minLength": 1},
+    "status": {"const": "restored"},
+    "restored_path": {"type": "string", "minLength": 1},
+    "restored_at": {"type": "string", "format": "date-time"},
+    "overwrite_performed": {"const": false},
+    "evidence": {"type": "array", "minItems": 1, "items": {"type": "object"}}
+  },
+  "additionalProperties": false
+}

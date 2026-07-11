@@ -11,9 +11,9 @@ from .junk_rules import JunkCategory
 
 
 L1_EXECUTION_LEVEL = "LEVEL_1_LOW_RISK_CLEANUP"
-_STATUSES = {"would_clean", "cleaned", "blocked", "skipped", "failed"}
-_ACTIONS = {"delete_file", "skip"}
-_METHODS = {"none", "pathlib_unlink"}
+_STATUSES = {"would_clean", "cleaned", "quarantined", "blocked", "skipped", "failed"}
+_ACTIONS = {"delete_file", "quarantine_file", "skip"}
+_METHODS = {"none", "pathlib_unlink", "pathlib_replace"}
 
 
 def _utc_now() -> str:
@@ -88,6 +88,11 @@ class CleanupExecutionAuditEvent:
                 raise ValueError("cleaned status requires confirmed real execution")
             if self.execution_method != "pathlib_unlink":
                 raise ValueError("cleaned status requires the bounded file method")
+        if self.status == "quarantined":
+            if not self.confirmed or self.dry_run:
+                raise ValueError("quarantined status requires confirmed execution")
+            if self.action != "quarantine_file" or self.execution_method != "pathlib_replace":
+                raise ValueError("quarantined status requires the quarantine method")
         if self.status != "cleaned" and self.bytes_reclaimed != 0:
             raise ValueError("only cleaned results may report reclaimed bytes")
         object.__setattr__(self, "evidence", _validated_evidence(self.evidence))
@@ -161,10 +166,10 @@ class CleanupExecutionReport:
     schema_version: str = "0.2"
 
     def __post_init__(self) -> None:
-        if self.mode not in {"dry_run", "confirmed_l1"}:
+        if self.mode not in {"dry_run", "confirmed_l1", "confirmed_l1_quarantine"}:
             raise ValueError("unsupported cleanup execution mode")
-        if self.mode == "confirmed_l1" and not self.confirmed:
-            raise ValueError("confirmed_l1 mode requires explicit confirmation")
+        if self.mode != "dry_run" and not self.confirmed:
+            raise ValueError("confirmed cleanup mode requires explicit confirmation")
         if self.execution_level != L1_EXECUTION_LEVEL:
             raise ValueError("cleanup reports are restricted to L1")
         if not self.allow_roots or any(not item for item in self.allow_roots):

@@ -22,6 +22,8 @@ PC CleanGuard 以用户可见闭环为 Sprint PR 单位快速推进，同时保�
 
 v0.3 Reputation KB 只能解释、排序与风险提示，不能自动触发删除、卸载或禁用。
 
+PR19 将原计划的可逆隔离基础提前接入 v0.3：普通文件 quarantine、manifest、restore、CLI、Skill actions 与 L1 cleanup integration。仍不提供 purge 或目录隔离。
+
 ## v0.4 — Quarantine + Restore
 
 建设可逆隔离区、restore contract、操作历史和失败恢复。所有隔离动作仍需 Policy Engine、用户确认、目标身份复核与审计。

@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://pc-cleanguard.example/schemas/skill_action_request.schema.json",
-  "title": "PC CleanGuard Skill Action Request through PR13",
-  "description": "A JSON request for an offline, non-executing PC CleanGuard action.",
+  "title": "PC CleanGuard Skill Action Request through PR19",
+  "description": "A JSON request for analysis or explicitly confirmed reversible quarantine actions.",
   "type": "object",
   "required": ["action", "payload"],
   "properties": {
@@ -15,7 +15,10 @@
         "build_cleanup_plan",
         "write_report",
         "write_audit",
-        "recommend_external_tools"
+        "recommend_external_tools",
+        "quarantine_file",
+        "list_quarantine_items",
+        "restore_quarantine_item"
       ]
     },
     "payload": {"type": "object"}
@@ -161,6 +164,41 @@
           }
         }
       }
+    },
+    {
+      "if": {"properties": {"action": {"const": "quarantine_file"}}},
+      "then": {"properties": {"payload": {
+        "type": "object",
+        "required": ["root", "path", "reason", "confirmed"],
+        "properties": {
+          "root": {"type": "string", "minLength": 1},
+          "path": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "minLength": 1},
+          "confirmed": {"const": true},
+          "evidence": {"type": "array", "items": {"type": "object"}}
+        },
+        "additionalProperties": false
+      }}}
+    },
+    {
+      "if": {"properties": {"action": {"const": "list_quarantine_items"}}},
+      "then": {"properties": {"payload": {
+        "type": "object", "required": ["root"],
+        "properties": {"root": {"type": "string", "minLength": 1}},
+        "additionalProperties": false
+      }}}
+    },
+    {
+      "if": {"properties": {"action": {"const": "restore_quarantine_item"}}},
+      "then": {"properties": {"payload": {
+        "type": "object", "required": ["root", "item_id", "confirmed"],
+        "properties": {
+          "root": {"type": "string", "minLength": 1},
+          "item_id": {"type": "string", "minLength": 1},
+          "confirmed": {"const": true}
+        },
+        "additionalProperties": false
+      }}}
     }
   ],
   "additionalProperties": false

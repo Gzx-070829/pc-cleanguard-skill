@@ -12,6 +12,7 @@ from ..pipeline.input_loader import (
     load_scan_json_file,
 )
 from ..protection import classify_developer_path
+from ..quarantine import QuarantineManager
 from .confirmation import L1_ALLOWED_CATEGORIES, CleanupConfirmation
 from .execution_result import (
     CleanupExecutionAuditEvent,
@@ -144,7 +145,11 @@ def write_cleanup_execution_report(
 class CleanupExecutor:
     """Execute only confirmed L1 file candidates and audit every decision."""
 
-    def __init__(self, user_code_roots: Iterable[str | Path] = ()) -> None:
+    def __init__(
+        self,
+        user_code_roots: Iterable[str | Path] = (),
+        quarantine_root: str | Path | None = None,
+    ) -> None:
         if isinstance(user_code_roots, (str, Path)):
             raise TypeError("user_code_roots must contain explicit roots")
         supplied = tuple(user_code_roots)
@@ -156,6 +161,12 @@ class CleanupExecutor:
         self._user_code_roots = tuple(
             Path(root).resolve(strict=False) for root in supplied
         )
+        if quarantine_root is not None and (
+            not isinstance(quarantine_root, (str, Path)) or not str(quarantine_root).strip()
+        ):
+            raise ValueError("quarantine_root must be an explicit local path")
+        self._quarantine_root = quarantine_root
+        self._quarantine_manager: QuarantineManager | None = None
 
     def execute(
         self,
@@ -196,7 +207,11 @@ class CleanupExecutor:
             results=tuple(results),
             audit_path=str(destination),
             summary=summary,
-            mode="confirmed_l1" if confirmation.confirmed else "dry_run",
+            mode=(
+                "confirmed_l1_quarantine"
+                if confirmation.confirmed and self._quarantine_root is not None
+                else "confirmed_l1" if confirmation.confirmed else "dry_run"
+            ),
         )
 
     def _process(
@@ -278,6 +293,40 @@ class CleanupExecutor:
                     {"source": "confirmation", "fact": "confirm flag is false"},
                 ),
             )
+        if self._quarantine_root is not None:
+            try:
+                if self._quarantine_manager is None:
+                    self._quarantine_manager = QuarantineManager.create_quarantine(
+                        self._quarantine_root
+                    )
+                quarantine_item = self._quarantine_manager.quarantine_file(
+                    path,
+                    reason="confirmed L1 cleanup quarantine",
+                    evidence=(*base_evidence, *decision.evidence),
+                )
+            except (OSError, TypeError, ValueError) as error:
+                return self._item(
+                    candidate,
+                    confirmation,
+                    action="quarantine_file",
+                    status="failed",
+                    reason=f"bounded L1 quarantine failed: {error}",
+                    bytes_reclaimed=0,
+                    evidence=(*base_evidence, *decision.evidence),
+                )
+            return self._item(
+                candidate,
+                confirmation,
+                action="quarantine_file",
+                status="quarantined",
+                reason=f"confirmed L1 file moved to quarantine item {quarantine_item.item_id}",
+                bytes_reclaimed=0,
+                evidence=(
+                    *base_evidence,
+                    *decision.evidence,
+                    {"source": "quarantine_manifest", "fact": f"item_id={quarantine_item.item_id}"},
+                ),
+            )
         try:
             current_size = max(0, int(path.stat(follow_symlinks=False).st_size))
             path.unlink()
@@ -323,11 +372,11 @@ class CleanupExecutor:
         bytes_reclaimed: int,
         evidence: tuple[dict, ...],
     ) -> CleanupExecutionItem:
-        method = (
-            "pathlib_unlink"
-            if confirmation.confirmed and status in {"cleaned", "failed"}
-            else "none"
-        )
+        method = "none"
+        if confirmation.confirmed and action == "delete_file" and status in {"cleaned", "failed"}:
+            method = "pathlib_unlink"
+        elif confirmation.confirmed and action == "quarantine_file" and status in {"quarantined", "failed"}:
+            method = "pathlib_replace"
         event = CleanupExecutionAuditEvent(
             path=candidate.path,
             category=candidate.category,
@@ -353,7 +402,7 @@ class CleanupExecutor:
 
     @staticmethod
     def _summary(results: list[CleanupExecutionItem]) -> dict:
-        statuses = ("would_clean", "cleaned", "blocked", "skipped", "failed")
+        statuses = ("would_clean", "cleaned", "quarantined", "blocked", "skipped", "failed")
         return {
             "total_results": len(results),
             **{
@@ -361,5 +410,5 @@ class CleanupExecutor:
                 for status in statuses
             },
             "bytes_reclaimed": sum(item.bytes_reclaimed for item in results),
-            "execution_performed": any(item.status == "cleaned" for item in results),
+            "execution_performed": any(item.status in {"cleaned", "quarantined"} for item in results),
         }

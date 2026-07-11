@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://pc-cleanguard.example/schemas/skill_action_response.schema.json",
-  "title": "PC CleanGuard Skill Action Response through PR13",
-  "description": "A Level 0 action result that never grants cleanup execution authority.",
+  "title": "PC CleanGuard Skill Action Response through PR19",
+  "description": "A Level 0 analysis or Level 2 reversible-action result that grants no future execution authority.",
   "type": "object",
   "required": [
     "schema_version",
@@ -25,12 +25,15 @@
         "build_cleanup_plan",
         "write_report",
         "write_audit",
-        "recommend_external_tools"
+        "recommend_external_tools",
+        "quarantine_file",
+        "list_quarantine_items",
+        "restore_quarantine_item"
       ]
     },
     "status": {"enum": ["completed", "planned"]},
     "requires_user_confirmation": {"type": "boolean"},
-    "execution_level": {"const": "LEVEL_0_READ_ONLY"},
+    "execution_level": {"enum": ["LEVEL_0_READ_ONLY", "LEVEL_2_REVERSIBLE"]},
     "evidence": {
       "type": "array",
       "minItems": 1,

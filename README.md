@@ -29,6 +29,8 @@ Explicit path
 
 v0.3 PR18 正在增加 Developer Guard 与 Reputation KB 数据契约：开发路径在 scanner/executor 两层默认阻断，PUP 声誉记录只能解释和排序，不能授权删除或卸载。
 
+PR19 增加可恢复 quarantine → manifest → restore 链路，并把隔离模式接入受控 L1 cleanup、CLI 与 Skill actions；不提供 purge。
+
 ## 5 分钟试用 / Try it in five minutes
 
 要求 Python 3.10+。克隆仓库并在根目录运行：
@@ -167,11 +169,12 @@ v0.2 编排示例：[examples/skill_actions/v0.2_cleanup_agent_flow.json](exampl
 - v0.3 Vision：[docs/VISION.md](docs/VISION.md)
 - Reputation KB contract：[docs/reputation-kb.md](docs/reputation-kb.md)
 - Developer Guard：[docs/developer-guard.md](docs/developer-guard.md)
+- Quarantine and Restore：[docs/quarantine-restore.md](docs/quarantine-restore.md)
 
 仓库提供 bug、软件规则反馈和 cleanup false-positive issue templates。提交示例时请使用虚构路径，勿上传文件内容、凭据、token 或真实用户数据。
 
 ## 版本状态 / Version status
 
-`v0.1.0 Public Preview` 与 `v0.2.0 Public Demo Preview` 已发布。当前 PR18 开始 v0.3：建立 Developer Guard、中文 PUP taxonomy 和 Reputation KB 的非授权数据契约。
+`v0.1.0 Public Preview` 与 `v0.2.0 Public Demo Preview` 已发布。v0.3 当前包含 Developer Guard、Reputation KB 契约，以及 PR19 可恢复 quarantine/restore 链路。
 
 PR 不创建 tag；只有获得明确发布授权后才创建正式版本 tag。
