@@ -4,13 +4,14 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Tuple
+from typing import Iterable, Tuple
 
 from ..core.models import RiskLevel
 from ..pipeline.input_loader import (
     _validated_explicit_local_path,
     load_scan_json_file,
 )
+from ..protection import classify_developer_path
 from .confirmation import L1_ALLOWED_CATEGORIES, CleanupConfirmation
 from .execution_result import (
     CleanupExecutionAuditEvent,
@@ -143,6 +144,19 @@ def write_cleanup_execution_report(
 class CleanupExecutor:
     """Execute only confirmed L1 file candidates and audit every decision."""
 
+    def __init__(self, user_code_roots: Iterable[str | Path] = ()) -> None:
+        if isinstance(user_code_roots, (str, Path)):
+            raise TypeError("user_code_roots must contain explicit roots")
+        supplied = tuple(user_code_roots)
+        if any(
+            not isinstance(root, (str, Path)) or not str(root).strip()
+            for root in supplied
+        ):
+            raise ValueError("user code roots must be non-empty local paths")
+        self._user_code_roots = tuple(
+            Path(root).resolve(strict=False) for root in supplied
+        )
+
     def execute(
         self,
         preview: dict,
@@ -206,6 +220,20 @@ class CleanupExecutor:
                         "fact": "candidate category is not temp, cache, or log",
                     },
                 ),
+            )
+        developer_decision = classify_developer_path(
+            candidate.path,
+            user_code_roots=self._user_code_roots,
+        )
+        if developer_decision.protected:
+            return self._item(
+                candidate,
+                confirmation,
+                action="delete_file",
+                status="blocked",
+                reason=developer_decision.reason,
+                bytes_reclaimed=0,
+                evidence=(*base_evidence, *developer_decision.evidence),
             )
         decision = confirmation.evaluate(candidate.path)
         if not decision.allowed:

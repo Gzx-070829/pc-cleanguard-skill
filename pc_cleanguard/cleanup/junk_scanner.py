@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Iterable, Tuple
 
 from ..core.models import RiskLevel
+from ..protection import DeveloperGuardDecision, classify_developer_path
 from .junk_rules import JunkCategory, JunkRule, default_junk_rules, match_junk_rule
 
 
@@ -198,6 +199,7 @@ class JunkScanner:
         self,
         limits: ScanLimits | None = None,
         rules: Iterable[JunkRule] | None = None,
+        user_code_roots: Iterable[str | Path] = (),
     ) -> None:
         self._limits = limits or ScanLimits()
         if not isinstance(self._limits, ScanLimits):
@@ -207,6 +209,17 @@ class JunkScanner:
             isinstance(rule, JunkRule) for rule in self._rules
         ):
             raise TypeError("rules must contain JunkRule objects")
+        if isinstance(user_code_roots, (str, Path)):
+            raise TypeError("user_code_roots must contain explicit roots")
+        supplied_roots = tuple(user_code_roots)
+        if any(
+            not isinstance(root, (str, Path)) or not str(root).strip()
+            for root in supplied_roots
+        ):
+            raise ValueError("user code roots must be non-empty local paths")
+        self._user_code_roots = tuple(
+            Path(root).resolve(strict=False) for root in supplied_roots
+        )
 
     def scan(self, paths: Iterable[str | Path]) -> JunkScanResult:
         if isinstance(paths, (str, Path)):
@@ -222,6 +235,13 @@ class JunkScanner:
                 state.warnings.append(f"skipped overlapping explicit path: {root}")
                 continue
             selected_roots.append(root)
+            developer_decision = classify_developer_path(
+                root,
+                user_code_roots=self._user_code_roots,
+            )
+            if developer_decision.protected:
+                self._block_developer(state, root, developer_decision)
+                continue
             if self._root_is_broad_or_protected(root):
                 self._block(state, root, "explicit path is protected or too broad")
                 continue
@@ -270,6 +290,13 @@ class JunkScanner:
 
     def _walk(self, directory: Path, state: _ScanState) -> None:
         if state.stopped:
+            return
+        developer_decision = classify_developer_path(
+            directory,
+            user_code_roots=self._user_code_roots,
+        )
+        if developer_decision.protected:
+            self._block_developer(state, directory, developer_decision)
             return
         try:
             entries = sorted(directory.iterdir(), key=lambda item: item.name.casefold())
@@ -371,3 +398,18 @@ class JunkScanner:
             )
         )
         state.warnings.append(f"blocked path: {path}: {reason}")
+
+    @staticmethod
+    def _block_developer(
+        state: _ScanState,
+        path: Path,
+        decision: DeveloperGuardDecision,
+    ) -> None:
+        state.blocked.append(
+            BlockedCandidate(
+                path=str(path),
+                reason=decision.reason,
+                evidence=decision.evidence,
+            )
+        )
+        state.warnings.append(f"blocked developer path: {path}: {decision.reason}")

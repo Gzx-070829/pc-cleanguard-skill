@@ -1,0 +1,37 @@
+[
+  {
+    "path": "C:\\SyntheticWorkspace\\app\\node_modules\\package\\cache.tmp",
+    "protected": true,
+    "reason": "developer-protected path matched node_dependency_tree: node_modules",
+    "evidence": [
+      {"source": "developer_guard", "fact": "matched node_modules path component"},
+      {"source": "path_metadata", "fact": "classification used path components only"}
+    ],
+    "protection_level": "PROTECTION_LEVEL_BLOCK_DEVELOPER_ASSET",
+    "matched_rule": "node_dependency_tree",
+    "execution_authorized": false
+  },
+  {
+    "path": "C:\\SyntheticWorkspace\\source\\build\\trace.log",
+    "protected": true,
+    "reason": "path is inside an explicit user code root",
+    "evidence": [
+      {"source": "developer_guard", "fact": "explicit synthetic user code root matched"},
+      {"source": "user_code_root", "fact": "C:\\SyntheticWorkspace\\source"}
+    ],
+    "protection_level": "PROTECTION_LEVEL_BLOCK_DEVELOPER_ASSET",
+    "matched_rule": "user_code_root",
+    "execution_authorized": false
+  },
+  {
+    "path": "C:\\SyntheticScratch\\ordinary.tmp",
+    "protected": false,
+    "reason": "no developer-protected path rule matched",
+    "evidence": [
+      {"source": "developer_guard", "fact": "no protected component or explicit code root matched"}
+    ],
+    "protection_level": "PROTECTION_LEVEL_NONE",
+    "matched_rule": null,
+    "execution_authorized": false
+  }
+]
