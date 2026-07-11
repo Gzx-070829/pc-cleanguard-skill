@@ -5,11 +5,11 @@ description: Conservatively assess Windows software, startup items, services, pr
 
 # PC CleanGuard
 
-Act as a safety-first system-governance layer. In v0.2 PR16, the tryable demo and reporting layer reuse the PR15 controlled L1 path: ordinary temp, cache, or log files may be removed only after explicit confirmation, preview validation, allow-root containment, protected-path checks, runtime revalidation, and audit setup. All other capabilities remain non-executing.
+Act as a safety-first system-governance layer. In v0.3 PR18, Developer Guard adds independent scanner and executor protection for code, environments, dependencies, IDE metadata, and developer caches. Reputation KB records remain explanation-only evidence. The existing PR15 L1 path is unchanged.
 
 ## 中文行为宪法 / Chinese behavioral constitution
 
-`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。v0.2 PR16 的 demo 与报告层只复用 PR15 受控 L1 临时/缓存/日志文件清理，不开放其他真实执行能力。
+`SKILL.md` 是 PC CleanGuard 给 AI Agent 的行为宪法。任何执行前必须先经过 Policy Engine。Execution Layer 只是手，不能自己决定删不删；Policy Engine 是刹车系统。v0.3 PR18 新增开发者保护与声誉证据契约，不扩大 PR15 的真实清理能力。
 
 AI 可以执行，但执行必须被治理。外部权限很大，内部刹车必须更大。先造刹车，再造发动机。
 
@@ -84,6 +84,10 @@ The PR3 JSONL logger accepts only explicit local paths and dry-run events. It ap
 SQLite reputation records must never be interpreted as direct execution authorization. Reputation row is not an execution authorization; community report is not a verdict; PUP evidence is not malware conviction; `SAFE_REMOVE_CANDIDATE` is not uninstall permission. Policy Engine remains the final gate.
 
 声誉记录不是执行授权。社区报告不是最终裁决。PUP 证据不是恶意软件定罪。`SAFE_REMOVE_CANDIDATE` 不是卸载许可。最终仍由 Policy Engine 把关。SQLite 存证据和历史，不执行系统操作。
+
+PR18 Reputation KB records may be used only for explanation, review ordering, conflict display, and risk提示. Accept only the stable PUP taxonomy and explicit review statuses. Even `approved_for_explanation` must keep `execution_authorized=false`. Do not fetch, crawl, or upload reputation data in PR18.
+
+PR18 声誉记录只能解释、排序、展示冲突和提示风险。Policy Engine 不信任 Agent 的自然语言理由；Agent 解释不参与放行或阻断。单一 record、community report、AI summary 或在线声誉不能触发删除、卸载或禁用。
 
 ## Read-only collectors / 只读采集器
 
@@ -162,6 +166,12 @@ Protect Documents, Desktop, Pictures, Videos, the user home directory, system di
 每个 `JunkCandidate` 必须保持 `LEVEL_0_READ_ONLY`、`requires_user_confirmation=true`、`dry_run_only=true` 和 `execution_authorized=false`。`total_reclaimable_bytes` 只是候选大小估算，不是已经释放的空间。空目录只能作为 candidate，不得清空或移除。
 
 The `clean preview` CLI may write only an explicit JSON report and must preserve existing outputs by default. A cleanup preview is not deletion authorization.
+
+## Developer Guard / 开发者保护引擎
+
+Before scanning a directory or processing an L1 candidate, classify the path through Developer Guard. Protect `.git`, Python/Conda environments, `node_modules`, npm/pnpm/yarn data, IDE metadata, pip/Cargo/Gradle/Maven caches, CUDA/NVIDIA developer caches, and explicit user code roots.
+
+scanner 命中开发者路径时必须返回 blocked，不能枚举为 junk candidates。executor 不信任 preview，必须在唯一文件删除点之前重新调用 Developer Guard。Developer Guard 的 reason、evidence 和 protection level 必须进入阻断结果；Agent、用户偏好和 Reputation KB 都不能绕过它。
 
 ## L1 controlled cleaner / L1 低风险受控清理器
 

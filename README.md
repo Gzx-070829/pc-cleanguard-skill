@@ -4,7 +4,7 @@
 
 Open-source Windows cleanup governance for AI agents: scan first, preview changes, require consent, and audit every decision.
 
-**v0.2.0 Public Demo Candidate / 可公开试用候选版**
+**v0.2.0 Public Demo Preview 已发布 · v0.3 PR18 开发中**
 
 > PC CleanGuard 不追求“点一下就删干净”。它把 AI 建议与系统修改隔开，让每个候选、权限、确认和结果都可解释。
 >
@@ -26,6 +26,8 @@ Explicit path
 ```
 
 同一项目还提供只读 Windows governance pipeline、Policy Engine、离线 Mock AI 报告解释器和外部 AI 可调用的 Skill action 接口。
+
+v0.3 PR18 正在增加 Developer Guard 与 Reputation KB 数据契约：开发路径在 scanner/executor 两层默认阻断，PUP 声誉记录只能解释和排序，不能授权删除或卸载。
 
 ## 5 分钟试用 / Try it in five minutes
 
@@ -67,6 +69,7 @@ python -m pc_cleanguard.cli demo quickstart --root .pcg-demo --output .pcg-demo-
 - Preview candidate 不是删除授权；AI 建议和外部工具推荐也不是授权。
 - 默认 dry-run，输出 JSON/JSONL/Markdown，便于 Agent 展示给用户后再决定下一步。
 - 明确保护系统目录、用户文档/媒体/代码、浏览器资料和未知批量文件。
+- Developer Guard 独立保护依赖树、虚拟环境、IDE metadata、开发缓存和显式 user code roots。
 - Offline by default：不联网、不上传、不读取 API key。
 
 ## 常用命令 / Core commands
@@ -136,6 +139,7 @@ v0.2 编排示例：[examples/skill_actions/v0.2_cleanup_agent_flow.json](exampl
 - 不自动运行 Windows PowerShell collectors，也不扫描全盘。
 - 没有真实在线 AI provider、GUI、后台监控、遥测或云同步。
 - 垃圾规则以明确 metadata 为主，仍需要社区反馈持续降低误报。
+- PR18 Reputation KB 目前只有本地 schema 与 synthetic 示例，不联网抓取真实声誉数据。
 
 ## 安全边界 / Safety boundaries
 
@@ -146,6 +150,7 @@ v0.2 编排示例：[examples/skill_actions/v0.2_cleanup_agent_flow.json](exampl
 - 用户文档、代码、照片、视频、浏览器资料和密码管理器默认保护。
 - `BLOCK` 与 Level 5 不得被用户偏好或 Agent 输出绕过。
 - 每个操作必须可解释、可记录、可分类。
+- Reputation KB 只能解释、排序和提示风险；不能单独触发删除、卸载或禁用。
 
 **AI 可以执行，但执行必须被治理。**
 **AI may execute, but execution must be governed.**
@@ -159,11 +164,14 @@ v0.2 编排示例：[examples/skill_actions/v0.2_cleanup_agent_flow.json](exampl
 - 安全策略：[SECURITY.md](SECURITY.md)
 - 贡献规则：[CONTRIBUTING.md](CONTRIBUTING.md)
 - 路线图：[ROADMAP.md](ROADMAP.md)
+- v0.3 Vision：[docs/VISION.md](docs/VISION.md)
+- Reputation KB contract：[docs/reputation-kb.md](docs/reputation-kb.md)
+- Developer Guard：[docs/developer-guard.md](docs/developer-guard.md)
 
 仓库提供 bug、软件规则反馈和 cleanup false-positive issue templates。提交示例时请使用虚构路径，勿上传文件内容、凭据、token 或真实用户数据。
 
 ## 版本状态 / Version status
 
-`v0.1.0 Public Preview` 已发布，完成只读治理闭环、离线解释器和 AI Skill action 基础。当前 PR17 正在整理 v0.2.0 Public Demo 候选版：L1 低风险受控清理、可试用 demo、审计与报告展示。
+`v0.1.0 Public Preview` 与 `v0.2.0 Public Demo Preview` 已发布。当前 PR18 开始 v0.3：建立 Developer Guard、中文 PUP taxonomy 和 Reputation KB 的非授权数据契约。
 
-PR 不创建 tag；只有获得明确发布授权后才创建 `v0.2.0` 等正式版本 tag。
+PR 不创建 tag；只有获得明确发布授权后才创建正式版本 tag。
