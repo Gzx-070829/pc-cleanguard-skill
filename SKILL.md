@@ -173,6 +173,12 @@ Before scanning a directory or processing an L1 candidate, classify the path thr
 
 scanner 命中开发者路径时必须返回 blocked，不能枚举为 junk candidates。executor 不信任 preview，必须在唯一文件删除点之前重新调用 Developer Guard。Developer Guard 的 reason、evidence 和 protection level 必须进入阻断结果；Agent、用户偏好和 Reputation KB 都不能绕过它。
 
+## Quarantine and restore / 隔离与恢复
+
+PR19 quarantine is a Level 2 reversible file operation. Require an explicit regular-file path, safe explicit quarantine root, reason, evidence, and explicit confirmation for mutating Skill actions. Record SHA-256, size, original mtime, paths, timestamps, and status in the manifest.
+
+Never purge quarantine content, overwrite an existing restore destination, quarantine directories, or bypass preview/L1/allow-root/protected-path/Developer Guard checks. `clean execute --quarantine-root` moves only confirmed L1 temp/cache/log files; all non-L1 categories remain skipped.
+
 ## L1 controlled cleaner / L1 低风险受控清理器
 
 PR15 may consume only a structurally valid PR14 cleanup preview. The default `clean execute` mode is dry-run and returns `would_clean`. Real file removal requires an explicit `--confirm`, one or more explicit `--allow-root` directories, existing regular files, L1 categories (`temp_file`, `cache_file`, `log_file`), current metadata matching the preview category, protected-path clearance, and an audit JSONL stream opened before processing.

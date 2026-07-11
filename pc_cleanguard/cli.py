@@ -34,6 +34,7 @@ from .pipeline import (
     write_pipeline_audit_jsonl,
     write_pipeline_report,
 )
+from .quarantine import QuarantineManager
 from .skill import invoke_skill_action, write_report
 
 
@@ -176,6 +177,11 @@ def _parser() -> argparse.ArgumentParser:
         action="store_true",
         help="explicitly replace existing result and audit artifacts",
     )
+    execute.add_argument(
+        "--quarantine-root",
+        type=Path,
+        help="move confirmed L1 files into this explicit quarantine root",
+    )
     report = clean_commands.add_parser(
         "report",
         help="render a Markdown summary from explicit preview and result JSON",
@@ -260,6 +266,22 @@ def _parser() -> argparse.ArgumentParser:
         type=Path,
         help="new explicit directory for dry-run artifacts",
     )
+    quarantine = subcommands.add_parser(
+        "quarantine",
+        help="add, list, or restore explicit regular-file quarantine items",
+    )
+    quarantine_commands = quarantine.add_subparsers(
+        dest="quarantine_command", required=True
+    )
+    quarantine_add = quarantine_commands.add_parser("add")
+    quarantine_add.add_argument("--root", required=True, type=Path)
+    quarantine_add.add_argument("--path", required=True, type=Path)
+    quarantine_add.add_argument("--reason", required=True)
+    quarantine_list = quarantine_commands.add_parser("list")
+    quarantine_list.add_argument("--root", required=True, type=Path)
+    quarantine_restore = quarantine_commands.add_parser("restore")
+    quarantine_restore.add_argument("--root", required=True, type=Path)
+    quarantine_restore.add_argument("--item-id", required=True)
     return parser
 
 
@@ -359,7 +381,7 @@ def _run_cleanup_execute(arguments: argparse.Namespace) -> dict:
         arguments.audit,
         explicit_overwrite=arguments.overwrite,
     )
-    report = CleanupExecutor().execute(
+    report = CleanupExecutor(quarantine_root=arguments.quarantine_root).execute(
         preview,
         confirmation,
         audit_path=audit_path,
@@ -378,6 +400,25 @@ def _run_cleanup_execute(arguments: argparse.Namespace) -> dict:
         "mode": report.mode,
         **report.summary,
     }
+
+
+def _run_quarantine(arguments: argparse.Namespace) -> dict:
+    if arguments.quarantine_command == "add":
+        manager = QuarantineManager.create_quarantine(arguments.root)
+        item = manager.quarantine_file(
+            arguments.path,
+            reason=arguments.reason,
+            evidence=(
+                {"source": "cli_explicit_request", "fact": "caller supplied path and reason"},
+            ),
+        )
+        return item.to_dict()
+    manager = QuarantineManager(arguments.root)
+    if arguments.quarantine_command == "list":
+        return {"root": str(manager.root), "items": [item.to_dict() for item in manager.list_items()]}
+    if arguments.quarantine_command == "restore":
+        return manager.restore_item(arguments.item_id).to_dict()
+    raise ValueError("unsupported quarantine command")
 
 
 def _run_cleanup_report(arguments: argparse.Namespace) -> dict:
@@ -400,6 +441,7 @@ def _run_cleanup_report(arguments: argparse.Namespace) -> dict:
                 "total_reclaimable_bytes",
                 "cleaned_count",
                 "cleaned_bytes",
+                "quarantined_count",
                 "would_clean_count",
                 "skipped_count",
                 "blocked_count",
@@ -437,9 +479,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
         elif arguments.command == "demo" and arguments.demo_command == "quickstart":
             summary = quickstart_cleanup_demo(arguments.root, arguments.output)
+        elif arguments.command == "quarantine":
+            summary = _run_quarantine(arguments)
         else:  # pragma: no cover - argparse enforces the available commands.
             parser.error(f"unsupported command: {arguments.command}")
-    except (FileExistsError, FileNotFoundError, OSError, TypeError, ValueError) as error:
+    except (FileExistsError, FileNotFoundError, KeyError, OSError, RuntimeError, TypeError, ValueError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
     print(json.dumps(summary, ensure_ascii=False, separators=(",", ":")))

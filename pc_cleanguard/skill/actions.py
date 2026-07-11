@@ -16,6 +16,7 @@ from ..ai import (
 from ..external_tools import ExternalToolCatalog, ToolRecommender, ToolTrustPolicy
 from ..pipeline import run_readonly_scan_pipeline
 from ..pipeline.input_loader import _validated_explicit_local_path
+from ..quarantine import QuarantineManager
 from .cleanup_plan import READ_ONLY_EXECUTION_LEVEL, build_cleanup_plan_from_report
 
 
@@ -26,7 +27,11 @@ ACTION_NAMES = (
     "write_report",
     "write_audit",
     "recommend_external_tools",
+    "quarantine_file",
+    "list_quarantine_items",
+    "restore_quarantine_item",
 )
+REVERSIBLE_EXECUTION_LEVEL = "LEVEL_2_REVERSIBLE"
 
 _AUDIT_RESULTS = {"planned", "simulated", "blocked", "refused", "skipped"}
 _AUDIT_METHODS = {"none", "dry_run", "policy_engine", "report_builder"}
@@ -131,8 +136,8 @@ class SkillActionResponse:
             raise ValueError("unsupported action response status")
         if not isinstance(self.requires_user_confirmation, bool):
             raise TypeError("requires_user_confirmation must be a bool")
-        if self.execution_level != READ_ONLY_EXECUTION_LEVEL:
-            raise ValueError("skill actions are restricted to Level 0")
+        if self.execution_level not in {READ_ONLY_EXECUTION_LEVEL, REVERSIBLE_EXECUTION_LEVEL}:
+            raise ValueError("unsupported skill action execution level")
         if self.execution_authorized is not False:
             raise ValueError("PR10 skill actions cannot authorize execution")
         if not isinstance(self.result, dict):
@@ -177,13 +182,14 @@ def _response(
     requires_user_confirmation: bool,
     status: str = "completed",
     request_id: str | None = None,
+    execution_level: str = READ_ONLY_EXECUTION_LEVEL,
 ) -> SkillActionResponse:
     return SkillActionResponse(
         request_id=_request_id(request_id),
         action=action,
         status=status,
         requires_user_confirmation=requires_user_confirmation,
-        execution_level=READ_ONLY_EXECUTION_LEVEL,
+        execution_level=execution_level,
         evidence=evidence,
         result=result,
         schema_version="0.1",
@@ -461,6 +467,67 @@ def _validated_payload(payload: dict, required: set[str], optional: set[str]) ->
     return payload
 
 
+def quarantine_file_action(
+    root,
+    path,
+    reason: str,
+    *,
+    evidence=(),
+    confirmed: bool,
+    request_id: str | None = None,
+) -> SkillActionResponse:
+    if confirmed is not True:
+        raise ValueError("quarantine_file requires explicit confirmed=true")
+    evidence_items = tuple(evidence) or (
+        {"source": "skill_action", "fact": "explicit confirmed quarantine request"},
+    )
+    item = QuarantineManager.create_quarantine(root).quarantine_file(
+        path, reason=reason, evidence=evidence_items
+    )
+    return _response(
+        action="quarantine_file",
+        request_id=request_id,
+        requires_user_confirmation=True,
+        execution_level=REVERSIBLE_EXECUTION_LEVEL,
+        evidence=(
+            {"source": "quarantine_manifest", "fact": f"item_id={item.item_id}"},
+        ),
+        result={**item.to_dict(), "status": "quarantined", "system_change_performed": True},
+    )
+
+
+def list_quarantine_items_action(root, *, request_id: str | None = None) -> SkillActionResponse:
+    manager = QuarantineManager(root)
+    items = [item.to_dict() for item in manager.list_items()]
+    return _response(
+        action="list_quarantine_items",
+        request_id=request_id,
+        requires_user_confirmation=False,
+        evidence=({"source": "quarantine_manifest", "fact": f"listed {len(items)} item(s)"},),
+        result={"root": str(manager.root), "items": items, "system_change_performed": False},
+    )
+
+
+def restore_quarantine_item_action(
+    root,
+    item_id: str,
+    *,
+    confirmed: bool,
+    request_id: str | None = None,
+) -> SkillActionResponse:
+    if confirmed is not True:
+        raise ValueError("restore_quarantine_item requires explicit confirmed=true")
+    item = QuarantineManager(root).restore_item(item_id)
+    return _response(
+        action="restore_quarantine_item",
+        request_id=request_id,
+        requires_user_confirmation=True,
+        execution_level=REVERSIBLE_EXECUTION_LEVEL,
+        evidence=({"source": "quarantine_manifest", "fact": f"restored item_id={item.item_id}"},),
+        result={**item.to_dict(), "system_change_performed": True},
+    )
+
+
 def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionResponse:
     """Validate and dispatch one external AI action request."""
 
@@ -535,6 +602,22 @@ def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionRespon
             payload["path"],
             payload["events"],
             explicit_overwrite=payload.get("explicit_overwrite", False),
+            request_id=request.request_id,
+        )
+    if request.action == "quarantine_file":
+        _validated_payload(payload, {"root", "path", "reason", "confirmed"}, {"evidence"})
+        return quarantine_file_action(
+            payload["root"], payload["path"], payload["reason"],
+            evidence=payload.get("evidence", ()), confirmed=payload["confirmed"],
+            request_id=request.request_id,
+        )
+    if request.action == "list_quarantine_items":
+        _validated_payload(payload, {"root"}, set())
+        return list_quarantine_items_action(payload["root"], request_id=request.request_id)
+    if request.action == "restore_quarantine_item":
+        _validated_payload(payload, {"root", "item_id", "confirmed"}, set())
+        return restore_quarantine_item_action(
+            payload["root"], payload["item_id"], confirmed=payload["confirmed"],
             request_id=request.request_id,
         )
     raise ValueError("unsupported skill action")

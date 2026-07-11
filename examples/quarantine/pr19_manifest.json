@@ -1,0 +1,18 @@
+{
+  "schema_version": "0.3",
+  "root": "C:\\SyntheticScratch\\quarantine",
+  "updated_at": "2026-07-11T08:00:00Z",
+  "items": [{
+    "item_id": "11111111-1111-4111-8111-111111111111",
+    "original_path": "C:\\SyntheticScratch\\sample.tmp",
+    "quarantine_path": "C:\\SyntheticScratch\\quarantine\\files\\11111111-1111-4111-8111-111111111111.bin",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "size_bytes": 128,
+    "original_mtime": 1783756800.0,
+    "reason": "Synthetic confirmed L1 quarantine example",
+    "evidence": [{"source": "synthetic_example", "fact": "no real user file"}],
+    "created_at": "2026-07-11T08:00:00Z",
+    "restored_at": null,
+    "status": "active"
+  }]
+}

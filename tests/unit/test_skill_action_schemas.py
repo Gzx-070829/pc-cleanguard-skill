@@ -49,8 +49,8 @@ class SkillActionSchemasTest(unittest.TestCase):
             }.issubset(required)
         )
         self.assertEqual(
-            "LEVEL_0_READ_ONLY",
-            schema["properties"]["execution_level"]["const"],
+            {"LEVEL_0_READ_ONLY", "LEVEL_2_REVERSIBLE"},
+            set(schema["properties"]["execution_level"]["enum"]),
         )
         self.assertFalse(schema["properties"]["execution_authorized"]["const"])
 

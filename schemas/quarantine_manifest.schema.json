@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/quarantine_manifest.schema.json",
+  "title": "PC CleanGuard Quarantine Manifest",
+  "type": "object",
+  "required": ["schema_version", "root", "updated_at", "items"],
+  "properties": {
+    "schema_version": {"const": "0.3"},
+    "root": {"type": "string", "minLength": 1},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "items": {"type": "array", "items": {"$ref": "quarantine_item.schema.json"}}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,12 @@
+{
+  "schema_version": "0.1",
+  "request_id": "synthetic-pr19-quarantine",
+  "action": "quarantine_file",
+  "payload": {
+    "root": "C:\\SyntheticScratch\\quarantine",
+    "path": "C:\\SyntheticScratch\\sample.tmp",
+    "reason": "Synthetic explicit reversible quarantine example",
+    "evidence": [{"source": "synthetic_example", "fact": "no real user file"}],
+    "confirmed": true
+  }
+}

@@ -8,7 +8,7 @@ from ..pipeline.input_loader import _validated_explicit_local_path
 from .executor import validate_cleanup_preview
 
 
-_EXECUTION_STATUSES = ("cleaned", "would_clean", "skipped", "blocked", "failed")
+_EXECUTION_STATUSES = ("cleaned", "quarantined", "would_clean", "skipped", "blocked", "failed")
 _SAFETY_NOTES = (
     "报告用于展示预览与执行结果，不构成新的清理授权。",
     "只有显式确认且通过 allow-root 与 L1 安全门的文件才能由现有执行器处理。",
@@ -21,7 +21,7 @@ def _validated_execution_result(result: dict | None) -> dict | None:
         return None
     if not isinstance(result, dict):
         raise TypeError("execution result must be a JSON object")
-    if result.get("mode") not in {"dry_run", "confirmed_l1"}:
+    if result.get("mode") not in {"dry_run", "confirmed_l1", "confirmed_l1_quarantine"}:
         raise ValueError("unsupported cleanup execution result mode")
     if not isinstance(result.get("results"), list):
         raise TypeError("cleanup execution results must be a list")
@@ -107,6 +107,7 @@ def build_cleanup_summary(
             for item in result_items
             if item["status"] == "cleaned"
         ),
+        "quarantined_count": status_counts.get("quarantined", 0),
         "would_clean_count": status_counts.get("would_clean", 0),
         "skipped_count": status_counts.get("skipped", 0),
         "blocked_count": status_counts.get("blocked", 0),
@@ -151,6 +152,7 @@ def render_cleanup_report_markdown(summary: dict) -> str:
         "total_reclaimable_bytes",
         "cleaned_count",
         "cleaned_bytes",
+        "quarantined_count",
         "would_clean_count",
         "skipped_count",
         "blocked_count",
@@ -172,6 +174,7 @@ def render_cleanup_report_markdown(summary: dict) -> str:
         f"- Candidates / 候选：{summary['total_candidates']}",
         f"- Reclaimable / 可释放：{_format_bytes(summary['total_reclaimable_bytes'])}",
         f"- Cleaned / 已清理：{summary['cleaned_count']} ({_format_bytes(summary['cleaned_bytes'])})",
+        f"- Quarantined / 已隔离：{summary['quarantined_count']}",
         f"- Would clean / 待确认：{summary['would_clean_count']}",
         f"- Skipped / 已跳过：{summary['skipped_count']}",
         f"- Blocked / 已阻断：{summary['blocked_count']}",

@@ -16,7 +16,7 @@
   ],
   "properties": {
     "schema_version": {"const": "0.2"},
-    "mode": {"enum": ["dry_run", "confirmed_l1"]},
+    "mode": {"enum": ["dry_run", "confirmed_l1", "confirmed_l1_quarantine"]},
     "confirmed": {"type": "boolean"},
     "execution_level": {"const": "LEVEL_1_LOW_RISK_CLEANUP"},
     "allow_roots": {
@@ -65,6 +65,7 @@
         "blocked": {"type": "integer", "minimum": 0},
         "skipped": {"type": "integer", "minimum": 0},
         "failed": {"type": "integer", "minimum": 0},
+        "quarantined": {"type": "integer", "minimum": 0},
         "bytes_reclaimed": {"type": "integer", "minimum": 0},
         "execution_performed": {"type": "boolean"}
       },
@@ -94,9 +95,9 @@
             "empty_directory_candidate"
           ]
         },
-        "action": {"enum": ["delete_file", "skip"]},
+        "action": {"enum": ["delete_file", "quarantine_file", "skip"]},
         "status": {
-          "enum": ["would_clean", "cleaned", "blocked", "skipped", "failed"]
+          "enum": ["would_clean", "cleaned", "quarantined", "blocked", "skipped", "failed"]
         },
         "reason": {"type": "string", "minLength": 1},
         "bytes_reclaimed": {"type": "integer", "minimum": 0},
@@ -138,16 +139,16 @@
             "empty_directory_candidate"
           ]
         },
-        "action": {"enum": ["delete_file", "skip"]},
+        "action": {"enum": ["delete_file", "quarantine_file", "skip"]},
         "status": {
-          "enum": ["would_clean", "cleaned", "blocked", "skipped", "failed"]
+          "enum": ["would_clean", "cleaned", "quarantined", "blocked", "skipped", "failed"]
         },
         "reason": {"type": "string", "minLength": 1},
         "bytes_reclaimed": {"type": "integer", "minimum": 0},
         "evidence": {"$ref": "#/$defs/evidence"},
         "confirmed": {"type": "boolean"},
         "dry_run": {"type": "boolean"},
-        "execution_method": {"enum": ["none", "pathlib_unlink"]},
+        "execution_method": {"enum": ["none", "pathlib_unlink", "pathlib_replace"]},
         "execution_level": {"const": "LEVEL_1_LOW_RISK_CLEANUP"}
       },
       "additionalProperties": false
