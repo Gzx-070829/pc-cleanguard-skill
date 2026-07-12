@@ -18,6 +18,7 @@ from .ai import (
 from .cleanup import (
     CleanupConfirmation,
     CleanupExecutor,
+    get_default_quarantine_root,
     JunkScanner,
     build_cleanup_preview,
     build_cleanup_summary,
@@ -42,6 +43,8 @@ from .reputation import (
     load_seed_records,
     render_pup_insight_markdown,
     write_pup_insight_markdown,
+    load_evidence_pack,
+    evidence_pack_stats,
 )
 from .skill import invoke_skill_action, write_report
 from .experience import run_release_smoke_check, run_user_trial
@@ -324,11 +327,18 @@ def _parser() -> argparse.ArgumentParser:
     reputation_insight = reputation_commands.add_parser("insight")
     reputation_insight.add_argument("--matches", required=True, type=Path)
     reputation_insight.add_argument("--output", required=True, type=Path)
+    evidence = reputation_commands.add_parser("evidence")
+    evidence_commands = evidence.add_subparsers(dest="evidence_command", required=True)
+    for evidence_command in ("validate", "stats"):
+        evidence_parser = evidence_commands.add_parser(evidence_command)
+        evidence_parser.add_argument("--input", required=True, type=Path)
     pup = subcommands.add_parser("pup", help="inspect PUP evidence without execution")
     pup_commands = pup.add_subparsers(dest="pup_command", required=True)
     pup_inspect = pup_commands.add_parser("inspect")
     pup_inspect.add_argument("--input", required=True, type=Path)
-    pup_inspect.add_argument("--seed", required=True, type=Path)
+    pup_source = pup_inspect.add_mutually_exclusive_group(required=True)
+    pup_source.add_argument("--seed", type=Path)
+    pup_source.add_argument("--evidence-pack", type=Path)
     pup_inspect.add_argument("--output", required=True, type=Path)
     trial = subcommands.add_parser("trial", help="run the bounded five-minute product trial")
     trial_commands = trial.add_subparsers(dest="trial_command", required=True)
@@ -439,10 +449,15 @@ def _run_cleanup_execute(arguments: argparse.Namespace) -> dict:
         arguments.audit,
         explicit_overwrite=arguments.overwrite,
     )
+    quarantine_root = arguments.quarantine_root
+    uses_default_quarantine = arguments.confirm and quarantine_root is None and not arguments.permanent
+    if uses_default_quarantine:
+        quarantine_root = get_default_quarantine_root()
     report = CleanupExecutor(
-        quarantine_root=arguments.quarantine_root,
+        quarantine_root=quarantine_root,
         permanent=arguments.permanent,
         permanent_delete_acknowledged=arguments.i_understand_permanent_delete,
+        using_default_quarantine=uses_default_quarantine,
     ).execute(
         preview,
         confirmation,
@@ -465,8 +480,10 @@ def _run_cleanup_execute(arguments: argparse.Namespace) -> dict:
 
 
 def _run_cleanup_safe(arguments: argparse.Namespace) -> dict:
-    if arguments.confirm and arguments.quarantine_root is None:
-        raise ValueError("clean safe --confirm requires --quarantine-root")
+    quarantine_root = arguments.quarantine_root
+    uses_default_quarantine = arguments.confirm and quarantine_root is None
+    if uses_default_quarantine:
+        quarantine_root = get_default_quarantine_root()
     output = Path(arguments.output).resolve(strict=False)
     if output.exists():
         raise FileExistsError(f"output already exists: {output}")
@@ -478,7 +495,7 @@ def _run_cleanup_safe(arguments: argparse.Namespace) -> dict:
     report_path = output / "cleanup_report.md"
     summary_path = output / "summary.json"
     write_report(preview_path, preview)
-    execution = CleanupExecutor(quarantine_root=arguments.quarantine_root).execute(
+    execution = CleanupExecutor(quarantine_root=quarantine_root, using_default_quarantine=uses_default_quarantine).execute(
         preview,
         CleanupConfirmation(arguments.confirm, tuple(arguments.paths)),
         audit_path=audit_path,
@@ -494,6 +511,8 @@ def _run_cleanup_safe(arguments: argparse.Namespace) -> dict:
         "output": str(output),
         "mode": execution.mode,
         "confirmed": execution.confirmed,
+        "quarantine_root": str(quarantine_root) if quarantine_root is not None else None,
+        "default_quarantine_root": uses_default_quarantine,
         **execution.summary,
     }
     write_report(summary_path, response)
@@ -520,6 +539,10 @@ def _run_quarantine(arguments: argparse.Namespace) -> dict:
 
 
 def _run_reputation(arguments: argparse.Namespace) -> dict:
+    if arguments.reputation_command == "evidence":
+        records = load_evidence_pack(arguments.input)
+        stats = evidence_pack_stats(records)
+        return {"valid": True, "record_count": len(records), **stats, "execution_authorized": False}
     if arguments.reputation_command == "match":
         report = load_scan_json_file(arguments.input)
         matches = ReputationMatcher(load_seed_records(arguments.seed)).match(report)
@@ -536,7 +559,8 @@ def _run_reputation(arguments: argparse.Namespace) -> dict:
 
 
 def _run_pup(arguments: argparse.Namespace) -> dict:
-    result = inspect_pup_risk(load_scan_json_file(arguments.input), arguments.seed)
+    source = arguments.evidence_pack or arguments.seed
+    result = inspect_pup_risk(load_scan_json_file(arguments.input), source, evidence_pack=arguments.evidence_pack is not None)
     write_pup_insight_markdown(arguments.output, result["markdown"])
     return {"output": str(arguments.output), "match_count": result["match_count"], "execution_authorized": False}
 

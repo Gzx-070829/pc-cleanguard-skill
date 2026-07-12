@@ -1,4 +1,5 @@
 import io
+import os
 import json
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
@@ -32,11 +33,18 @@ class Pr20SafeCleanTest(unittest.TestCase):
             ])
         return code, stderr.getvalue()
 
-    def test_confirm_without_quarantine_or_permanent_is_rejected(self) -> None:
-        code, error = self._execute("--confirm")
-        self.assertEqual(2, code)
-        self.assertIn("quarantine", error.casefold())
-        self.assertTrue(self.candidate.exists())
+    def test_confirm_without_quarantine_uses_default_quarantine(self) -> None:
+        previous = Path.cwd()
+        os.chdir(self.root)
+        try:
+            code, error = self._execute("--confirm")
+        finally:
+            os.chdir(previous)
+        self.assertEqual(0, code, error)
+        self.assertFalse(self.candidate.exists())
+        report = json.loads((self.root / "result.json").read_text(encoding="utf-8"))
+        self.assertTrue(report["summary"]["default_quarantine_root"])
+        self.assertIn("使用默认隔离目录：.pcg-quarantine", (self.root / "audit.jsonl").read_text(encoding="utf-8"))
 
     def test_permanent_requires_second_confirmation(self) -> None:
         code, error = self._execute("--confirm", "--permanent")
@@ -77,6 +85,18 @@ class Pr20SafeCleanTest(unittest.TestCase):
         result = json.loads((output / "result.json").read_text(encoding="utf-8"))
         self.assertEqual("confirmed_l1_quarantine", result["mode"])
         self.assertEqual(1, result["summary"]["quarantined"])
+
+    def test_clean_safe_confirm_without_root_uses_default(self) -> None:
+        output = self.root / "default-output"
+        previous = Path.cwd(); os.chdir(self.root)
+        try:
+            with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                code = main(["clean", "safe", "--path", str(self.root), "--output", str(output), "--confirm"])
+        finally:
+            os.chdir(previous)
+        self.assertEqual(0, code)
+        summary = json.loads((output / "summary.json").read_text(encoding="utf-8"))
+        self.assertTrue(summary["default_quarantine_root"])
 
     def test_clean_safe_parser_has_no_permanent_option(self) -> None:
         with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):

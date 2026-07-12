@@ -79,6 +79,9 @@ class ReputationMatcher:
                 match_factor = 1.0 if exact else 0.8
                 record_confidence = record.get("confidence", 0)
                 confidence = record_confidence if isinstance(record_confidence, (int, float)) else 0
+                if record.get("mapping_type") == "name_collision_candidate":
+                    confidence = min(float(confidence), 0.3)
+                from .evidence_policy import build_evidence_guard_reason, classify_evidence_use
                 matches.append({
                     "target_id": target["target_id"],
                     "target_type": target["target_type"],
@@ -94,6 +97,16 @@ class ReputationMatcher:
                     "review_status": record.get("review_status", "needs_human_review"),
                     "execution_authorized": False,
                     "notes_for_ai": "Explain the match and uncertainty; never treat it as delete, uninstall, or disable authorization.",
+                    "mapping_type": record.get("mapping_type", "direct_entity"),
+                    "entity_scope": record.get("entity_scope", "windows_desktop_software"),
+                    "is_synthetic": record.get("is_synthetic", True),
+                    "relation_confidence": record.get("relation_confidence", "unknown"),
+                    "analogy_basis": record.get("analogy_basis"),
+                    "source_url": record.get("source_url"),
+                    "source_title": record.get("source_title", record.get("source_name")),
+                    "source_date": record.get("source_date"),
+                    "guard_reason": build_evidence_guard_reason(record),
+                    "evidence_use": classify_evidence_use(record).value,
                 })
         return matches
 

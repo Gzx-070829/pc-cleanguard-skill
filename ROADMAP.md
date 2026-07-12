@@ -30,6 +30,8 @@ PR21 增加 Reputation Matcher、PUP Insight、CLI/Skill 用户入口和 AI expl
 
 PR22 将 cleanup preview、默认隔离、审计、报告、PUP insight 和恢复说明编排为 5 分钟用户试用入口，优先验证真实用户能否理解产品价值与安全边界。
 
+PR24 提供无需配置的 `.pcg-quarantine` 默认隔离路径，并把 Evidence Pack 的实体关系、synthetic 状态、类比依据和执行阻断规则代码化。
+
 ## v0.4 — Reputation adapters + PUP planner + registry backup planning
 
 在明确来源许可和人工审核下接入真实公开 Reputation adapter；构建 PUP 声明式 planner 与注册表备份规划。声誉证据仍不授权执行，registry backup planning 不提供任意写入口。
