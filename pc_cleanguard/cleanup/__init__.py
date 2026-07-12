@@ -15,6 +15,7 @@ from .junk_scanner import (
     ScanLimits,
 )
 from .preview import CleanupPreview, build_cleanup_preview
+from .quarantine_defaults import DEFAULT_QUARANTINE_NAME, get_default_quarantine_root
 from .confirmation import (
     L1_ALLOWED_CATEGORIES,
     CleanupConfirmation,
@@ -50,6 +51,8 @@ __all__ = [
     "BlockedCandidate",
     "CleanupPreview",
     "build_cleanup_preview",
+    "DEFAULT_QUARANTINE_NAME",
+    "get_default_quarantine_root",
     "L1_ALLOWED_CATEGORIES",
     "CleanupConfirmation",
     "ConfirmationDecision",

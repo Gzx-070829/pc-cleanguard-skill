@@ -13,9 +13,9 @@ def build_pup_insight(matches: list[dict]) -> dict:
         raise ValueError("reputation matches cannot authorize execution")
     categories = sorted({category for item in matches for category in item.get("behavior_categories", ())})
     uncertain = [
-        f"{item.get('target_id', 'unknown')}: false_positive_risk={item.get('false_positive_risk', 'high')}"
+        f"{item.get('target_id', 'unknown')}: mapping_type={item.get('mapping_type', 'unknown')}, false_positive_risk={item.get('false_positive_risk', 'high')}"
         for item in matches
-        if item.get("false_positive_risk") != "low" or item.get("review_status") != "approved_for_explanation"
+        if item.get("mapping_type") in {"analogical_behavior","name_collision_candidate","related_publisher"} or item.get("false_positive_risk") != "low" or item.get("review_status") != "approved_for_explanation"
     ]
     return {
         "summary": {"matched_targets": len(matches), "behavior_category_count": len(categories)},
@@ -28,5 +28,6 @@ def build_pup_insight(matches: list[dict]) -> dict:
         "next_steps_for_user": ["查看命中证据和误报风险。", "不确定时保留软件并请求人工复核。"],
         "requires_user_confirmation": True,
         "execution_authorized": False,
+        "evidence_guard_applied": True,
     }
 

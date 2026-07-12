@@ -32,6 +32,8 @@ python -m pc_cleanguard.cli quarantine restore --root .pcg-quarantine --item-id 
 
 5 分钟即可看到清理预览、空间估算、审计报告和 synthetic PUP 线索。默认 dry-run；确认后默认隔离、可恢复。PUP 线索只是提示，不是删除授权。不联网、不上传、不静默删除，也不替代杀毒软件。
 
+确认清理时可省略 `--quarantine-root`，系统会使用当前目录下的 `.pcg-quarantine`；用户不必自己设计隔离路径。永久删除仍是显式双旗专家模式。
+
 > PC CleanGuard 不追求“点一下就删干净”。它把 AI 建议与系统修改隔开，让每个候选、权限、确认和结果都可解释。
 >
 > PC CleanGuard is not a one-click disk cleaner. It places auditable policy and consent gates between AI advice and system changes.
@@ -62,6 +64,8 @@ PR20 增加普通用户 `clean safe` 入口和离线 Reputation Seed Pack。永�
 PR21 让本地 Reputation KB 变得用户可见：可对 report 中的软件、启动项、服务和计划任务进行名称/别名匹配，生成中文 PUP 风险洞察；匹配与洞察只用于解释、排序和人工复核。
 
 PR22 把上述能力编排为 `trial run` 产品体验：自动生成 START HERE、用户摘要、机器摘要、清理报告、PUP 洞察、审计和恢复说明。
+
+PR24 增加默认 `.pcg-quarantine` 与 Evidence Guard。Evidence Pack 不是黑名单；mapping relation 与 synthetic 状态是正交轴，所有 evidence 均被阻断在执行门之外。
 
 ## 5 分钟试用 / Try it in five minutes
 
@@ -225,6 +229,8 @@ v0.2 编排示例：[examples/skill_actions/v0.2_cleanup_agent_flow.json](exampl
 - Safe Clean Flow：[docs/safe-clean-user-flow.md](docs/safe-clean-user-flow.md)
 - Reputation Seed：[docs/reputation-seed.md](docs/reputation-seed.md)
 - Reputation Source Policy：[docs/reputation-source-policy.md](docs/reputation-source-policy.md)
+- Reputation Evidence Pack：[docs/reputation-evidence-pack.md](docs/reputation-evidence-pack.md)
+- Reputation Source Review Policy：[docs/reputation-source-review-policy.md](docs/reputation-source-review-policy.md)
 - Reputation Matching：[docs/reputation-matching.md](docs/reputation-matching.md)
 - PUP Insight Flow：[docs/pup-insight-user-flow.md](docs/pup-insight-user-flow.md)
 - User Trial：[docs/user-trial.md](docs/user-trial.md)

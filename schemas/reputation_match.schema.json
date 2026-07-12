@@ -15,7 +15,17 @@
     "evidence": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["source", "fact"], "properties": {"source": {"type": "string"}, "fact": {"type": "string"}}, "additionalProperties": false}},
     "review_status": {"enum": ["needs_human_review", "approved_for_explanation"]},
     "execution_authorized": {"const": false},
-    "notes_for_ai": {"type": "string", "minLength": 1}
+    "notes_for_ai": {"type": "string", "minLength": 1},
+    "mapping_type": {"enum": ["direct_entity", "related_publisher", "name_collision_candidate", "analogical_behavior"]},
+    "entity_scope": {"enum": ["windows_desktop_software", "mobile_app", "mobile_sdk", "browser_extension", "publisher_level", "unknown"]},
+    "is_synthetic": {"type": "boolean"},
+    "relation_confidence": {"enum": ["low", "medium", "high", "unknown"]},
+    "analogy_basis": {"type": ["string", "null"]},
+    "source_url": {"type": ["string", "null"]},
+    "source_title": {"type": ["string", "null"]},
+    "source_date": {"type": ["string", "null"]},
+    "guard_reason": {"type": "array", "items": {"type": "string"}},
+    "evidence_use": {"enum": ["explain_only", "review_hint", "publisher_level_warning", "name_collision_warning", "blocked_from_execution"]}
   },
   "additionalProperties": false
 }

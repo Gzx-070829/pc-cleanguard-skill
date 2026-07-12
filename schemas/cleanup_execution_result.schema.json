@@ -68,6 +68,8 @@
         "quarantined": {"type": "integer", "minimum": 0},
         "bytes_reclaimed": {"type": "integer", "minimum": 0},
         "execution_performed": {"type": "boolean"}
+        ,"quarantine_root": {"type": ["string", "null"]}
+        ,"default_quarantine_root": {"type": "boolean"}
       },
       "additionalProperties": false
     },

@@ -12,6 +12,7 @@ def render_pup_insight_markdown(insight: dict) -> str:
     behaviors = insight.get("suspicious_behaviors", [])
     uncertainty = insight.get("uncertainty_notes", [])
     reviews = insight.get("recommended_review", [])
+    matches = insight.get("matched_targets", [])
     return "\n".join([
         "# PUP 风险洞察 / PUP Risk Insight",
         "",
@@ -33,7 +34,11 @@ def render_pup_insight_markdown(insight: dict) -> str:
         "",
         *[f"- {item}" for item in reviews],
         "",
-        "AI 和 Reputation KB 均不能提供删除、卸载或禁用授权。",
+        "## Evidence Guard details",
+        "",
+        *[f"- `{item.get('mapping_type')}` / `{item.get('entity_scope')}` / synthetic={item.get('is_synthetic')} / relation={item.get('relation_confidence')} / analogy={item.get('analogy_basis')} / source={item.get('source_title')} ({item.get('source_date')}) {item.get('source_url')} / guard={'; '.join(item.get('guard_reason', []))}" for item in matches],
+        "",
+        "Evidence Pack 仅用于解释、排序和人工复核，不是删除、卸载、禁用授权。",
         "",
     ])
 

@@ -14,7 +14,7 @@ python -m pc_cleanguard.cli trial run --root .pcg-demo --output .pcg-trial
 python -m pc_cleanguard.cli trial run --root .pcg-demo --output .pcg-trial-confirm --confirm --quarantine-root .pcg-quarantine
 ```
 
-确认模式只把 demo root 内通过 L1 安全门的 temp/cache/log 文件移入可恢复隔离区。查看和恢复：
+确认模式只把 demo root 内通过 L1 安全门的 temp/cache/log 文件移入可恢复隔离区。`--quarantine-root` 可省略；省略时自动使用 `.pcg-quarantine`。查看和恢复：
 
 ```console
 python -m pc_cleanguard.cli quarantine list --root .pcg-quarantine

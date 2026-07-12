@@ -201,6 +201,7 @@ def run_cleanup_demo(
     *,
     confirm: bool = False,
     quarantine_root: str | Path | None = None,
+    using_default_quarantine: bool = False,
 ) -> dict:
     """Run preview, PR15 execution, audit, and reporting for a marked demo root."""
 
@@ -226,7 +227,8 @@ def run_cleanup_demo(
     write_report(preview_path, preview)
     confirmation = CleanupConfirmation(confirm, (demo_root,))
     execution = CleanupExecutor(
-        quarantine_root=quarantine_root
+        quarantine_root=quarantine_root,
+        using_default_quarantine=using_default_quarantine,
     ).execute(
         preview,
         confirmation,

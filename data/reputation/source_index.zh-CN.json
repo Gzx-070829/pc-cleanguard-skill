@@ -1,0 +1,6 @@
+{
+  "purpose":"来源索引只记录可审计 metadata，不是黑名单或稳定 taxonomy。",
+  "execution_authorized":false,
+  "sources":[{"source_id":"synthetic-pr24","source_title":"PC CleanGuard PR24 Synthetic Evidence","source_date":"2026-07-12","source_url":"https://example.invalid/evidence-pack","batch_label":null,"is_synthetic":true}],
+  "notes":["批次号是滚动事实，不是稳定 taxonomy。","APP/SDK 通报最多进入 explanation/review 层，不能进入 execution 层。"]
+}

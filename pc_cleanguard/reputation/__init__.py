@@ -22,6 +22,8 @@ from .source_validation import validate_source_manifest
 from .matcher import ReputationMatcher, normalize_reputation_name
 from .insight import build_pup_insight
 from .reporting import render_pup_insight_markdown, write_pup_insight_markdown
+from .evidence_pack_loader import load_evidence_pack, validate_evidence_record, evidence_pack_stats
+from .evidence_policy import EvidenceUse, classify_evidence_use, is_execution_gating_eligible, build_evidence_guard_reason
 
 __all__ = [
     "EvidenceType",
@@ -46,4 +48,6 @@ __all__ = [
     "build_pup_insight",
     "render_pup_insight_markdown",
     "write_pup_insight_markdown",
+    "load_evidence_pack", "validate_evidence_record", "evidence_pack_stats",
+    "EvidenceUse", "classify_evidence_use", "is_execution_gating_eligible", "build_evidence_guard_reason",
 ]

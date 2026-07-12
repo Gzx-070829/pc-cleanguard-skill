@@ -1,5 +1,6 @@
 import json
 import ast
+import os
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -35,9 +36,14 @@ class TrialRunnerTest(unittest.TestCase):
         self.assertFalse((root / "temp/example.tmp").exists())
         self.assertIn("quarantine restore", (output / "user_summary.md").read_text(encoding="utf-8"))
 
-    def test_confirm_requires_explicit_quarantine_root(self) -> None:
-        with self.assertRaises(ValueError):
-            run_user_trial(self.base / "demo", self.base / "trial", confirm=True)
+    def test_confirm_without_root_uses_default_quarantine(self) -> None:
+        previous = Path.cwd()
+        os.chdir(self.base)
+        try:
+            result = run_user_trial(self.base / "demo", self.base / "trial", confirm=True)
+        finally:
+            os.chdir(previous)
+        self.assertTrue(result["machine_summary"]["default_quarantine_root"])
 
     def test_experience_modules_have_no_process_or_network_imports(self) -> None:
         package = Path(__file__).resolve().parents[2] / "pc_cleanguard" / "experience"

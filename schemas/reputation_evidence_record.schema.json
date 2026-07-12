@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PC CleanGuard Reputation Evidence Record",
+  "type": "object",
+  "required": ["record_id","software_name","publisher","aliases","source_type","source_name","source_url","source_title","source_date","evidence_summary","behavior_categories","jurisdiction","language","review_status","confidence","false_positive_risk","execution_authorized","license_note","evidence_scope","mapping_type","is_synthetic","entity_scope","relation_confidence"],
+  "properties": {
+    "record_id":{"type":"string","minLength":1}, "software_name":{"type":"string","minLength":1}, "publisher":{"type":"string","minLength":1},
+    "aliases":{"type":"array","items":{"type":"string"}},
+    "source_type":{"enum":["public_regulatory_notice","public_vendor_behavior_article","public_news_or_public_report","community_report","synthetic_example"]},
+    "source_name":{"type":"string","minLength":1}, "source_url":{"type":"string","minLength":1}, "source_title":{"type":"string","minLength":1}, "source_date":{"type":"string","minLength":1},
+    "evidence_summary":{"type":"string","minLength":1}, "behavior_categories":{"type":"array","minItems":1,"items":{"type":"string"}},
+    "jurisdiction":{"type":"string"}, "language":{"type":"string"}, "review_status":{"enum":["needs_human_review","approved_for_explanation"]},
+    "confidence":{"type":"number","minimum":0,"maximum":1}, "false_positive_risk":{"enum":["low","medium","high"]}, "execution_authorized":{"const":false},
+    "license_note":{"type":"string","minLength":1}, "evidence_scope":{"enum":["explanation","review","sorting","risk_hint"]},
+    "mapping_type":{"enum":["direct_entity","related_publisher","name_collision_candidate","analogical_behavior"]},
+    "is_synthetic":{"type":"boolean"},
+    "entity_scope":{"enum":["windows_desktop_software","mobile_app","mobile_sdk","browser_extension","publisher_level","unknown"]},
+    "relation_confidence":{"enum":["low","medium","high","unknown"]},
+    "analogy_basis":{"type":["string","null"]}
+  },
+  "allOf":[{"if":{"properties":{"mapping_type":{"const":"analogical_behavior"}}},"then":{"required":["analogy_basis"],"properties":{"analogy_basis":{"type":"string","minLength":1}}}}],
+  "additionalProperties":false
+}

@@ -8,6 +8,7 @@ from pathlib import Path
 from ..demo import init_cleanup_demo, run_cleanup_demo
 from ..pup import inspect_pup_risk
 from ..reputation import write_pup_insight_markdown
+from ..cleanup import get_default_quarantine_root
 from .user_summary import build_user_summary, render_user_summary_markdown
 
 
@@ -25,8 +26,9 @@ def run_user_trial(
 ) -> dict:
     if not isinstance(confirm, bool):
         raise TypeError("confirm must be bool")
-    if confirm and quarantine_root is None:
-        raise ValueError("confirmed trial requires an explicit quarantine_root")
+    uses_default_quarantine = confirm and quarantine_root is None
+    if uses_default_quarantine:
+        quarantine_root = get_default_quarantine_root()
     if not confirm and quarantine_root is not None:
         raise ValueError("quarantine_root requires confirm=true")
     demo_root = Path(root).resolve(strict=False)
@@ -37,6 +39,7 @@ def run_user_trial(
         output_root,
         confirm=confirm,
         quarantine_root=quarantine_root,
+        using_default_quarantine=uses_default_quarantine,
     )
 
     project_root = Path(__file__).resolve().parents[2]
@@ -68,6 +71,7 @@ def run_user_trial(
         "audit": cleanup["audit"],
         "quarantine_manifest": str(Path(quarantine_root).resolve(strict=False) / "manifest.json") if quarantine_root is not None else None,
         "execution_performed": cleanup["execution_performed"],
+        "default_quarantine_root": uses_default_quarantine,
     }
     _write(output_root / "user_summary.md", render_user_summary_markdown(user_summary))
     _write(output_root / "machine_summary.json", json.dumps(machine, ensure_ascii=False, indent=2))

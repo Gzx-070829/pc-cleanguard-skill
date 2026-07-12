@@ -21,6 +21,7 @@ from .execution_result import (
 )
 from .junk_rules import JunkCategory, match_junk_rule
 from .junk_scanner import JunkCandidate
+from .quarantine_defaults import get_default_quarantine_root
 
 
 _PREVIEW_FIELDS = {
@@ -152,6 +153,7 @@ class CleanupExecutor:
         *,
         permanent: bool = False,
         permanent_delete_acknowledged: bool = False,
+        using_default_quarantine: bool = False,
     ) -> None:
         if isinstance(user_code_roots, (str, Path)):
             raise TypeError("user_code_roots must contain explicit roots")
@@ -168,7 +170,10 @@ class CleanupExecutor:
             not isinstance(quarantine_root, (str, Path)) or not str(quarantine_root).strip()
         ):
             raise ValueError("quarantine_root must be an explicit local path")
-        self._quarantine_root = quarantine_root
+        self._uses_default_quarantine = (quarantine_root is None and not permanent) or using_default_quarantine
+        self._quarantine_root = (
+            get_default_quarantine_root() if self._uses_default_quarantine else quarantine_root
+        )
         if not isinstance(permanent, bool) or not isinstance(permanent_delete_acknowledged, bool):
             raise TypeError("permanent flags must be bool")
         if permanent_delete_acknowledged and not permanent:
@@ -192,8 +197,6 @@ class CleanupExecutor:
             raise TypeError("confirmation must be CleanupConfirmation")
         if not isinstance(explicit_overwrite, bool):
             raise TypeError("explicit_overwrite must be a bool")
-        if confirmation.confirmed and self._quarantine_root is None and not self._permanent:
-            raise ValueError("confirmed cleanup requires --quarantine-root; permanent deletion is expert-only")
         if confirmation.confirmed and self._permanent and not self._permanent_delete_acknowledged:
             raise ValueError("permanent deletion requires --i-understand-permanent-delete")
         destination = _validated_explicit_local_path(
@@ -216,6 +219,8 @@ class CleanupExecutor:
                 )
                 audit_stream.flush()
         summary = self._summary(results)
+        summary["quarantine_root"] = str(self._quarantine_root) if self._quarantine_root is not None else None
+        summary["default_quarantine_root"] = self._uses_default_quarantine and confirmation.confirmed
         return CleanupExecutionReport(
             confirmed=confirmation.confirmed,
             allow_roots=tuple(str(root) for root in confirmation.allow_roots),
@@ -376,8 +381,8 @@ class CleanupExecutor:
             ),
         )
 
-    @staticmethod
     def _item(
+        self,
         candidate: JunkCandidate,
         confirmation: CleanupConfirmation,
         *,
@@ -387,6 +392,8 @@ class CleanupExecutor:
         bytes_reclaimed: int,
         evidence: tuple[dict, ...],
     ) -> CleanupExecutionItem:
+        if self._uses_default_quarantine and confirmation.confirmed:
+            evidence = (*evidence, {"source": "quarantine_default", "fact": "使用默认隔离目录：.pcg-quarantine"})
         method = "none"
         if confirmation.confirmed and action == "delete_file" and status in {"cleaned", "failed"}:
             method = "pathlib_unlink"
