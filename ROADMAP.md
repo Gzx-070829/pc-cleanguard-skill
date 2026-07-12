@@ -10,9 +10,9 @@ PC CleanGuard 以用户可见闭环为 Sprint PR 单位快速推进，同时保�
 
 已发布：junk preview、受控 L1 temp/cache/log 文件清理、allow-root/protected-path/runtime revalidation、JSONL audit、Markdown report、synthetic demo quickstart 与 plan-only external-tool recommender。
 
-## v0.3 — Developer Guard + Reputation KB contract
+## v0.3.0 — User trial + quarantine-first + PUP insight + Developer Guard
 
-当前阶段。PR18 交付：
+Public Preview：
 
 - 中文优先的 8 类 PUP behavior taxonomy；
 - evidence-only Reputation Record schema、review status 与 synthetic examples；
@@ -30,13 +30,13 @@ PR21 增加 Reputation Matcher、PUP Insight、CLI/Skill 用户入口和 AI expl
 
 PR22 将 cleanup preview、默认隔离、审计、报告、PUP insight 和恢复说明编排为 5 分钟用户试用入口，优先验证真实用户能否理解产品价值与安全边界。
 
-## v0.4 — Quarantine + Restore
+## v0.4 — Reputation adapters + PUP planner + registry backup planning
 
-建设可逆隔离区、restore contract、操作历史和失败恢复。所有隔离动作仍需 Policy Engine、用户确认、目标身份复核与审计。
+在明确来源许可和人工审核下接入真实公开 Reputation adapter；构建 PUP 声明式 planner 与注册表备份规划。声誉证据仍不授权执行，registry backup planning 不提供任意写入口。
 
-## v0.5 — PUP planner + registry backup
+## v0.5 — Controlled uninstall + stronger external-tool governance
 
-将多来源 PUP evidence 转换为声明式治理计划，并建立注册表备份/恢复基础。Planner 不直接执行；registry backup 不能成为任意写注册表入口。
+在 allowlist、签名/发布者核验、用户确认、回滚和审计下推进更强的受控卸载与外部工具治理。
 
 ## v1.0 — External tool adapter + Agent ecosystem integration
 

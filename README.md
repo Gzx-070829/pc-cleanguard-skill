@@ -1,16 +1,36 @@
 # PC CleanGuard Skill
 
-面向 AI Agent 的开源 Windows 安全清理治理层：看得见候选，默认可恢复隔离，每一步都有审计。
+PC CleanGuard Skill 让 AI 更安全地分析、解释、预览、隔离和审计 Windows 清理任务。
 
-Open-source Windows cleanup governance for AI agents: scan first, preview changes, require consent, and audit every decision.
+PC CleanGuard Skill helps AI agents safely inspect, explain, preview, quarantine, and audit Windows cleanup tasks.
 
-**v0.2.0 Public Demo Preview 已发布 · v0.3 PR22 用户试用体验**
+**v0.3.0 Public Preview · 默认隔离，可恢复 · Offline by default**
+
+快速试用：
 
 ```powershell
 python -m pc_cleanguard.cli trial run --root .pcg-demo --output .pcg-trial
 ```
 
-5 分钟即可看到清理预览、空间估算、审计报告和 synthetic PUP 线索。默认 dry-run；确认后默认隔离、可恢复。PUP 线索只是提示，不是删除授权。不联网、不上传、不静默删除。
+确认隔离试用：
+
+```powershell
+python -m pc_cleanguard.cli trial run --root .pcg-demo --output .pcg-trial-confirm --confirm --quarantine-root .pcg-quarantine
+```
+
+PUP 线索检查：
+
+```powershell
+python -m pc_cleanguard.cli pup inspect --input <report.json> --seed examples/reputation/seed_records.zh-CN.json --output pup_insight.md
+```
+
+恢复隔离文件：
+
+```powershell
+python -m pc_cleanguard.cli quarantine restore --root .pcg-quarantine --item-id <id>
+```
+
+5 分钟即可看到清理预览、空间估算、审计报告和 synthetic PUP 线索。默认 dry-run；确认后默认隔离、可恢复。PUP 线索只是提示，不是删除授权。不联网、不上传、不静默删除，也不替代杀毒软件。
 
 > PC CleanGuard 不追求“点一下就删干净”。它把 AI 建议与系统修改隔开，让每个候选、权限、确认和结果都可解释。
 >
@@ -209,11 +229,15 @@ v0.2 编排示例：[examples/skill_actions/v0.2_cleanup_agent_flow.json](exampl
 - PUP Insight Flow：[docs/pup-insight-user-flow.md](docs/pup-insight-user-flow.md)
 - User Trial：[docs/user-trial.md](docs/user-trial.md)
 - Product Positioning：[docs/product-positioning.md](docs/product-positioning.md)
+- v0.3 Public Preview：[docs/v0.3-public-preview.md](docs/v0.3-public-preview.md)
+- v0.3 User Trial Script：[docs/v0.3-user-trial-script.md](docs/v0.3-user-trial-script.md)
+- v0.3.0 Release Checklist：[docs/release-v0.3.0-checklist.md](docs/release-v0.3.0-checklist.md)
+- v0.3 Showcase：[examples/showcase/v0.3/README.md](examples/showcase/v0.3/README.md)
 
 仓库提供 bug、软件规则反馈和 cleanup false-positive issue templates。提交示例时请使用虚构路径，勿上传文件内容、凭据、token 或真实用户数据。
 
 ## 版本状态 / Version status
 
-`v0.1.0 Public Preview` 与 `v0.2.0 Public Demo Preview` 已发布。v0.3 当前包含 Developer Guard、Reputation KB/Matcher/PUP Insight、可恢复 quarantine/restore，以及默认隔离安全入口。
+`v0.1.0 Public Preview` 与 `v0.2.0 Public Demo Preview` 已发布；当前版本为 `v0.3.0 Public Preview`，包含五分钟试用、Developer Guard、Reputation KB/Matcher/PUP Insight、可恢复 quarantine/restore 和默认隔离安全入口。
 
 PR 不创建 tag；只有获得明确发布授权后才创建正式版本 tag。

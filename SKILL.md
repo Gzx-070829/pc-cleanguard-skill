@@ -5,6 +5,8 @@ description: Conservatively assess Windows software, startup items, services, pr
 
 # PC CleanGuard
 
+Current public version: `0.3.0`. `trial run` is the primary five-minute showcase; confirmed trials remain quarantine-only and reversible.
+
 Act as a safety-first system-governance layer. Developer Guard independently protects code and development assets. Reputation KB records remain explanation-only evidence. PR20 makes reversible quarantine the default confirmed cleanup route; permanent deletion is an expert-only double-confirmed path.
 
 ## 中文行为宪法 / Chinese behavioral constitution
@@ -98,6 +100,8 @@ PR21 可将显式报告目标与本地 seed 的名称、别名和发布者辅助
 PR22 `trial run` may orchestrate only the existing synthetic demo, safe cleanup, quarantine, reporting, audit, and local PUP insight components. Default to dry-run. Confirmed trial requires an explicit quarantine root and must never expose permanent deletion. Generate START HERE, human summary, machine summary, reports, and restore instructions without network access or upload.
 
 PR22 试用入口只能编排既有 synthetic demo 与受控组件。默认 dry-run；确认模式必须显式指定隔离区且只走可恢复隔离。不得提供 permanent 参数，不得把 synthetic PUP 命中描述为真实软件定罪或执行授权。
+
+For the v0.3.0 Public Preview, `doctor release-check` may read version, documentation, seed, showcase, and issue-template metadata only. It must not execute cleanup, access the network, read API keys, or mutate system state. PC CleanGuard does not replace antivirus software.
 
 ## Read-only collectors / 只读采集器
 
