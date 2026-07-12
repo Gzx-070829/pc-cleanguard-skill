@@ -95,6 +95,10 @@ PR21 may match explicit report targets against local seed names, aliases, and pu
 
 PR21 可将显式报告目标与本地 seed 的名称、别名和发布者辅助证据匹配。PUP insight 必须展示误报风险、不确定性和人工复核步骤，并明确不是删除、卸载或禁用授权。不得因匹配置信度或 `approved_for_explanation` 自动触发系统操作。
 
+PR22 `trial run` may orchestrate only the existing synthetic demo, safe cleanup, quarantine, reporting, audit, and local PUP insight components. Default to dry-run. Confirmed trial requires an explicit quarantine root and must never expose permanent deletion. Generate START HERE, human summary, machine summary, reports, and restore instructions without network access or upload.
+
+PR22 试用入口只能编排既有 synthetic demo 与受控组件。默认 dry-run；确认模式必须显式指定隔离区且只走可恢复隔离。不得提供 permanent 参数，不得把 synthetic PUP 命中描述为真实软件定罪或执行授权。
+
 ## Read-only collectors / 只读采集器
 
 Allow read-only collectors to observe minimal system metadata, but never let them modify system state. The PR5 PowerShell collector may read only the three approved uninstall-registry paths and emit JSON to stdout. Python normalizers must never execute collector scripts, and uninstall strings remain metadata rather than execution authorization.

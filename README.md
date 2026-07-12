@@ -1,10 +1,16 @@
 # PC CleanGuard Skill
 
-面向 AI Agent 的开源 Windows 清理治理 Skill：先扫描、再预览、需确认、全审计。
+面向 AI Agent 的开源 Windows 安全清理治理层：看得见候选，默认可恢复隔离，每一步都有审计。
 
 Open-source Windows cleanup governance for AI agents: scan first, preview changes, require consent, and audit every decision.
 
-**v0.2.0 Public Demo Preview 已发布 · v0.3 PR21 开发中**
+**v0.2.0 Public Demo Preview 已发布 · v0.3 PR22 用户试用体验**
+
+```powershell
+python -m pc_cleanguard.cli trial run --root .pcg-demo --output .pcg-trial
+```
+
+5 分钟即可看到清理预览、空间估算、审计报告和 synthetic PUP 线索。默认 dry-run；确认后默认隔离、可恢复。PUP 线索只是提示，不是删除授权。不联网、不上传、不静默删除。
 
 > PC CleanGuard 不追求“点一下就删干净”。它把 AI 建议与系统修改隔开，让每个候选、权限、确认和结果都可解释。
 >
@@ -34,6 +40,8 @@ PR19 增加可恢复 quarantine → manifest → restore 链路，并把隔离�
 PR20 增加普通用户 `clean safe` 入口和离线 Reputation Seed Pack。永久删除降为专家模式，必须双重显式确认；种子证据始终 `execution_authorized=false`。
 
 PR21 让本地 Reputation KB 变得用户可见：可对 report 中的软件、启动项、服务和计划任务进行名称/别名匹配，生成中文 PUP 风险洞察；匹配与洞察只用于解释、排序和人工复核。
+
+PR22 把上述能力编排为 `trial run` 产品体验：自动生成 START HERE、用户摘要、机器摘要、清理报告、PUP 洞察、审计和恢复说明。
 
 ## 5 分钟试用 / Try it in five minutes
 
@@ -199,6 +207,8 @@ v0.2 编排示例：[examples/skill_actions/v0.2_cleanup_agent_flow.json](exampl
 - Reputation Source Policy：[docs/reputation-source-policy.md](docs/reputation-source-policy.md)
 - Reputation Matching：[docs/reputation-matching.md](docs/reputation-matching.md)
 - PUP Insight Flow：[docs/pup-insight-user-flow.md](docs/pup-insight-user-flow.md)
+- User Trial：[docs/user-trial.md](docs/user-trial.md)
+- Product Positioning：[docs/product-positioning.md](docs/product-positioning.md)
 
 仓库提供 bug、软件规则反馈和 cleanup false-positive issue templates。提交示例时请使用虚构路径，勿上传文件内容、凭据、token 或真实用户数据。
 

@@ -44,6 +44,7 @@ from .reputation import (
     write_pup_insight_markdown,
 )
 from .skill import invoke_skill_action, write_report
+from .experience import run_user_trial
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -323,6 +324,13 @@ def _parser() -> argparse.ArgumentParser:
     pup_inspect.add_argument("--input", required=True, type=Path)
     pup_inspect.add_argument("--seed", required=True, type=Path)
     pup_inspect.add_argument("--output", required=True, type=Path)
+    trial = subcommands.add_parser("trial", help="run the bounded five-minute product trial")
+    trial_commands = trial.add_subparsers(dest="trial_command", required=True)
+    trial_run = trial_commands.add_parser("run")
+    trial_run.add_argument("--root", required=True, type=Path)
+    trial_run.add_argument("--output", required=True, type=Path)
+    trial_run.add_argument("--confirm", action="store_true")
+    trial_run.add_argument("--quarantine-root", type=Path)
     return parser
 
 
@@ -590,6 +598,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             summary = _run_reputation(arguments)
         elif arguments.command == "pup" and arguments.pup_command == "inspect":
             summary = _run_pup(arguments)
+        elif arguments.command == "trial" and arguments.trial_command == "run":
+            summary = run_user_trial(
+                arguments.root,
+                arguments.output,
+                confirm=arguments.confirm,
+                quarantine_root=arguments.quarantine_root,
+            )
         else:  # pragma: no cover - argparse enforces the available commands.
             parser.error(f"unsupported command: {arguments.command}")
     except (FileExistsError, FileNotFoundError, KeyError, OSError, RuntimeError, TypeError, ValueError) as error:
