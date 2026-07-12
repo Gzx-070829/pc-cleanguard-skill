@@ -36,7 +36,10 @@ class CleanupExecutorTest(unittest.TestCase):
         self.directory.cleanup()
 
     def _execute(self, confirmed: bool, *, root: Path | None = None):
-        return CleanupExecutor().execute(
+        return CleanupExecutor(
+            permanent=confirmed,
+            permanent_delete_acknowledged=confirmed,
+        ).execute(
             self.preview,
             CleanupConfirmation(confirmed, (root or self.root,)),
             audit_path=self.audit,

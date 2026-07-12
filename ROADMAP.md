@@ -24,6 +24,8 @@ v0.3 Reputation KB 只能解释、排序与风险提示，不能自动触发删�
 
 PR19 将原计划的可逆隔离基础提前接入 v0.3：普通文件 quarantine、manifest、restore、CLI、Skill actions 与 L1 cleanup integration。仍不提供 purge 或目录隔离。
 
+PR20 把隔离设为确认清理的默认路径，增加 `clean safe` 普通用户闭环；永久删除改为显式专家模式和二次确认。首批 Reputation Seed Pack 为离线 synthetic/placeholder 证据，固定不授权执行，不采集专有检测规则。
+
 ## v0.4 — Quarantine + Restore
 
 建设可逆隔离区、restore contract、操作历史和失败恢复。所有隔离动作仍需 Policy Engine、用户确认、目标身份复核与审计。

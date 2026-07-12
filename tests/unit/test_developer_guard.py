@@ -114,7 +114,10 @@ class DeveloperGuardTest(unittest.TestCase):
             protected.write_bytes(b"must remain")
             preview["top_candidates"][0]["path"] = str(protected)
 
-            report = CleanupExecutor().execute(
+            report = CleanupExecutor(
+                permanent=True,
+                permanent_delete_acknowledged=True,
+            ).execute(
                 preview,
                 CleanupConfirmation(True, (root,)),
                 audit_path=root / "audit.jsonl",
@@ -132,7 +135,11 @@ class DeveloperGuardTest(unittest.TestCase):
             generated_log.write_bytes(b"belongs to user code")
             preview = build_cleanup_preview(JunkScanner().scan([root])).to_dict()
 
-            report = CleanupExecutor(user_code_roots=(code_root,)).execute(
+            report = CleanupExecutor(
+                user_code_roots=(code_root,),
+                permanent=True,
+                permanent_delete_acknowledged=True,
+            ).execute(
                 preview,
                 CleanupConfirmation(True, (root,)),
                 audit_path=root / "code-audit.jsonl",

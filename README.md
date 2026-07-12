@@ -4,7 +4,7 @@
 
 Open-source Windows cleanup governance for AI agents: scan first, preview changes, require consent, and audit every decision.
 
-**v0.2.0 Public Demo Preview 已发布 · v0.3 PR18 开发中**
+**v0.2.0 Public Demo Preview 已发布 · v0.3 PR20 开发中**
 
 > PC CleanGuard 不追求“点一下就删干净”。它把 AI 建议与系统修改隔开，让每个候选、权限、确认和结果都可解释。
 >
@@ -12,7 +12,7 @@ Open-source Windows cleanup governance for AI agents: scan first, preview change
 
 ## 这是什么 / What it is
 
-PC CleanGuard 当前可以在用户显式提供的本地路径中读取文件 metadata，识别临时文件、缓存、日志、崩溃转储、安装残留和空目录候选，估算可释放空间，并生成 JSON preview。默认执行是 dry-run；只有显式确认且通过全部 L1 门禁的普通 temp/cache/log 文件才可被清理。
+PC CleanGuard 当前可以在用户显式提供的本地路径中读取文件 metadata，识别临时文件、缓存、日志、崩溃转储、安装残留和空目录候选，估算可释放空间，并生成 JSON preview。默认执行是 dry-run；确认后默认把通过全部 L1 门禁的普通 temp/cache/log 文件移入可恢复隔离区。
 
 完整链路：
 
@@ -30,6 +30,8 @@ Explicit path
 v0.3 PR18 正在增加 Developer Guard 与 Reputation KB 数据契约：开发路径在 scanner/executor 两层默认阻断，PUP 声誉记录只能解释和排序，不能授权删除或卸载。
 
 PR19 增加可恢复 quarantine → manifest → restore 链路，并把隔离模式接入受控 L1 cleanup、CLI 与 Skill actions；不提供 purge。
+
+PR20 增加普通用户 `clean safe` 入口和离线 Reputation Seed Pack。永久删除降为专家模式，必须双重显式确认；种子证据始终 `execution_authorized=false`。
 
 ## 5 分钟试用 / Try it in five minutes
 
@@ -88,7 +90,19 @@ python -m pc_cleanguard.cli clean preview --path C:\Explicit\Temp --output outpu
 python -m pc_cleanguard.cli clean execute --preview output\preview.json --allow-root C:\Explicit\Temp --result output\result.json --audit output\audit.jsonl
 ```
 
-没有 `--confirm` 时只产生 `would_clean`，不删除文件。受控 L1 确认格式见 [L1 Controlled Cleaner](docs/l1-controlled-cleaner.md)。
+没有 `--confirm` 时只产生 `would_clean`。普通用户推荐使用一条安全入口：
+
+```powershell
+python -m pc_cleanguard.cli clean safe --path C:\Explicit\Temp --output output\safe
+```
+
+确认后默认隔离：
+
+```powershell
+python -m pc_cleanguard.cli clean safe --path C:\Explicit\Temp --output output\safe --confirm --quarantine-root output\quarantine
+```
+
+`clean execute --confirm` 也必须提供 `--quarantine-root`。永久删除是专家模式，必须同时提供 `--permanent --i-understand-permanent-delete`，且不会扩大 L1 范围。详见 [Safe Clean Flow](docs/safe-clean-user-flow.md)。
 
 ### 导出 Markdown 报告
 
@@ -141,7 +155,7 @@ v0.2 编排示例：[examples/skill_actions/v0.2_cleanup_agent_flow.json](exampl
 - 不自动运行 Windows PowerShell collectors，也不扫描全盘。
 - 没有真实在线 AI provider、GUI、后台监控、遥测或云同步。
 - 垃圾规则以明确 metadata 为主，仍需要社区反馈持续降低误报。
-- PR18 Reputation KB 目前只有本地 schema 与 synthetic 示例，不联网抓取真实声誉数据。
+- PR20 Reputation Seed Pack 目前提供 20 条 synthetic/placeholder 中文记录，不联网抓取声誉数据，也不包含专有检测库。
 
 ## 安全边界 / Safety boundaries
 
@@ -170,11 +184,14 @@ v0.2 编排示例：[examples/skill_actions/v0.2_cleanup_agent_flow.json](exampl
 - Reputation KB contract：[docs/reputation-kb.md](docs/reputation-kb.md)
 - Developer Guard：[docs/developer-guard.md](docs/developer-guard.md)
 - Quarantine and Restore：[docs/quarantine-restore.md](docs/quarantine-restore.md)
+- Safe Clean Flow：[docs/safe-clean-user-flow.md](docs/safe-clean-user-flow.md)
+- Reputation Seed：[docs/reputation-seed.md](docs/reputation-seed.md)
+- Reputation Source Policy：[docs/reputation-source-policy.md](docs/reputation-source-policy.md)
 
 仓库提供 bug、软件规则反馈和 cleanup false-positive issue templates。提交示例时请使用虚构路径，勿上传文件内容、凭据、token 或真实用户数据。
 
 ## 版本状态 / Version status
 
-`v0.1.0 Public Preview` 与 `v0.2.0 Public Demo Preview` 已发布。v0.3 当前包含 Developer Guard、Reputation KB 契约，以及 PR19 可恢复 quarantine/restore 链路。
+`v0.1.0 Public Preview` 与 `v0.2.0 Public Demo Preview` 已发布。v0.3 当前包含 Developer Guard、Reputation KB 契约、可恢复 quarantine/restore，以及 PR20 默认隔离安全入口与离线 seed pack。
 
 PR 不创建 tag；只有获得明确发布授权后才创建正式版本 tag。

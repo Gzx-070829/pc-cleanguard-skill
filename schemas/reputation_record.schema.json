@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://pc-cleanguard.example/schemas/reputation_record.schema.json",
   "title": "PC CleanGuard Reputation KB Record",
-  "description": "Evidence for explanation, sorting, and risk提示 only. A record can never authorize deletion, uninstall, disablement, or execution.",
+  "description": "Evidence for explanation, sorting, and risk提示 only. PR20 local seeds can never authorize deletion, uninstall, disablement, or execution.",
   "type": "object",
   "required": [
     "record_id",
@@ -53,6 +53,9 @@
     },
     "source_type": {
       "enum": [
+        "public_regulatory_notice",
+        "public_vendor_behavior_article",
+        "synthetic_example",
         "official_vendor",
         "security_vendor",
         "curated_research",
