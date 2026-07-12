@@ -1,0 +1,25 @@
+name: PUP reputation feedback / PUP 声誉反馈
+description: Report a possible match, mismatch, source issue, or false positive without uploading files.
+title: "[PUP reputation] "
+labels: ["reputation", "false-positive"]
+body:
+  - type: textarea
+    id: synthetic_identity
+    attributes:
+      label: Sanitized software identity / 脱敏软件身份
+      description: Prefer Example/Synthetic names; do not upload binaries or private paths.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Public evidence and source URL / 公开证据与来源
+    validations:
+      required: true
+  - type: checkboxes
+    id: acknowledgement
+    attributes:
+      label: Safety acknowledgement
+      options:
+        - label: I understand a reputation report is evidence, not deletion/uninstall/disable authorization.
+          required: true

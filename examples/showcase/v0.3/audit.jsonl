@@ -1,0 +1,2 @@
+{"event_id":"example-audit-1","path":".pcg-demo/temp/example.tmp","action":"quarantine_file","status":"quarantined","dry_run":false,"execution_method":"pathlib_replace","synthetic":true}
+{"event_id":"example-audit-2","path":".pcg-demo/dumps/example.dmp","action":"skip","status":"skipped","dry_run":false,"execution_method":"none","synthetic":true}

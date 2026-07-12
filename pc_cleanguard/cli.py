@@ -44,13 +44,19 @@ from .reputation import (
     write_pup_insight_markdown,
 )
 from .skill import invoke_skill_action, write_report
-from .experience import run_user_trial
+from .experience import run_release_smoke_check, run_user_trial
+from . import __version__
 
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="python -m pc_cleanguard.cli",
         description="PC CleanGuard offline governance CLI with controlled L1 cleanup",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"PC CleanGuard Skill {__version__}",
     )
     subcommands = parser.add_subparsers(dest="command", required=True)
     scan = subcommands.add_parser(
@@ -331,6 +337,9 @@ def _parser() -> argparse.ArgumentParser:
     trial_run.add_argument("--output", required=True, type=Path)
     trial_run.add_argument("--confirm", action="store_true")
     trial_run.add_argument("--quarantine-root", type=Path)
+    doctor = subcommands.add_parser("doctor", help="run read-only project checks")
+    doctor_commands = doctor.add_subparsers(dest="doctor_command", required=True)
+    doctor_commands.add_parser("release-check", help="verify local v0.3.0 release assets")
     return parser
 
 
@@ -605,6 +614,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 confirm=arguments.confirm,
                 quarantine_root=arguments.quarantine_root,
             )
+        elif arguments.command == "doctor" and arguments.doctor_command == "release-check":
+            summary = run_release_smoke_check()
         else:  # pragma: no cover - argparse enforces the available commands.
             parser.error(f"unsupported command: {arguments.command}")
     except (FileExistsError, FileNotFoundError, KeyError, OSError, RuntimeError, TypeError, ValueError) as error:

@@ -1,0 +1,25 @@
+name: Trial experience feedback / 试用体验反馈
+description: Tell us whether the five-minute trial clearly showed value and safety boundaries.
+title: "[Trial feedback] "
+labels: ["trial", "feedback"]
+body:
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Trial mode / 试用模式
+      options: ["dry-run", "confirmed quarantine"]
+    validations:
+      required: true
+  - type: textarea
+    id: experience
+    attributes:
+      label: What was clear or confusing? / 哪些内容清楚或困惑？
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy confirmation
+      options:
+        - label: I removed private paths, credentials, machine names, and file contents.
+          required: true
