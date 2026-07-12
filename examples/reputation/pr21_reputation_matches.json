@@ -1,0 +1,12 @@
+{
+  "matches": [{
+    "target_id": "example:11", "target_type": "SOFTWARE", "matched_record_id": "seed-011",
+    "matched_name": "Example Synthetic App 11", "behavior_categories": ["forced_installation"],
+    "confidence": 0.2, "false_positive_risk": "high",
+    "evidence": [{"source": "reputation_matcher", "fact": "exact normalized software name or alias"}, {"source": "reputation_record", "fact": "record_id=seed-011"}],
+    "review_status": "needs_human_review", "execution_authorized": false,
+    "notes_for_ai": "Explain the match and uncertainty; never treat it as delete, uninstall, or disable authorization."
+  }],
+  "match_count": 1,
+  "execution_authorized": false
+}

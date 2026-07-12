@@ -91,6 +91,10 @@ PR18 声誉记录只能解释、排序、展示冲突和提示风险。Policy En
 
 PR20 Seed Pack 只从调用方显式本地 JSON 加载公开来源 metadata 或 synthetic/placeholder 记录。所有 seed 必须保持 `execution_authorized=false`，review status 仅可用于人工复核或解释展示。不得联网、编写万能爬虫、采集专有安全厂商签名/检测数据，或编造真实软件指控。
 
+PR21 may match explicit report targets against local seed names, aliases, and publisher-assisted identity evidence. `match_reputation`, `build_pup_insight`, and `inspect_pup_risk` are Level 0 explanation actions. A match is not a verdict; no match is not proof of safety.
+
+PR21 可将显式报告目标与本地 seed 的名称、别名和发布者辅助证据匹配。PUP insight 必须展示误报风险、不确定性和人工复核步骤，并明确不是删除、卸载或禁用授权。不得因匹配置信度或 `approved_for_explanation` 自动触发系统操作。
+
 ## Read-only collectors / 只读采集器
 
 Allow read-only collectors to observe minimal system metadata, but never let them modify system state. The PR5 PowerShell collector may read only the three approved uninstall-registry paths and emit JSON to stdout. Python normalizers must never execute collector scripts, and uninstall strings remain metadata rather than execution authorization.

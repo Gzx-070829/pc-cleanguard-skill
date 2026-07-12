@@ -35,6 +35,14 @@ from .pipeline import (
     write_pipeline_report,
 )
 from .quarantine import QuarantineManager
+from .pup import inspect_pup_risk
+from .reputation import (
+    ReputationMatcher,
+    build_pup_insight,
+    load_seed_records,
+    render_pup_insight_markdown,
+    write_pup_insight_markdown,
+)
 from .skill import invoke_skill_action, write_report
 
 
@@ -300,6 +308,21 @@ def _parser() -> argparse.ArgumentParser:
     quarantine_restore = quarantine_commands.add_parser("restore")
     quarantine_restore.add_argument("--root", required=True, type=Path)
     quarantine_restore.add_argument("--item-id", required=True)
+    reputation = subcommands.add_parser("reputation", help="offline reputation evidence matching")
+    reputation_commands = reputation.add_subparsers(dest="reputation_command", required=True)
+    reputation_match = reputation_commands.add_parser("match")
+    reputation_match.add_argument("--input", required=True, type=Path)
+    reputation_match.add_argument("--seed", required=True, type=Path)
+    reputation_match.add_argument("--output", required=True, type=Path)
+    reputation_insight = reputation_commands.add_parser("insight")
+    reputation_insight.add_argument("--matches", required=True, type=Path)
+    reputation_insight.add_argument("--output", required=True, type=Path)
+    pup = subcommands.add_parser("pup", help="inspect PUP evidence without execution")
+    pup_commands = pup.add_subparsers(dest="pup_command", required=True)
+    pup_inspect = pup_commands.add_parser("inspect")
+    pup_inspect.add_argument("--input", required=True, type=Path)
+    pup_inspect.add_argument("--seed", required=True, type=Path)
+    pup_inspect.add_argument("--output", required=True, type=Path)
     return parser
 
 
@@ -479,6 +502,28 @@ def _run_quarantine(arguments: argparse.Namespace) -> dict:
     raise ValueError("unsupported quarantine command")
 
 
+def _run_reputation(arguments: argparse.Namespace) -> dict:
+    if arguments.reputation_command == "match":
+        report = load_scan_json_file(arguments.input)
+        matches = ReputationMatcher(load_seed_records(arguments.seed)).match(report)
+        payload = {"matches": matches, "match_count": len(matches), "execution_authorized": False}
+        write_report(arguments.output, payload)
+        return {"output": str(arguments.output), **payload}
+    if arguments.reputation_command == "insight":
+        payload = load_scan_json_file(arguments.matches)
+        matches = payload.get("matches") if isinstance(payload, dict) else None
+        insight = build_pup_insight(matches)
+        write_pup_insight_markdown(arguments.output, render_pup_insight_markdown(insight))
+        return {"output": str(arguments.output), "matched_targets": len(matches), "execution_authorized": False}
+    raise ValueError("unsupported reputation command")
+
+
+def _run_pup(arguments: argparse.Namespace) -> dict:
+    result = inspect_pup_risk(load_scan_json_file(arguments.input), arguments.seed)
+    write_pup_insight_markdown(arguments.output, result["markdown"])
+    return {"output": str(arguments.output), "match_count": result["match_count"], "execution_authorized": False}
+
+
 def _run_cleanup_report(arguments: argparse.Namespace) -> dict:
     preview = load_cleanup_preview_json(arguments.preview)
     execution_result = load_scan_json_file(arguments.result)
@@ -541,6 +586,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             summary = quickstart_cleanup_demo(arguments.root, arguments.output)
         elif arguments.command == "quarantine":
             summary = _run_quarantine(arguments)
+        elif arguments.command == "reputation":
+            summary = _run_reputation(arguments)
+        elif arguments.command == "pup" and arguments.pup_command == "inspect":
+            summary = _run_pup(arguments)
         else:  # pragma: no cover - argparse enforces the available commands.
             parser.error(f"unsupported command: {arguments.command}")
     except (FileExistsError, FileNotFoundError, KeyError, OSError, RuntimeError, TypeError, ValueError) as error:

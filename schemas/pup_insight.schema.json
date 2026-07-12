@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/pup_insight.schema.json",
+  "title": "PUP Insight",
+  "description": "Explanation and review guidance only; never execution authorization.",
+  "type": "object",
+  "required": ["summary", "suspicious_behaviors", "matched_targets", "uncertainty_notes", "recommended_review", "blocked_actions", "safety_notice", "next_steps_for_user", "requires_user_confirmation", "execution_authorized"],
+  "properties": {
+    "summary": {"type": "object"},
+    "suspicious_behaviors": {"type": "array", "items": {"type": "string"}},
+    "matched_targets": {"type": "array", "items": {"$ref": "reputation_match.schema.json"}},
+    "uncertainty_notes": {"type": "array", "items": {"type": "string"}},
+    "recommended_review": {"type": "array", "items": {"type": "string"}},
+    "blocked_actions": {"type": "array", "items": {"enum": ["automatic_delete", "automatic_uninstall", "automatic_disable"]}},
+    "safety_notice": {"type": "string", "minLength": 1},
+    "next_steps_for_user": {"type": "array", "items": {"type": "string"}},
+    "requires_user_confirmation": {"const": true},
+    "execution_authorized": {"const": false}
+  },
+  "additionalProperties": false
+}

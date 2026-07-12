@@ -103,6 +103,20 @@ def build_safe_report_digest(report: dict) -> dict:
         "scheduled_tasks",
         "total_targets",
     )
+    pup_insight = report.get("pup_insight", {})
+    if not isinstance(pup_insight, dict) or pup_insight.get("execution_authorized") is not False:
+        pup_insight = {}
+    pup_summary = pup_insight.get("summary", {})
+    if not isinstance(pup_summary, dict):
+        pup_summary = {}
+    allowed_pup_categories = {
+        "forced_installation", "difficult_uninstall", "browser_hijacking", "ad_popup",
+        "malicious_collection", "malicious_uninstall", "malicious_bundling",
+        "other_user_rights_violation",
+    }
+    categories = pup_insight.get("suspicious_behaviors", [])
+    if not isinstance(categories, list):
+        categories = []
     return {
         "privacy_mode": (
             summary.get("privacy_mode")
@@ -116,6 +130,12 @@ def build_safe_report_digest(report: dict) -> dict:
             key: _non_negative_integer(normalized.get(key)) for key in normalized_keys
         },
         "decisions": safe_decisions,
+        "pup_insight": {
+            "matched_targets": _non_negative_integer(pup_summary.get("matched_targets")),
+            "behavior_categories": sorted({item for item in categories if item in allowed_pup_categories}),
+            "has_uncertainty": bool(pup_insight.get("uncertainty_notes")),
+            "execution_authorized": False,
+        },
         "destructive_actions_executed": False,
     }
 
@@ -139,6 +159,7 @@ def build_report_explanation_prompt(report: dict) -> str:
 - 不得把 AI 输出解释为删除、卸载、隔离、禁用、停止服务、修改任务或注册表的授权。
 - 不得输出 PowerShell、cmd、reg、sc、schtasks 或其他可执行系统命令。
 - 不得因单一来源、AI 判断、社区规则或在线声誉建议删除。
+- PUP insight 只是解释、排序和风险提示，不是删除、卸载或禁用授权。
 - 所有 `ASK_USER`、`UNKNOWN` 和证据不足项必须标记为“需要用户确认”。
 - 用户文档、代码、照片、浏览器资料和密码管理器默认保护。
 - `SAFE_REMOVE`、`STARTUP_OFF` 和 `QUARANTINE` 只是候选建议，不是执行授权。

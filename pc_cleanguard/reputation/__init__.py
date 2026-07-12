@@ -19,6 +19,9 @@ from .reputation_models import (
 )
 from .seed_loader import load_seed_records, load_source_manifest, validate_seed_record
 from .source_validation import validate_source_manifest
+from .matcher import ReputationMatcher, normalize_reputation_name
+from .insight import build_pup_insight
+from .reporting import render_pup_insight_markdown, write_pup_insight_markdown
 
 __all__ = [
     "EvidenceType",
@@ -38,4 +41,9 @@ __all__ = [
     "load_source_manifest",
     "validate_seed_record",
     "validate_source_manifest",
+    "ReputationMatcher",
+    "normalize_reputation_name",
+    "build_pup_insight",
+    "render_pup_insight_markdown",
+    "write_pup_insight_markdown",
 ]

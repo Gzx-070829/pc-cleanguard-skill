@@ -4,7 +4,7 @@
 
 Open-source Windows cleanup governance for AI agents: scan first, preview changes, require consent, and audit every decision.
 
-**v0.2.0 Public Demo Preview 已发布 · v0.3 PR20 开发中**
+**v0.2.0 Public Demo Preview 已发布 · v0.3 PR21 开发中**
 
 > PC CleanGuard 不追求“点一下就删干净”。它把 AI 建议与系统修改隔开，让每个候选、权限、确认和结果都可解释。
 >
@@ -32,6 +32,8 @@ v0.3 PR18 正在增加 Developer Guard 与 Reputation KB 数据契约：开发�
 PR19 增加可恢复 quarantine → manifest → restore 链路，并把隔离模式接入受控 L1 cleanup、CLI 与 Skill actions；不提供 purge。
 
 PR20 增加普通用户 `clean safe` 入口和离线 Reputation Seed Pack。永久删除降为专家模式，必须双重显式确认；种子证据始终 `execution_authorized=false`。
+
+PR21 让本地 Reputation KB 变得用户可见：可对 report 中的软件、启动项、服务和计划任务进行名称/别名匹配，生成中文 PUP 风险洞察；匹配与洞察只用于解释、排序和人工复核。
 
 ## 5 分钟试用 / Try it in five minutes
 
@@ -126,6 +128,14 @@ python -m pc_cleanguard.cli explain --report output/governance-report.json --out
 
 `pc_cleanguard.cli explain` 使用离线 Mock 或 dry-run prompt provider，不连接真实模型。
 
+### 检查 PUP / 流氓软件线索
+
+```powershell
+python -m pc_cleanguard.cli pup inspect --input report.json --seed examples/reputation/seed_records.zh-CN.json --output pup_inspection.md
+```
+
+输出不是删除、卸载或禁用授权；高误报风险和未审核记录会明确要求用户复核。
+
 ## AI / Skill 调用
 
 外部 Agent 可以通过 `invoke_skill_action` 调用 `scan_from_json`、`explain_report`、`build_cleanup_plan`、`write_report`、`write_audit` 和 `recommend_external_tools`：
@@ -187,11 +197,13 @@ v0.2 编排示例：[examples/skill_actions/v0.2_cleanup_agent_flow.json](exampl
 - Safe Clean Flow：[docs/safe-clean-user-flow.md](docs/safe-clean-user-flow.md)
 - Reputation Seed：[docs/reputation-seed.md](docs/reputation-seed.md)
 - Reputation Source Policy：[docs/reputation-source-policy.md](docs/reputation-source-policy.md)
+- Reputation Matching：[docs/reputation-matching.md](docs/reputation-matching.md)
+- PUP Insight Flow：[docs/pup-insight-user-flow.md](docs/pup-insight-user-flow.md)
 
 仓库提供 bug、软件规则反馈和 cleanup false-positive issue templates。提交示例时请使用虚构路径，勿上传文件内容、凭据、token 或真实用户数据。
 
 ## 版本状态 / Version status
 
-`v0.1.0 Public Preview` 与 `v0.2.0 Public Demo Preview` 已发布。v0.3 当前包含 Developer Guard、Reputation KB 契约、可恢复 quarantine/restore，以及 PR20 默认隔离安全入口与离线 seed pack。
+`v0.1.0 Public Preview` 与 `v0.2.0 Public Demo Preview` 已发布。v0.3 当前包含 Developer Guard、Reputation KB/Matcher/PUP Insight、可恢复 quarantine/restore，以及默认隔离安全入口。
 
 PR 不创建 tag；只有获得明确发布授权后才创建正式版本 tag。

@@ -1,0 +1,9 @@
+{
+  "schema_version": "0.1",
+  "request_id": "pr21-inspect-example",
+  "action": "inspect_pup_risk",
+  "payload": {
+    "report": {"targets": [{"target_id": "example:11", "object_type": "SOFTWARE", "name": "Example Synthetic App 11"}]},
+    "seed_path": "examples/reputation/seed_records.zh-CN.json"
+  }
+}

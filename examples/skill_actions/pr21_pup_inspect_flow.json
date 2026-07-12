@@ -1,0 +1,7 @@
+{
+  "flow": ["match_reputation", "build_pup_insight", "inspect_pup_risk"],
+  "source": "local_seed_pack",
+  "requires_user_confirmation": true,
+  "execution_authorized": false,
+  "blocked_actions": ["automatic_delete", "automatic_uninstall", "automatic_disable"]
+}
