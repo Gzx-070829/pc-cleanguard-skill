@@ -200,11 +200,16 @@ def run_cleanup_demo(
     output: str | Path,
     *,
     confirm: bool = False,
+    quarantine_root: str | Path | None = None,
 ) -> dict:
     """Run preview, PR15 execution, audit, and reporting for a marked demo root."""
 
     if not isinstance(confirm, bool):
         raise TypeError("confirm must be a bool")
+    if confirm and quarantine_root is None:
+        quarantine_root = Path(output) / "quarantine"
+    if not confirm and quarantine_root is not None:
+        raise ValueError("quarantine_root requires confirm=true")
     demo_root = _explicit_demo_root(root)
     if not demo_root.is_dir():
         raise FileNotFoundError(f"demo root does not exist: {demo_root}")
@@ -221,7 +226,7 @@ def run_cleanup_demo(
     write_report(preview_path, preview)
     confirmation = CleanupConfirmation(confirm, (demo_root,))
     execution = CleanupExecutor(
-        quarantine_root=(output_root / "quarantine") if confirm else None
+        quarantine_root=quarantine_root
     ).execute(
         preview,
         confirmation,
@@ -241,6 +246,7 @@ def run_cleanup_demo(
         "audit": str(audit_path),
         "report": str(report_path),
         "confirmed": confirm,
+        "quarantine_root": str(Path(quarantine_root).resolve(strict=False)) if quarantine_root is not None else None,
         "execution_performed": execution.summary["execution_performed"],
         "next_step": (
             "Review cleanup_report.md and the audit JSONL."

@@ -28,6 +28,8 @@ PR20 把隔离设为确认清理的默认路径，增加 `clean safe` 普通用�
 
 PR21 增加 Reputation Matcher、PUP Insight、CLI/Skill 用户入口和 AI explain 的受限洞察摘要。它让声誉证据可见，但仍不提供删除、卸载或禁用授权。
 
+PR22 将 cleanup preview、默认隔离、审计、报告、PUP insight 和恢复说明编排为 5 分钟用户试用入口，优先验证真实用户能否理解产品价值与安全边界。
+
 ## v0.4 — Quarantine + Restore
 
 建设可逆隔离区、restore contract、操作历史和失败恢复。所有隔离动作仍需 Policy Engine、用户确认、目标身份复核与审计。

@@ -1,0 +1,13 @@
+{
+  "cleanup_candidates": 6,
+  "reclaimable_bytes": 177,
+  "quarantined_count": 0,
+  "recoverable_count": 0,
+  "skipped_count": 3,
+  "blocked_count": 0,
+  "pup_clue_count": 1,
+  "confirmed": false,
+  "execution_performed": false,
+  "execution_authorized": false,
+  "safety_boundaries": "默认 dry-run；确认后默认隔离；不联网、不上传；PUP 线索不是执行授权。"
+}
