@@ -1,0 +1,15 @@
+{
+  "schema_version": "0.1",
+  "request_id": "pr21-insight-example",
+  "action": "build_pup_insight",
+  "payload": {
+    "matches": [{
+      "target_id": "example:11", "target_type": "SOFTWARE", "matched_record_id": "seed-011",
+      "matched_name": "Example Synthetic App 11", "behavior_categories": ["forced_installation"],
+      "confidence": 0.2, "false_positive_risk": "high",
+      "evidence": [{"source": "reputation_matcher", "fact": "exact normalized software name or alias"}],
+      "review_status": "needs_human_review", "execution_authorized": false,
+      "notes_for_ai": "Explain only; never authorize execution."
+    }]
+  }
+}

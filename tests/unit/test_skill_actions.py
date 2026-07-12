@@ -45,6 +45,9 @@ class SkillActionsTest(unittest.TestCase):
                 "quarantine_file",
                 "list_quarantine_items",
                 "restore_quarantine_item",
+                "match_reputation",
+                "build_pup_insight",
+                "inspect_pup_risk",
             },
             set(ACTION_NAMES),
         )

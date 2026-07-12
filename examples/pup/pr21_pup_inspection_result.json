@@ -1,0 +1,6 @@
+{
+  "match_count": 1,
+  "execution_authorized": false,
+  "safety_notice": "PUP insight is explanation-only and cannot authorize deletion, uninstall, or disablement.",
+  "output": "examples/reputation/pr21_pup_insight.md"
+}

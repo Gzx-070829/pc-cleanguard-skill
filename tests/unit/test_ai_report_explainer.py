@@ -23,6 +23,19 @@ SAMPLE_REPORT = (
 
 
 class AIReportExplainerTest(unittest.TestCase):
+    def test_explainer_consumes_bounded_pup_insight(self) -> None:
+        report = {
+            "pup_insight": {
+                "summary": {"matched_targets": 2, "behavior_category_count": 1},
+                "suspicious_behaviors": ["ad_popup"],
+                "uncertainty_notes": ["needs review"],
+                "execution_authorized": False,
+            }
+        }
+        explanation = explain_report(report, DryRunPromptProvider())
+        self.assertIn("ad_popup", explanation.prompt)
+        self.assertIn("不是删除、卸载或禁用授权", explanation.prompt)
+
     def setUp(self) -> None:
         self.directory = TemporaryDirectory()
         self.root = Path(self.directory.name)
