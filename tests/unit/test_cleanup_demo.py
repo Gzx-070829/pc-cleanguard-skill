@@ -72,7 +72,7 @@ class CleanupDemoTest(unittest.TestCase):
         self.assertTrue((self.root / "cache" / "example.cache").exists())
         self.assertTrue((self.root / "logs" / "example.log").exists())
 
-    def test_confirm_deletes_only_demo_l1_files(self) -> None:
+    def test_confirm_quarantines_only_demo_l1_files(self) -> None:
         init_cleanup_demo(self.root)
         result = run_cleanup_demo(self.root, self.output, confirm=True)
 
@@ -104,7 +104,7 @@ class CleanupDemoTest(unittest.TestCase):
 
         self.assertTrue((self.root / "untrusted.tmp").exists())
 
-    def test_confirm_does_not_delete_user_added_file_inside_demo_root(self) -> None:
+    def test_confirm_does_not_quarantine_user_added_file_inside_demo_root(self) -> None:
         init_cleanup_demo(self.root)
         added = self.root / "user-added.tmp"
         added.write_text("user data", encoding="utf-8")

@@ -149,6 +149,9 @@ class CleanupExecutor:
         self,
         user_code_roots: Iterable[str | Path] = (),
         quarantine_root: str | Path | None = None,
+        *,
+        permanent: bool = False,
+        permanent_delete_acknowledged: bool = False,
     ) -> None:
         if isinstance(user_code_roots, (str, Path)):
             raise TypeError("user_code_roots must contain explicit roots")
@@ -166,6 +169,14 @@ class CleanupExecutor:
         ):
             raise ValueError("quarantine_root must be an explicit local path")
         self._quarantine_root = quarantine_root
+        if not isinstance(permanent, bool) or not isinstance(permanent_delete_acknowledged, bool):
+            raise TypeError("permanent flags must be bool")
+        if permanent_delete_acknowledged and not permanent:
+            raise ValueError("permanent delete acknowledgement requires permanent mode")
+        if permanent and quarantine_root is not None:
+            raise ValueError("permanent and quarantine modes are mutually exclusive")
+        self._permanent = permanent
+        self._permanent_delete_acknowledged = permanent_delete_acknowledged
         self._quarantine_manager: QuarantineManager | None = None
 
     def execute(
@@ -181,6 +192,10 @@ class CleanupExecutor:
             raise TypeError("confirmation must be CleanupConfirmation")
         if not isinstance(explicit_overwrite, bool):
             raise TypeError("explicit_overwrite must be a bool")
+        if confirmation.confirmed and self._quarantine_root is None and not self._permanent:
+            raise ValueError("confirmed cleanup requires --quarantine-root; permanent deletion is expert-only")
+        if confirmation.confirmed and self._permanent and not self._permanent_delete_acknowledged:
+            raise ValueError("permanent deletion requires --i-understand-permanent-delete")
         destination = _validated_explicit_local_path(
             audit_path, allowed_suffixes={".jsonl"}
         )

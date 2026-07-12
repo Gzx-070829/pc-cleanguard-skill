@@ -182,6 +182,24 @@ def _parser() -> argparse.ArgumentParser:
         type=Path,
         help="move confirmed L1 files into this explicit quarantine root",
     )
+    execute.add_argument(
+        "--permanent",
+        action="store_true",
+        help="expert-only permanent L1 deletion; requires a second acknowledgement",
+    )
+    execute.add_argument(
+        "--i-understand-permanent-delete",
+        action="store_true",
+        help="second acknowledgement required with --permanent",
+    )
+    safe = clean_commands.add_parser(
+        "safe",
+        help="preview, safely execute, audit, and report explicit paths",
+    )
+    safe.add_argument("--path", dest="paths", required=True, action="append", type=Path)
+    safe.add_argument("--output", required=True, type=Path)
+    safe.add_argument("--confirm", action="store_true")
+    safe.add_argument("--quarantine-root", type=Path)
     report = clean_commands.add_parser(
         "report",
         help="render a Markdown summary from explicit preview and result JSON",
@@ -381,7 +399,11 @@ def _run_cleanup_execute(arguments: argparse.Namespace) -> dict:
         arguments.audit,
         explicit_overwrite=arguments.overwrite,
     )
-    report = CleanupExecutor(quarantine_root=arguments.quarantine_root).execute(
+    report = CleanupExecutor(
+        quarantine_root=arguments.quarantine_root,
+        permanent=arguments.permanent,
+        permanent_delete_acknowledged=arguments.i_understand_permanent_delete,
+    ).execute(
         preview,
         confirmation,
         audit_path=audit_path,
@@ -400,6 +422,42 @@ def _run_cleanup_execute(arguments: argparse.Namespace) -> dict:
         "mode": report.mode,
         **report.summary,
     }
+
+
+def _run_cleanup_safe(arguments: argparse.Namespace) -> dict:
+    if arguments.confirm and arguments.quarantine_root is None:
+        raise ValueError("clean safe --confirm requires --quarantine-root")
+    output = Path(arguments.output).resolve(strict=False)
+    if output.exists():
+        raise FileExistsError(f"output already exists: {output}")
+    output.mkdir(parents=True)
+    preview = build_cleanup_preview(JunkScanner().scan(arguments.paths)).to_dict()
+    preview_path = output / "preview.json"
+    result_path = output / "result.json"
+    audit_path = output / "audit.jsonl"
+    report_path = output / "cleanup_report.md"
+    summary_path = output / "summary.json"
+    write_report(preview_path, preview)
+    execution = CleanupExecutor(quarantine_root=arguments.quarantine_root).execute(
+        preview,
+        CleanupConfirmation(arguments.confirm, tuple(arguments.paths)),
+        audit_path=audit_path,
+    )
+    write_cleanup_execution_report(result_path, execution)
+    summary = build_cleanup_summary(preview, execution.to_dict())
+    write_cleanup_report_markdown(
+        report_path,
+        render_cleanup_report_markdown(summary),
+    )
+    response = {
+        "paths": [str(path) for path in arguments.paths],
+        "output": str(output),
+        "mode": execution.mode,
+        "confirmed": execution.confirmed,
+        **execution.summary,
+    }
+    write_report(summary_path, response)
+    return response
 
 
 def _run_quarantine(arguments: argparse.Namespace) -> dict:
@@ -467,6 +525,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             summary = _run_cleanup_preview(arguments)
         elif arguments.command == "clean" and arguments.clean_command == "execute":
             summary = _run_cleanup_execute(arguments)
+        elif arguments.command == "clean" and arguments.clean_command == "safe":
+            summary = _run_cleanup_safe(arguments)
         elif arguments.command == "clean" and arguments.clean_command == "report":
             summary = _run_cleanup_report(arguments)
         elif arguments.command == "demo" and arguments.demo_command == "init-cleanup":

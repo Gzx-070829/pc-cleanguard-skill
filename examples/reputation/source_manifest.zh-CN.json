@@ -1,0 +1,36 @@
+{
+  "pack_id": "pcg-reputation-seed-zh-cn-v1",
+  "language": "zh-CN",
+  "purpose": "仅用于解释、排序和风险提示，不提供执行授权。",
+  "execution_authorized": false,
+  "sources": [
+    {
+      "source_id": "synthetic-seed-policy",
+      "source_type": "synthetic_example",
+      "source_name": "PC CleanGuard Synthetic Seed Policy",
+      "source_url": "https://example.invalid/pc-cleanguard/reputation-seed-policy",
+      "license_note": "Synthetic placeholder records for contract and UI testing."
+    },
+    {
+      "source_id": "public-regulatory-placeholder",
+      "source_type": "public_regulatory_notice",
+      "source_name": "Public regulatory notice placeholder",
+      "source_url": "https://example.invalid/public-regulatory-notice-placeholder",
+      "license_note": "Placeholder only; requires human replacement and source review before explanation approval."
+    },
+    {
+      "source_id": "public-vendor-placeholder",
+      "source_type": "public_vendor_behavior_article",
+      "source_name": "Public vendor behavior article placeholder",
+      "source_url": "https://example.invalid/public-vendor-article-placeholder",
+      "license_note": "Metadata placeholder; no proprietary detection logic or signature content."
+    },
+    {
+      "source_id": "community-placeholder",
+      "source_type": "community_report",
+      "source_name": "Community report placeholder",
+      "source_url": "https://example.invalid/community-report-placeholder",
+      "license_note": "Unverified community evidence; human review required."
+    }
+  ]
+}

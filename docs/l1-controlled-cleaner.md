@@ -1,6 +1,6 @@
 # L1 Controlled Cleaner / L1 低风险受控清理器
 
-PR15 是 PC CleanGuard 的第一条真实清理路径。它只处理 PR14 cleanup preview 中的 `temp_file`、`cache_file` 和 `log_file` 普通文件；默认仍为 dry-run，只有显式 `--confirm` 且全部门禁通过时才删除文件。
+PR15 建立第一条受控 L1 文件路径；PR20 将确认后的默认动作改为可恢复隔离。永久删除仍只处理 PR14 cleanup preview 中的 `temp_file`、`cache_file` 和 `log_file` 普通文件，并要求专家模式双确认。
 
 PR15 is the first real cleanup path. It is limited to ordinary temp, cache, and log files from a structurally valid PR14 cleanup preview. Dry-run remains the default.
 
@@ -32,10 +32,10 @@ python -m pc_cleanguard.cli clean execute --preview preview.json --allow-root C:
 显式确认 L1 文件清理：
 
 ```powershell
-python -m pc_cleanguard.cli clean execute --preview preview.json --allow-root C:\Explicit\Temp --result result.json --audit audit.jsonl --confirm
+python -m pc_cleanguard.cli clean execute --preview preview.json --allow-root C:\Explicit\Temp --result result.json --audit audit.jsonl --confirm --quarantine-root quarantine
 ```
 
-`--allow-root` 可以重复。result 或 audit 已存在时默认拒绝执行，确保不会先删除再因输出冲突失败；只有显式 `--overwrite` 才替换输出产物。
+`--allow-root` 可以重复。result 或 audit 已存在时默认拒绝执行。永久删除还需显式追加 `--permanent --i-understand-permanent-delete`，且不能同时指定 quarantine root。
 
 ## 结果与审计
 

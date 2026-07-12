@@ -220,7 +220,9 @@ def run_cleanup_demo(
     preview = build_cleanup_preview(_bounded_demo_scan(demo_root)).to_dict()
     write_report(preview_path, preview)
     confirmation = CleanupConfirmation(confirm, (demo_root,))
-    execution = CleanupExecutor().execute(
+    execution = CleanupExecutor(
+        quarantine_root=(output_root / "quarantine") if confirm else None
+    ).execute(
         preview,
         confirmation,
         audit_path=audit_path,

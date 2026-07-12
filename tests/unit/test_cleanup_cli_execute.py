@@ -57,7 +57,9 @@ class CleanupCliExecuteTest(unittest.TestCase):
         self.assertFalse(json.loads(stdout)["confirmed"])
 
     def test_execute_confirm_deletes_l1_file_in_temporary_allow_root(self) -> None:
-        code, stdout, stderr = self._run("--confirm")
+        code, stdout, stderr = self._run(
+            "--confirm", "--permanent", "--i-understand-permanent-delete"
+        )
         report = json.loads(self.result.read_text(encoding="utf-8"))
         audit = [
             json.loads(line) for line in self.audit.read_text(encoding="utf-8").splitlines()
@@ -72,7 +74,9 @@ class CleanupCliExecuteTest(unittest.TestCase):
 
     def test_existing_result_blocks_before_confirmed_deletion(self) -> None:
         self.result.write_text("preserve", encoding="utf-8")
-        code, _, stderr = self._run("--confirm")
+        code, _, stderr = self._run(
+            "--confirm", "--permanent", "--i-understand-permanent-delete"
+        )
         self.assertEqual(2, code)
         self.assertIn("exists", stderr.casefold())
         self.assertEqual("preserve", self.result.read_text(encoding="utf-8"))

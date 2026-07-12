@@ -17,6 +17,8 @@ from .reputation_models import (
     SourceType,
     SuggestedClassification,
 )
+from .seed_loader import load_seed_records, load_source_manifest, validate_seed_record
+from .source_validation import validate_source_manifest
 
 __all__ = [
     "EvidenceType",
@@ -32,4 +34,8 @@ __all__ = [
     "SuggestedClassification",
     "pup_behavior_label_zh",
     "pup_taxonomy_records",
+    "load_seed_records",
+    "load_source_manifest",
+    "validate_seed_record",
+    "validate_source_manifest",
 ]
