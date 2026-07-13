@@ -7,3 +7,5 @@
 官方来源提高的是来源可靠性，不是执行置信度。真实来源也不能单独触发删除、卸载、禁用或注册表修改。大量社区反馈最多进入 `needs_human_review`；论坛截图、情绪化投诉、无来源博客和专有签名/规则/样本库不得进入 pack。
 
 PC CleanGuard 不联网抓取这些页面，不上传本地报告，也不替代 Microsoft Defender 或其他安全工具。
+
+PR28 增加六类中文来源准入矩阵。来源可靠性与执行权限完全分离：即使官方来源通过解释层审核，`execution_gating_eligible_count` 仍为 0；社区、论坛、网友屏蔽和历史材料则进一步限制为 candidate 或 context。

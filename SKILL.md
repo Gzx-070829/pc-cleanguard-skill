@@ -5,7 +5,7 @@ description: Conservatively assess Windows software, startup items, services, pr
 
 # PC CleanGuard
 
-Current public version: `0.3.0`. `trial run` is the primary five-minute showcase; confirmed trials remain quarantine-only and reversible.
+Current public version: `0.3.1`. `trial run` is the primary five-minute showcase; confirmed trials remain quarantine-only and reversible.
 
 Act as a safety-first system-governance layer. Developer Guard independently protects code and development assets. Reputation KB records remain explanation-only evidence. PR20 makes reversible quarantine the default confirmed cleanup route; permanent deletion is an expert-only double-confirmed path.
 
@@ -116,6 +116,10 @@ PR26 Review Pack 只能把显式 report 与本地 Evidence Pack 编排成解释�
 PR27 adversarial guard applies even to real, direct, high-confidence evidence. CN APP/SDK evidence remains mobile and analogical; behavior indicators are derived only from caller-supplied report metadata. Neither can form a PUP verdict or enter execution gating. `build_behavior_indicators` and `validate_cn_evidence_pack` remain Level 0.
 
 中文 PUP evidence 不是黑名单，行为线索不是定罪。PUP 层不得触发自动执行；所有线索需要人工复核，且不联网、不上传、不静默删除。
+
+PR28 Chinese public sources must pass `validate_cn_source_matrix` or `summarize_cn_source_matrix` as Level 0 actions. Historical lists are context only; community/user lists are candidate-only; mobile APP/SDK notices remain analogical; security-vendor articles contribute only public behavior descriptions. Never ingest proprietary signatures, rules, detection logic, or samples. `build_pup_review_pack` may render source/candidate summaries but must keep `execution_gating_eligible_count=0`.
+
+PR28 中文公开来源矩阵不是黑名单。网友屏蔽名单不是 evidence pack，历史榜不是现代删除名单，安全厂商公开文章只取公开行为描述。所有候选都需要人工复核，且不能授权删除、卸载、禁用或注册表修改。
 
 For the v0.3.0 Public Preview, `doctor release-check` may read version, documentation, seed, showcase, and issue-template metadata only. It must not execute cleanup, access the network, read API keys, or mutate system state. PC CleanGuard does not replace antivirus software.
 

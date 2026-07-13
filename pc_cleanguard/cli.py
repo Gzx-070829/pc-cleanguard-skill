@@ -60,6 +60,10 @@ from .reputation import (
     write_indicators,
     build_human_review_checklist,
     render_human_review_checklist,
+    load_cn_candidate_sources,
+    load_cn_source_matrix,
+    summarize_cn_candidate_sources,
+    summarize_cn_source_matrix,
 )
 from .skill import invoke_skill_action, write_report
 from .experience import run_release_smoke_check, run_user_trial
@@ -369,6 +373,15 @@ def _parser() -> argparse.ArgumentParser:
     evidence_indicators.add_argument("--overwrite", action="store_true")
     evidence_indicator_stats = evidence_commands.add_parser("indicators-stats")
     evidence_indicator_stats.add_argument("--input", required=True, type=Path)
+    cn_source = reputation_commands.add_parser("cn-source")
+    cn_source_commands = cn_source.add_subparsers(dest="cn_source_command", required=True)
+    for cn_source_command in ("validate", "stats"):
+        cn_source_parser = cn_source_commands.add_parser(cn_source_command)
+        cn_source_parser.add_argument("--input", required=True, type=Path)
+    cn_source_candidates = cn_source_commands.add_parser("candidates")
+    cn_source_candidates.add_argument("--input", required=True, type=Path)
+    cn_source_candidates.add_argument("--output", required=True, type=Path)
+    cn_source_candidates.add_argument("--overwrite", action="store_true")
     pup = subcommands.add_parser("pup", help="inspect PUP evidence without execution")
     pup_commands = pup.add_subparsers(dest="pup_command", required=True)
     pup_inspect = pup_commands.add_parser("inspect")
@@ -383,6 +396,7 @@ def _parser() -> argparse.ArgumentParser:
     pup_review_pack.add_argument("--input", required=True, type=Path)
     pup_review_pack.add_argument("--evidence-pack", required=True, type=Path)
     pup_review_pack.add_argument("--cn-evidence-pack", type=Path)
+    pup_review_pack.add_argument("--cn-source-matrix", type=Path)
     pup_review_pack.add_argument("--output", required=True, type=Path)
     pup_review_pack.add_argument("--include-indicators", action="store_true")
     pup_review_pack.add_argument("--human-review-checklist", action="store_true")
@@ -403,7 +417,7 @@ def _parser() -> argparse.ArgumentParser:
     trial_run.add_argument("--quarantine-root", type=Path)
     doctor = subcommands.add_parser("doctor", help="run read-only project checks")
     doctor_commands = doctor.add_subparsers(dest="doctor_command", required=True)
-    doctor_commands.add_parser("release-check", help="verify local v0.3.0 release assets")
+    doctor_commands.add_parser("release-check", help="verify local v0.3.1 release assets")
     return parser
 
 
@@ -593,6 +607,22 @@ def _run_quarantine(arguments: argparse.Namespace) -> dict:
 
 
 def _run_reputation(arguments: argparse.Namespace) -> dict:
+    if arguments.reputation_command == "cn-source":
+        if arguments.cn_source_command in {"validate", "stats"}:
+            sources = load_cn_source_matrix(arguments.input)
+            result = summarize_cn_source_matrix(sources)
+            return {"valid": True, **result}
+        candidates = load_cn_candidate_sources(arguments.input)
+        result = summarize_cn_candidate_sources(candidates)
+        payload = {
+            **result,
+            "candidates": candidates,
+            "execution_gating_eligible_count": 0,
+            "execution_authorized": False,
+            "runtime_network_access": False,
+        }
+        write_report(arguments.output, payload, explicit_overwrite=arguments.overwrite)
+        return {"output": str(arguments.output), **result}
     if arguments.reputation_command == "evidence":
         if arguments.evidence_command == "intake":
             candidates = load_evidence_candidates(arguments.input)
@@ -676,6 +706,7 @@ def _run_pup(arguments: argparse.Namespace) -> dict:
             arguments.evidence_pack,
             arguments.output,
             cn_evidence_pack=arguments.cn_evidence_pack,
+            cn_source_matrix=arguments.cn_source_matrix,
             include_behavior_indicators=arguments.include_behavior_indicators,
             overwrite=arguments.overwrite,
         )

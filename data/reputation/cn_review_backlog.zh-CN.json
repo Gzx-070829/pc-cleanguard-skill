@@ -1,0 +1,22 @@
+[
+  {
+    "candidate_id": "cn-extra-huorong-2023-public-behavior",
+    "review_status": "needs_human_review",
+    "reviewer_decision": "needs_more_evidence",
+    "reviewer_notes": "需核对独立来源、具体下载链路、文件签名、版本与本机身份；不得复制厂商检测材料。",
+    "accepted_record_id": null,
+    "rejection_reason": null,
+    "requires_more_evidence": true,
+    "risk_of_misclassification": "high"
+  },
+  {
+    "candidate_id": "cn-extra-xinhua-2021-pc-popup",
+    "review_status": "needs_human_review",
+    "reviewer_decision": "needs_more_evidence",
+    "reviewer_notes": "报道仅描述治理背景；参会企业不能映射为问题实体，需原始材料与具体产品版本证据。",
+    "accepted_record_id": null,
+    "rejection_reason": null,
+    "requires_more_evidence": true,
+    "risk_of_misclassification": "high"
+  }
+]

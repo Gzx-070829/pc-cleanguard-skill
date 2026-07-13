@@ -11,3 +11,5 @@ PR25 增加人工核验的 real-source pack。真实记录和 synthetic 记录�
 PR26 可从 record 派生非授权 indicators，但不会修改原始 evidence。Indicator 只改善真实 report 的人工复核可见性；`execution_gating_eligible_count` 继续固定为 0。
 
 PR27 增加中文 evidence 与对抗守卫。中文批次级 APP/SDK 来源保持 `analogical_behavior + mobile`，不是 Windows 黑名单；即使 evidence 真实、direct、high confidence，也不能成为执行授权。
+
+PR28 在 evidence pack 前增加中文公开来源矩阵和 candidate/backlog 层。网友屏蔽名单、历史榜和单篇媒体报道不直接进入 pack；安全厂商文章只保存公开行为描述。来源矩阵与 evidence pack 是不同资产，二者都不能授权执行。

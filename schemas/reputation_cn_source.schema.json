@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PC CleanGuard Chinese Public Source Matrix",
+  "type": "array",
+  "items": {
+    "allOf": [{"$ref": "#/$defs/sourceFields"}],
+    "unevaluatedProperties": false
+  },
+  "$defs": {
+    "sourceFields": {
+      "type": "object",
+      "required": [
+        "source_id", "source_class", "source_name", "source_url", "source_title",
+        "source_date", "source_access_status", "claimed_entities", "claimed_behaviors",
+        "platform_scope", "source_reliability", "machine_readable", "license_note",
+        "review_notes", "allowed_use", "forbidden_use", "version_or_time_scope",
+        "evidence_freshness", "cross_source_count", "requires_second_source"
+      ],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "source_class": {"enum": ["historical_public_list", "security_vendor_public_article", "official_or_regulatory_notice", "reputable_media_report", "community_multi_report", "user_blocklist_or_forum_list"]},
+        "source_name": {"type": "string", "minLength": 1},
+        "source_url": {"type": "string", "pattern": "^https?://"},
+        "source_title": {"type": "string", "minLength": 1},
+        "source_date": {"type": "string", "pattern": "^(unknown|[0-9]{4}-[0-9]{2}-[0-9]{2})$"},
+        "source_access_status": {"enum": ["accessible", "archived", "access_limited", "unknown"]},
+        "claimed_entities": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "claimed_behaviors": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "platform_scope": {"enum": ["windows_desktop_software", "windows_installer_or_bundle", "mobile_app", "mobile_sdk", "cross_platform_behavior", "online_domain_blocklist", "publisher_level", "unknown"]},
+        "source_reliability": {"enum": ["high", "medium", "low", "unknown"]},
+        "machine_readable": {"type": "boolean"},
+        "license_note": {"type": "string", "minLength": 1},
+        "review_notes": {"type": "string", "minLength": 1},
+        "allowed_use": {"enum": ["candidate_only", "explanation_only", "review_hint", "historical_context", "publisher_level_warning"]},
+        "forbidden_use": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {"enum": ["delete_authorization", "uninstall_authorization", "disable_authorization", "registry_edit_authorization"]}
+        },
+        "version_or_time_scope": {"type": "string", "minLength": 1},
+        "evidence_freshness": {"enum": ["current", "time_scoped", "historical", "unknown"]},
+        "cross_source_count": {"type": "integer", "minimum": 0},
+        "requires_second_source": {"type": "boolean"}
+      }
+    }
+  }
+}

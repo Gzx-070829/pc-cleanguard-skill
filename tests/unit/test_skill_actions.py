@@ -33,7 +33,7 @@ class SkillActionsTest(unittest.TestCase):
     def tearDown(self) -> None:
         self.directory.cleanup()
 
-    def test_action_names_include_pr13_recommender_scope(self) -> None:
+    def test_action_names_include_v031_cn_source_scope(self) -> None:
         self.assertEqual(
             {
                 "scan_from_json",
@@ -51,6 +51,8 @@ class SkillActionsTest(unittest.TestCase):
                 "build_pup_review_pack",
                 "build_behavior_indicators",
                 "validate_cn_evidence_pack",
+                "validate_cn_source_matrix",
+                "summarize_cn_source_matrix",
             },
             set(ACTION_NAMES),
         )

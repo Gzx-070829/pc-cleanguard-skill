@@ -4,7 +4,7 @@ PC CleanGuard Skill 让 AI 更安全地分析、解释、预览、隔离和审�
 
 PC CleanGuard Skill helps AI agents safely inspect, explain, preview, quarantine, and audit Windows cleanup tasks.
 
-**v0.3.0 Public Preview · 默认隔离，可恢复 · Offline by default**
+**v0.3.1 Public Preview · 中文来源可追溯 · 默认隔离，可恢复 · Offline by default**
 
 PUP Review Pack 可以离线生成带来源追溯的 PUP 线索复核包，但不会删除、卸载、禁用、上传或修改注册表。
 PUP Review Pack can generate a local, offline, source-traceable review folder for suspicious PUP signals without deleting, uninstalling, disabling, uploading, or modifying the registry.
@@ -27,10 +27,10 @@ PUP 线索检查：
 python -m pc_cleanguard.cli pup inspect --input <report.json> --seed examples/reputation/seed_records.zh-CN.json --output pup_insight.md
 ```
 
-生成完整离线复核包：
+生成带中文公开来源矩阵的完整离线复核包：
 
 ```powershell
-python -m pc_cleanguard.cli pup review-pack --input examples/reputation/pr26_realistic_windows_inventory.json --evidence-pack data/reputation/evidence_pack.real.zh-CN.json --output .pcg-pup-review
+python -m pc_cleanguard.cli pup review-pack --input examples/reputation/pr26_realistic_windows_inventory.json --evidence-pack data/reputation/evidence_pack.real.zh-CN.json --cn-evidence-pack data/reputation/evidence_pack.cn.zh-CN.json --cn-source-matrix data/reputation/cn_source_matrix.zh-CN.json --output .pcg-pup-review --include-behavior-indicators
 ```
 
 恢复隔离文件：
@@ -81,6 +81,16 @@ PR25 增加离线 Evidence Intake/Review/Build 和首批 5 条人工核验公开
 PR26 增加保守 Evidence Indicator matching、PUP Intelligence Engine 和一条命令生成的本地 Review Pack。detection family 不等于 installed app display name；所有 match 仍需人工复核。
 
 PR27 增加 Adversarial Evidence Guard、5 条批次级中文官方来源、Behavior Indicators 和 v0.3.1 发布准备。中文 evidence 不是黑名单，behavior indicator 不是 PUP 定罪；PC CleanGuard 不是杀毒软件，也不替代 Microsoft Defender。
+
+PR28 发布 v0.3.1：新增六类中文公开来源矩阵、candidate/review 分层、候选池和 Review Pack 来源摘要。网友屏蔽名单不是 evidence pack，历史榜不是现代删除名单，安全厂商文章只取公开行为描述；全部线索仍需人工复核且 `execution_gating_eligible_count=0`。
+
+校验本地中文来源矩阵：
+
+```powershell
+python -m pc_cleanguard.cli reputation cn-source validate --input data/reputation/cn_source_matrix.zh-CN.json
+python -m pc_cleanguard.cli reputation cn-source stats --input data/reputation/cn_source_matrix.zh-CN.json
+python -m pc_cleanguard.cli reputation cn-source candidates --input data/reputation/cn_candidate_sources.zh-CN.json --output cn_candidate_summary.json
+```
 
 ## 5 分钟试用 / Try it in five minutes
 
