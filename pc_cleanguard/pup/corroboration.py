@@ -21,6 +21,8 @@ def score_match_corroboration(match: dict, behavior_indicators: list[dict]) -> d
         "matched_behavior_indicators": related,
         "missing_behavior_indicators": [] if related else ["publisher/path/startup/task/service/browser/behavior metadata"],
         "required_human_checks": ["核对发布者、签名、版本和安装来源。", "核对浏览器、启动项、计划任务和服务是否符合用户预期。"],
+        "source_trace": {"source_url": match.get("source_url"), "source_title": match.get("source_title"), "source_date": match.get("source_date")},
+        "review_next_step": "对照来源范围与本机 metadata；缺少第二来源或身份不一致时降级并提交误报反馈。",
         "false_positive_risk_after_corroboration": "high" if mapping in {"related_publisher","name_collision_candidate"} or not related else "medium",
         "why_still_not_execution_authorization": "行为佐证只增强人工复核，不确认用户意图，也不授权删除、卸载、禁用或注册表修改。",
         "uncertainty_notes": [] if related else ["没有同一 target 的行为元数据佐证；名称或 indicator 命中需要更多证据。"],
@@ -47,5 +49,5 @@ def render_corroboration_markdown(corroboration: dict) -> str:
     for key in ("corroborated_match_count","strong_review_signal_count","moderate_review_signal_count","weak_name_only_signal_count","publisher_only_signal_count","behavior_only_signal_count","no_corroboration_count"):
         lines.append(f"- {key}: `{corroboration.get(key,0)}`")
     lines.extend(["- execution_gating_eligible_count: `0`",""])
-    for item in corroboration.get("details",()): lines.extend([f"## {item['target_id']}","",f"- level: `{item['corroboration_level']}`",f"- score: `{item['corroboration_score']}`",f"- safety: {item['why_still_not_execution_authorization']}",""])
+    for item in corroboration.get("details",()): lines.extend([f"## {item['target_id']}","",f"- level: `{item['corroboration_level']}`",f"- score: `{item['corroboration_score']}`",f"- source: {item.get('source_trace', {}).get('source_title') or '未提供'}",f"- next: {item.get('review_next_step')}",f"- safety: {item['why_still_not_execution_authorization']}",""])
     return "\n".join(lines).rstrip()+"\n"

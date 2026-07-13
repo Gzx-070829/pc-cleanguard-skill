@@ -1,0 +1,1 @@
+{"action":"build_false_positive_feedback_template","payload":{"match":{"matched_record_id":"ev:example","matched_name":"Example App"},"report_metadata":{"path_redacted":"C:/Users/<USER>/Example"}}}

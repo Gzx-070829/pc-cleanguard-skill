@@ -84,6 +84,11 @@ def build_evidence_quality_summary(evidence_packs, *, cn_candidates=(), review_b
         "records_without_time_scope":sum(not str(item.get("version_or_time_scope",item.get("source_date",""))).strip() for item in records),
         "records_without_second_source":sum(item.get("false_positive_risk")=="high" for item in records),
         "high_false_positive_risk_records":sum(item.get("false_positive_risk")=="high" for item in records),
+        "coverage_data_gaps": [
+            "为高误报风险记录补充独立第二来源。",
+            "补充版本、签名、组件、分发渠道和本机行为 metadata。",
+            "继续覆盖布丁系/万能五笔、浏览器主页/搜索修改链路等未充分核验方向。",
+        ],
         "quality_gate_failures":gate_failures,"quality_gate_passed":not gate_failures,
     }
     if corroboration is not None: result["corroborated_match_count"]=corroboration.get("corroborated_match_count",0)

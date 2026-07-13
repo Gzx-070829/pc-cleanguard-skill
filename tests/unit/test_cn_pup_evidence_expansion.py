@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[2]; PACK=ROOT/"data/reputation/evidence_pa
 class CnPupEvidenceExpansionTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls): cls.records=load_evidence_pack(PACK)
-    def test_has_five_to_eight_approved_real_records(self): self.assertGreaterEqual(len(self.records),5); self.assertLessEqual(len(self.records),8)
+    def test_has_ten_to_fifteen_approved_real_records(self): self.assertGreaterEqual(len(self.records),10); self.assertLessEqual(len(self.records),15)
     def test_sources_and_summaries_are_complete(self):
         self.assertTrue(all(all(str(r[k]).strip() for k in ("source_url","source_title","source_date","evidence_summary","source_quote_summary")) for r in self.records))
     def test_records_are_non_authorizing_real_evidence(self): self.assertTrue(all(r["execution_authorized"] is False and r["is_synthetic"] is False for r in self.records))

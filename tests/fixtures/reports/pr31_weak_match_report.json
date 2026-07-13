@@ -1,0 +1,5 @@
+{
+  "fixture_metadata":{"synthetic_but_realistic":true,"notice":"Synthetic name-collision fixture; not a real machine or factual accusation."},
+  "installed_apps":[{"target_id":"app:weak","display_name":"Example Common Name","publisher":"Example Different Publisher","install_location":"C:/Users/<USER>/AppData/Local/Example"}],
+  "startup_items":[],"services":[],"scheduled_tasks":[]
+}

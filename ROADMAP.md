@@ -1,5 +1,9 @@
 # Roadmap
 
+v0.3.3：中文 evidence 扩至 10 条，增加三类报告 fixture、Coverage Dashboard、用户报告、误报反馈、Agent examples 与产品化 Review Pack。
+
+v0.4：优先更完整只读检测、可逆操作、用户确认和恢复；不进入自动杀软路线，PUP evidence 不能单独触发执行。详见 [v0.4 roadmap](docs/v0.4-roadmap.md)。
+
 v0.3.2：中文 Windows PUP evidence 扩充、行为佐证闭环、真实报告试跑、no-match 价值报告与质量门。
 
 PC CleanGuard 以用户可见闭环为 Sprint PR 单位快速推进，同时保持“不静默删除、不绕过确认、不联网泄露、不把 AI/声誉建议当授权”的安全底线。

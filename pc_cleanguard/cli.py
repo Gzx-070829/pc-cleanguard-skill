@@ -68,7 +68,11 @@ from .reputation import (
     summarize_cn_source_matrix,
     build_evidence_quality_summary,
     render_evidence_quality_markdown,
+    build_evidence_coverage_summary,
+    render_evidence_coverage_markdown,
+    build_false_positive_feedback_template,
 )
+from .reporting import build_user_friendly_pup_report, render_user_friendly_pup_report_markdown
 from .validation import (
     build_no_match_report,
     build_real_report_trial,
@@ -387,6 +391,12 @@ def _parser() -> argparse.ArgumentParser:
     evidence_quality.add_argument("--inputs", required=True, nargs="+", type=Path)
     evidence_quality.add_argument("--output", required=True, type=Path)
     evidence_quality.add_argument("--overwrite", action="store_true")
+    evidence_coverage = evidence_commands.add_parser("coverage")
+    evidence_coverage.add_argument("--inputs", required=True, nargs="+", type=Path)
+    evidence_coverage.add_argument("--candidates", required=True, type=Path)
+    evidence_coverage.add_argument("--backlog", required=True, type=Path)
+    evidence_coverage.add_argument("--output", required=True, type=Path)
+    evidence_coverage.add_argument("--overwrite", action="store_true")
     cn_source = reputation_commands.add_parser("cn-source")
     cn_source_commands = cn_source.add_subparsers(dest="cn_source_command", required=True)
     for cn_source_command in ("validate", "stats"):
@@ -422,6 +432,9 @@ def _parser() -> argparse.ArgumentParser:
     pup_review_pack.add_argument("--include-evidence-quality", action="store_true")
     pup_review_pack.add_argument("--include-real-report-validation-summary", action="store_true")
     pup_review_pack.add_argument("--include-corroboration", action="store_true")
+    pup_review_pack.add_argument("--include-coverage", action="store_true")
+    pup_review_pack.add_argument("--include-user-friendly-report", action="store_true")
+    pup_review_pack.add_argument("--include-false-positive-template", action="store_true")
     pup_corroborate = pup_commands.add_parser("corroborate")
     pup_corroborate.add_argument("--matches", required=True, type=Path)
     pup_corroborate.add_argument("--behavior-indicators", required=True, type=Path)
@@ -452,6 +465,8 @@ def _parser() -> argparse.ArgumentParser:
     trial_report.add_argument("--cn-source-matrix", type=Path)
     trial_report.add_argument("--include-behavior-indicators", action="store_true")
     trial_report.add_argument("--include-evidence-quality", action="store_true")
+    trial_report.add_argument("--include-coverage", action="store_true")
+    trial_report.add_argument("--include-user-friendly-report", action="store_true")
     trial_report.add_argument("--overwrite", action="store_true")
     validation = subcommands.add_parser("validation", help="explain local validation results")
     validation_commands = validation.add_subparsers(dest="validation_command", required=True)
@@ -459,9 +474,21 @@ def _parser() -> argparse.ArgumentParser:
     validation_no_match.add_argument("--input", required=True, type=Path)
     validation_no_match.add_argument("--output", required=True, type=Path)
     validation_no_match.add_argument("--overwrite", action="store_true")
+    report = subcommands.add_parser("report", help="render user-facing local reports")
+    report_commands = report.add_subparsers(dest="report_command", required=True)
+    report_user = report_commands.add_parser("user-friendly")
+    report_user.add_argument("--review-pack", required=True, type=Path)
+    report_user.add_argument("--output", required=True, type=Path)
+    report_user.add_argument("--overwrite", action="store_true")
+    feedback = subcommands.add_parser("feedback", help="build local feedback templates")
+    feedback_commands = feedback.add_subparsers(dest="feedback_command", required=True)
+    feedback_fp = feedback_commands.add_parser("false-positive-template")
+    feedback_fp.add_argument("--match", required=True, type=Path)
+    feedback_fp.add_argument("--output", required=True, type=Path)
+    feedback_fp.add_argument("--overwrite", action="store_true")
     doctor = subcommands.add_parser("doctor", help="run read-only project checks")
     doctor_commands = doctor.add_subparsers(dest="doctor_command", required=True)
-    doctor_commands.add_parser("release-check", help="verify local v0.3.2 release assets")
+    doctor_commands.add_parser("release-check", help="verify local v0.3.3 release assets")
     return parser
 
 
@@ -668,6 +695,15 @@ def _run_reputation(arguments: argparse.Namespace) -> dict:
         write_report(arguments.output, payload, explicit_overwrite=arguments.overwrite)
         return {"output": str(arguments.output), **result}
     if arguments.reputation_command == "evidence":
+        if arguments.evidence_command == "coverage":
+            records = [load_evidence_pack(path) for path in arguments.inputs]
+            candidates = json.loads(arguments.candidates.read_text(encoding="utf-8"))
+            backlog = json.loads(arguments.backlog.read_text(encoding="utf-8"))
+            summary = build_evidence_coverage_summary(records, candidates, backlog)
+            arguments.output.parent.mkdir(parents=True, exist_ok=True)
+            with arguments.output.open("w" if arguments.overwrite else "x", encoding="utf-8", newline="\n") as stream:
+                stream.write(render_evidence_coverage_markdown(summary))
+            return {"output": str(arguments.output), **summary}
         if arguments.evidence_command == "quality":
             records = [load_evidence_pack(path) for path in arguments.inputs]
             summary = build_evidence_quality_summary(records)
@@ -775,6 +811,9 @@ def _run_pup(arguments: argparse.Namespace) -> dict:
             include_evidence_quality=arguments.include_evidence_quality,
             include_real_report_validation_summary=arguments.include_real_report_validation_summary,
             include_corroboration=arguments.include_corroboration,
+            include_coverage=arguments.include_coverage,
+            include_user_friendly_report=arguments.include_user_friendly_report,
+            include_false_positive_template=arguments.include_false_positive_template,
             overwrite=arguments.overwrite,
         )
     source = arguments.evidence_pack or arguments.seed
@@ -876,6 +915,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 cn_source_matrix=arguments.cn_source_matrix,
                 include_behavior_indicators=arguments.include_behavior_indicators,
                 include_evidence_quality=arguments.include_evidence_quality,
+                include_coverage=arguments.include_coverage,
+                include_user_friendly_report=arguments.include_user_friendly_report,
                 overwrite=arguments.overwrite,
             )
         elif arguments.command == "validation" and arguments.validation_command == "no-match":
@@ -884,6 +925,19 @@ def main(argv: Sequence[str] | None = None) -> int:
             with arguments.output.open("w" if arguments.overwrite else "x", encoding="utf-8", newline="\n") as stream:
                 stream.write(render_no_match_report_markdown(value_report))
             summary = {"output": str(arguments.output), "execution_authorized": False, "runtime_network_access": False}
+        elif arguments.command == "report" and arguments.report_command == "user-friendly":
+            machine = load_scan_json_file(arguments.review_pack / "machine_summary.json")
+            friendly = build_user_friendly_pup_report(machine)
+            with arguments.output.open("w" if arguments.overwrite else "x", encoding="utf-8", newline="\n") as stream:
+                stream.write(render_user_friendly_pup_report_markdown(friendly))
+            summary = {"output": str(arguments.output), "execution_gating_eligible_count": 0, "execution_authorized": False}
+        elif arguments.command == "feedback" and arguments.feedback_command == "false-positive-template":
+            payload = json.loads(arguments.match.read_text(encoding="utf-8"))
+            if isinstance(payload, dict): payload = payload.get("matches", payload)
+            match = payload[0] if isinstance(payload, list) and payload else payload
+            template = build_false_positive_feedback_template(match or {}, {})
+            write_report(arguments.output, template, explicit_overwrite=arguments.overwrite)
+            summary = {"output": str(arguments.output), "review_status": template["review_status"], "execution_authorized": False}
         elif arguments.command == "doctor" and arguments.doctor_command == "release-check":
             summary = run_release_smoke_check()
         else:  # pragma: no cover - argparse enforces the available commands.

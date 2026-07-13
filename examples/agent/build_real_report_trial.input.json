@@ -1,0 +1,1 @@
+{"action":"build_real_report_trial","payload":{"report":{"installed_apps":[]},"output_dir":".pcg-report-trial","evidence_pack":"data/reputation/evidence_pack.real.zh-CN.json","include_coverage":true,"include_user_friendly_report":true}}

@@ -59,6 +59,9 @@ class SkillActionsTest(unittest.TestCase):
             "build_pup_corroboration",
             "build_real_report_trial",
             "build_no_match_report",
+            "build_evidence_coverage_summary",
+            "build_user_friendly_pup_report",
+            "build_false_positive_feedback_template",
             },
             set(ACTION_NAMES),
         )

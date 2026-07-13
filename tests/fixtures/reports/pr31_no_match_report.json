@@ -1,0 +1,7 @@
+{
+  "fixture_metadata":{"synthetic_but_realistic":true,"notice":"Synthetic and redacted; not a real machine or factual accusation."},
+  "installed_apps":[{"target_id":"app:no-match","display_name":"Example Neutral Utility"}],
+  "startup_items":[{"target_id":"startup:no-match","name":"ExampleUpdater"}],
+  "services":[{"target_id":"service:no-match","display_name":"ExampleService"}],
+  "scheduled_tasks":[{"target_id":"task:no-match","task_name":"ExampleUpdateTask"}]
+}

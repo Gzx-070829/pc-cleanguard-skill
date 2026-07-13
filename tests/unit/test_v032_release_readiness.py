@@ -4,7 +4,7 @@ import pc_cleanguard
 
 ROOT=Path(__file__).resolve().parents[2]
 class V032ReleaseReadinessTest(unittest.TestCase):
-    def test_version_is_032(self): self.assertEqual("0.3.2",pc_cleanguard.__version__)
+    def test_current_version_is_033_while_v032_assets_remain(self): self.assertEqual("0.3.3",pc_cleanguard.__version__)
     def test_release_docs_exist(self):
         for name in ("docs/release-v0.3.2-checklist.md","docs/v0.3.2-public-preview.md","docs/v0.3.2-release-notes.md"): self.assertTrue((ROOT/name).is_file(),name)
     def test_showcase_exists(self):

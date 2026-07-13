@@ -2,6 +2,8 @@
 
 可选 `--include-corroboration` 会输出佐证摘要、详细 JSON、中文 evidence 质量与 match/no-match 摘要。行为佐证是人工复核增强，不是定罪或执行授权。
 
+PR31 还可输出 `user_friendly_summary.md`、`evidence_coverage.md`、结构化误报模板和 `data_gap_summary.md`。
+
 PUP Review Pack 是一个本地、离线、带来源追溯的复核目录：
 
 ```powershell

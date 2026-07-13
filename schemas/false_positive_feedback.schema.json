@@ -1,0 +1,13 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"PC CleanGuard False-positive Feedback",
+  "type":"object",
+  "required":["feedback_id","record_id","software_name","user_claim","installed_from","publisher_observed","signature_status_observed","version_observed","path_redacted","why_user_thinks_false_positive","supporting_context","privacy_redaction_confirmed","consent_to_share_redacted_report","created_at","review_status"],
+  "properties":{
+    "feedback_id":{"type":"string","minLength":1},"record_id":{"type":"string","minLength":1},"software_name":{"type":"string","minLength":1},"user_claim":{"const":"possible_false_positive"},
+    "installed_from":{"type":"string"},"publisher_observed":{"type":"string"},"signature_status_observed":{"type":"string"},"version_observed":{"type":"string"},"path_redacted":{"type":"string"},
+    "why_user_thinks_false_positive":{"type":"string"},"supporting_context":{"type":"string"},"privacy_redaction_confirmed":{"type":"boolean"},"consent_to_share_redacted_report":{"type":"boolean"},
+    "created_at":{"type":"string","minLength":1},"review_status":{"const":"review_queue_only"},"uploaded":{"const":false},"runtime_network_access":{"const":false},"evidence_pack_modified":{"const":false},"execution_gating_eligible_count":{"const":0},"execution_authorized":{"const":false}
+  },
+  "additionalProperties":false
+}

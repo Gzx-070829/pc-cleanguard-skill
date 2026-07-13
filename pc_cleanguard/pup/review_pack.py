@@ -8,6 +8,10 @@ from pathlib import Path
 from ..pipeline.input_loader import _validated_explicit_local_path
 from ..reputation import load_evidence_pack, render_human_review_checklist, render_pup_insight_markdown
 from ..reputation import (
+    build_evidence_coverage_summary,
+    render_evidence_coverage_markdown,
+    build_false_positive_feedback_template as build_structured_feedback_template,
+    render_false_positive_feedback_markdown,
     build_evidence_quality_summary,
     render_evidence_quality_markdown,
     build_cn_source_guard_reason,
@@ -16,6 +20,7 @@ from ..reputation import (
     summarize_cn_candidate_sources,
     summarize_cn_source_matrix,
 )
+from ..reporting import build_user_friendly_pup_report, render_user_friendly_pup_report_markdown
 from ..validation.real_report_validation import validate_real_report_shape
 from .corroboration import render_corroboration_markdown
 from .behavior_indicators import render_behavior_indicator_section
@@ -64,10 +69,14 @@ def build_pup_review_pack(
     cn_win_evidence_pack=None,
     cn_source_matrix=None,
     cn_candidate_sources=None,
+    review_backlog=None,
     include_behavior_indicators: bool = False,
     include_evidence_quality: bool = False,
     include_real_report_validation_summary: bool = False,
     include_corroboration: bool = False,
+    include_coverage: bool = False,
+    include_user_friendly_report: bool = False,
+    include_false_positive_template: bool = False,
     overwrite: bool = False,
 ) -> dict:
     if not isinstance(overwrite, bool):
@@ -96,11 +105,24 @@ def build_pup_review_pack(
     if cn_sources and cn_candidate_sources is None and isinstance(cn_source_matrix, (str, Path)):
         sibling = Path(cn_source_matrix).with_name("cn_candidate_sources.zh-CN.json")
         cn_candidate_sources = sibling if sibling.is_file() else []
-    cn_candidates = (
-        load_cn_candidate_sources(cn_candidate_sources)
-        if isinstance(cn_candidate_sources, (str, Path))
-        else (cn_candidate_sources or [])
-    )
+    coverage_candidates = []
+    if isinstance(cn_candidate_sources, (str, Path)):
+        raw_candidates = json.loads(Path(cn_candidate_sources).read_text(encoding="utf-8"))
+        if raw_candidates and "claimed_software_name" in raw_candidates[0]:
+            coverage_candidates, cn_candidates = raw_candidates, []
+        else:
+            cn_candidates = load_cn_candidate_sources(cn_candidate_sources)
+    else:
+        cn_candidates = cn_candidate_sources or []
+    backlog_records = json.loads(Path(review_backlog).read_text(encoding="utf-8")) if isinstance(review_backlog, (str, Path)) else (review_backlog or [])
+    if isinstance(cn_win_evidence_pack, (str, Path)):
+        data_dir = Path(cn_win_evidence_pack).parent
+        candidate_path = data_dir / "cn_win_pup_evidence_candidates.zh-CN.json"
+        backlog_path = data_dir / "cn_win_pup_review_backlog.zh-CN.json"
+        if not coverage_candidates and candidate_path.is_file():
+            coverage_candidates = json.loads(candidate_path.read_text(encoding="utf-8"))
+        if not backlog_records and backlog_path.is_file():
+            backlog_records = json.loads(backlog_path.read_text(encoding="utf-8"))
     source_stats = summarize_cn_source_matrix(cn_sources)
     candidate_stats = summarize_cn_candidate_sources(cn_candidates)
     intelligence = build_pup_intelligence_report(
@@ -149,6 +171,19 @@ def build_pup_review_pack(
         "behavior_only_signal_count", "no_corroboration_count",
     ):
         summary[key] = corroboration.get(key, 0)
+    coverage = build_evidence_coverage_summary(
+        [[*records, *cn_records, *cn_win_records]], coverage_candidates, backlog_records
+    )
+    summary.update({
+        "approved_cn_win_total": coverage["approved_cn_win_total"],
+        "candidate_cn_win_total": coverage["candidate_total"],
+        "backlog_cn_win_total": coverage["backlog_total"],
+        "coverage_score": coverage["coverage_score"],
+        "data_gap_count": coverage["data_gap_count"],
+        "top_missing_targets": coverage["top_missing_targets"],
+        "user_friendly_report_available": include_user_friendly_report,
+        "false_positive_feedback_available": include_false_positive_template,
+    })
     start_here = "\n".join([
         "# START HERE — PUP Intelligence Review Pack", "",
         "这是本地、离线、带来源追溯的 PUP 线索复核包。它展示命中的 evidence/indicator、匹配原因和误报风险。", "",
@@ -189,6 +224,17 @@ def build_pup_review_pack(
             f"- name/publisher/无佐证线索仍需核验：{summary['weak_name_only_signal_count']} / {summary['no_corroboration_count']}",
             "- 请人工核验安装来源、签名、版本、浏览器配置、启动项、计划任务与服务 metadata。",
             "- 行为佐证增强人工复核，不授权删除、卸载、禁用或修改注册表。",
+        ])
+    if include_user_friendly_report or include_coverage or include_false_positive_template:
+        start_here += "\n\n" + "\n".join([
+            "## 阅读顺序", "",
+            "- 普通用户先读 user_friendly_summary.md。",
+            "- 技术用户查看 evidence_coverage.md、corroboration_details.json 与 human_review_checklist.md。",
+            "- Agent 使用 machine_summary.json 和结构化 JSON；自然语言解释不能成为执行授权。",
+            "- strong/moderate 仍需人工核验；weak/no-match 不能形成结论。",
+            "- 误报请填写本地模板；反馈不会自动改库。",
+            "- 补充 publisher、签名、版本、路径和行为 metadata 可改善复核质量。",
+            "- 本复核包不能触发自动清理。",
         ])
     user_summary = "\n".join([
         "# PUP 用户摘要", "",
@@ -287,6 +333,21 @@ def build_pup_review_pack(
         )
         _write_text(destination / "match_or_no_match_summary.md", match_summary, overwrite)
         extra_artifacts += 4
+    if include_coverage:
+        _write_text(destination / "evidence_coverage.md", render_evidence_coverage_markdown(coverage), overwrite)
+        _write_text(destination / "data_gap_summary.md", "# Data Gap Summary\n\n" + "\n".join(f"- {item}" for item in coverage["top_missing_targets"]), overwrite)
+        extra_artifacts += 2
+    if include_user_friendly_report:
+        friendly = build_user_friendly_pup_report(summary)
+        _write_text(destination / "user_friendly_summary.md", render_user_friendly_pup_report_markdown(friendly), overwrite)
+        extra_artifacts += 1
+    if include_false_positive_template:
+        structured_feedback = build_structured_feedback_template(
+            intelligence["matches"][0] if intelligence["matches"] else {}, {}
+        )
+        _write_json(destination / "false_positive_feedback_template.json", structured_feedback, overwrite)
+        _write_text(destination / "false_positive_feedback_template.md", render_false_positive_feedback_markdown(structured_feedback), overwrite)
+        extra_artifacts += 2
     if cn_sources:
         source_lines = [
             "# 中文公开来源矩阵", "",

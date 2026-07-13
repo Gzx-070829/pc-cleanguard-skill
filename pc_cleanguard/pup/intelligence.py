@@ -30,7 +30,8 @@ def build_safety_notice() -> str:
     return (
         "真实来源 evidence 和 indicator match 仅用于解释、排序和人工复核，"
         "不是删除、卸载、禁用或注册表修改授权。Review Pack 在本地离线生成，"
-        "不联网、不上传，也不替代 Microsoft Defender 或其他安全工具。"
+        "不联网、不上传，也不替代 Microsoft Defender、火绒、360、腾讯电脑管家或其他安全工具。"
+        "公开文章只取行为描述，不采集任何厂商专有检测逻辑。"
     )
 
 
@@ -153,6 +154,12 @@ def build_pup_intelligence_report(
             "核对本地软件身份与用户安装意图；证据不足时保留并收集更多证据。",
             "若名称或实体不一致，提交本地 false-positive feedback 模板供人工修订。",
         ],
+        "review_signal_legend": {
+            "strong_review_signal": "evidence 与同一目标的行为元数据有较强佐证，仍需人工复核。",
+            "moderate_review_signal": "存在部分佐证，身份、版本、组件或用户意图仍不完整。",
+            "weak_name_only_signal": "仅名称或名称碰撞线索，不能形成结论。",
+            "no_match": "当前 evidence 与 metadata 未命中，不代表系统干净。",
+        },
         "execution_authorized": False,
         "runtime_network_access": False,
     }
