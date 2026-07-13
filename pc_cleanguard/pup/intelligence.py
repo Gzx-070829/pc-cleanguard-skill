@@ -15,6 +15,7 @@ from ..reputation import (
     summarize_cn_source_matrix,
 )
 from .behavior_indicators import build_behavior_indicators_from_report
+from .corroboration import build_pup_corroboration
 
 
 BLOCKED_ACTIONS = [
@@ -69,6 +70,15 @@ def build_pup_intelligence_report(
     insight = build_pup_insight(matches)
     counts = insight["summary"]
     behavior_indicators = build_behavior_indicators_from_report(report) if include_behavior_indicators else []
+    corroboration = build_pup_corroboration(matches, behavior_indicators)
+    by_target = {
+        item.get("target_id"): item for item in corroboration.get("details", [])
+        if item.get("target_id")
+    }
+    for match in matches:
+        detail = by_target.get(match.get("target_id"), {})
+        match["corroboration_level"] = detail.get("corroboration_level", "no_corroboration")
+        match["matched_behavior_indicators"] = detail.get("matched_behavior_indicators", [])
     cn_record_ids = {item["record_id"] for item in cn_records}
     cn_match_count = sum(item.get("matched_record_id") in cn_record_ids for item in matches)
     cn_win_record_ids = {item["record_id"] for item in cn_win_records}
@@ -79,6 +89,11 @@ def build_pup_intelligence_report(
         f"{item['target_id']}: behavior_type={item['behavior_type']} 误伤风险高，只能人工复核。"
         for item in behavior_indicators
         if item["false_positive_risk"] == "high"
+    )
+    uncertainty_notes.extend(
+        f"{item.get('target_id', 'unknown')}: evidence 命中缺少本机行为佐证，必须继续人工核验。"
+        for item in corroboration.get("details", [])
+        if item.get("corroboration_level") == "no_corroboration"
     )
     return {
         "summary": {
@@ -114,6 +129,12 @@ def build_pup_intelligence_report(
         "cn_win_installer_artifact_count": sum(item.get("mapping_type") == "installer_artifact" for item in cn_win_records),
         "cn_win_match_count": cn_win_match_count,
         "behavior_indicator_count": len(behavior_indicators),
+        "corroboration": corroboration,
+        **{key: corroboration.get(key, 0) for key in (
+            "corroborated_match_count", "strong_review_signal_count",
+            "moderate_review_signal_count", "weak_name_only_signal_count",
+            "behavior_only_signal_count", "no_corroboration_count",
+        )},
         "adversarial_guard_status": guard["status"],
         **source_stats,
         **candidate_stats,

@@ -16,7 +16,8 @@ from ..reputation import (
     summarize_cn_candidate_sources,
     summarize_cn_source_matrix,
 )
-from ..validation import validate_real_report_shape
+from ..validation.real_report_validation import validate_real_report_shape
+from .corroboration import render_corroboration_markdown
 from .behavior_indicators import render_behavior_indicator_section
 from .feedback_template import build_false_positive_feedback_template
 from .intelligence import build_pup_intelligence_report
@@ -66,6 +67,7 @@ def build_pup_review_pack(
     include_behavior_indicators: bool = False,
     include_evidence_quality: bool = False,
     include_real_report_validation_summary: bool = False,
+    include_corroboration: bool = False,
     overwrite: bool = False,
 ) -> dict:
     if not isinstance(overwrite, bool):
@@ -127,14 +129,26 @@ def build_pup_review_pack(
     if cn_sources:
         summary.update(source_stats)
         summary.update(candidate_stats)
-    quality = build_evidence_quality_summary([[*records, *cn_records, *cn_win_records]])
+    corroboration = intelligence.get("corroboration", {})
+    quality = build_evidence_quality_summary(
+        [[*records, *cn_records, *cn_win_records]], corroboration=corroboration
+    )
     validation = validate_real_report_shape(report)
     summary.update({
         "evidence_quality_score": quality["evidence_quality_score"],
         "matchability_score": validation["matchability_score"],
         "high_false_positive_risk_count": quality["high_false_positive_risk_count"],
         "execution_gating_eligible_count": 0,
+        "cn_win_approved_count": quality["cn_win_approved_count"],
+        "quality_gate_passed": quality["quality_gate_passed"],
+        "no_match_value_report_available": True,
     })
+    for key in (
+        "corroborated_match_count", "strong_review_signal_count",
+        "moderate_review_signal_count", "weak_name_only_signal_count",
+        "behavior_only_signal_count", "no_corroboration_count",
+    ):
+        summary[key] = corroboration.get(key, 0)
     start_here = "\n".join([
         "# START HERE — PUP Intelligence Review Pack", "",
         "这是本地、离线、带来源追溯的 PUP 线索复核包。它展示命中的 evidence/indicator、匹配原因和误报风险。", "",
@@ -166,6 +180,15 @@ def build_pup_review_pack(
             "- 历史榜不能当现代删除名单：版本、时间和实体关系已经变化。",
             "- 安全厂商公开文章只取公开行为描述，不复制签名、规则库、检测逻辑或样本库。",
             "- 中文证据仍不是删除、卸载、禁用或注册表修改授权。",
+        ])
+    if include_corroboration:
+        start_here += "\n\n" + "\n".join([
+            "## 行为佐证状态", "",
+            f"- 有行为佐证的 evidence 命中：{summary['corroborated_match_count']}",
+            f"- strong / moderate：{summary['strong_review_signal_count']} / {summary['moderate_review_signal_count']}",
+            f"- name/publisher/无佐证线索仍需核验：{summary['weak_name_only_signal_count']} / {summary['no_corroboration_count']}",
+            "- 请人工核验安装来源、签名、版本、浏览器配置、启动项、计划任务与服务 metadata。",
+            "- 行为佐证增强人工复核，不授权删除、卸载、禁用或修改注册表。",
         ])
     user_summary = "\n".join([
         "# PUP 用户摘要", "",
@@ -252,6 +275,18 @@ def build_pup_review_pack(
             f"- pii_hint_count: `{validation['pii_hint_count']}`",
         ]), overwrite)
         extra_artifacts += 1
+    if include_corroboration:
+        _write_text(destination / "corroboration_summary.md", render_corroboration_markdown(corroboration), overwrite)
+        _write_json(destination / "corroboration_details.json", corroboration, overwrite)
+        _write_text(destination / "cn_win_evidence_quality.md", render_evidence_quality_markdown(quality), overwrite)
+        match_summary = (
+            f"# Match Summary\n\n发现 `{len(intelligence['matches'])}` 条复核线索；"
+            "命中与佐证均不是执行授权。"
+            if intelligence["matches"] else
+            "# No-match Summary\n\nNo-match 不等于系统干净；只表示当前 evidence 与 metadata 未产生复核线索。"
+        )
+        _write_text(destination / "match_or_no_match_summary.md", match_summary, overwrite)
+        extra_artifacts += 4
     if cn_sources:
         source_lines = [
             "# 中文公开来源矩阵", "",

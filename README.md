@@ -1,10 +1,12 @@
 # PC CleanGuard Skill
 
+> 当前 Public Preview：v0.3.2。新增中文 Windows PUP 行为佐证、真实报告试跑与 no-match 价值报告；它们只支持解释和人工复核，不是执行授权。
+
 PC CleanGuard Skill 让 AI 更安全地分析、解释、预览、隔离和审计 Windows 清理任务。
 
 PC CleanGuard Skill helps AI agents safely inspect, explain, preview, quarantine, and audit Windows cleanup tasks.
 
-**v0.3.1 Public Preview · 中文来源可追溯 · 默认隔离，可恢复 · Offline by default**
+**v0.3.2 Public Preview · 中文 PUP 行为佐证 · 默认隔离，可恢复 · Offline by default**
 
 PUP Review Pack 可以离线生成带来源追溯的 PUP 线索复核包，但不会删除、卸载、禁用、上传或修改注册表。
 PUP Review Pack can generate a local, offline, source-traceable review folder for suspicious PUP signals without deleting, uninstalling, disabling, uploading, or modifying the registry.
@@ -279,6 +281,7 @@ v0.2 编排示例：[examples/skill_actions/v0.2_cleanup_agent_flow.json](exampl
 - 中文来源 Rubric：[docs/reputation-cn-source-rubric.md](docs/reputation-cn-source-rubric.md)
 - Behavior Indicators：[docs/pup-behavior-indicators.md](docs/pup-behavior-indicators.md)
 - v0.3.1 Preview Notes：[docs/v0.3.1-preview-notes.md](docs/v0.3.1-preview-notes.md)
+- v0.3.2 Release Notes：[docs/v0.3.2-release-notes.md](docs/v0.3.2-release-notes.md)
 - User Trial：[docs/user-trial.md](docs/user-trial.md)
 - Product Positioning：[docs/product-positioning.md](docs/product-positioning.md)
 - v0.3 Public Preview：[docs/v0.3-public-preview.md](docs/v0.3-public-preview.md)

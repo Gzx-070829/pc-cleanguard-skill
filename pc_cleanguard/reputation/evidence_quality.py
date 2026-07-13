@@ -45,11 +45,19 @@ def _flatten(evidence_packs: Iterable) -> list[dict]:
     return records
 
 
-def build_evidence_quality_summary(evidence_packs) -> dict:
+def build_evidence_quality_summary(evidence_packs, *, cn_candidates=(), review_backlog=(), corroboration=None) -> dict:
     records = _flatten(evidence_packs)
     scores = [score_evidence_record_quality(item) for item in records]
     count = len(records)
-    return {
+    prohibited_tone=("一定是流氓","必须删除","建议卸载","软件本体定罪")
+    gate_failures=[]
+    if any(item.get("execution_authorized") is not False for item in records): gate_failures.append("execution_authorized_not_false")
+    if any(item.get("execution_gating_eligible") is True for item in records): gate_failures.append("positive_execution_gating")
+    if any(not str(item.get(field,"")).strip() for item in records for field in ("source_url","source_title")): gate_failures.append("missing_source_metadata")
+    if any(item.get("mapping_type")=="installer_artifact" and not str(item.get("version_or_time_scope","")).strip() for item in records): gate_failures.append("installer_missing_time_scope")
+    if any(item.get("review_status")=="approved_for_explanation" and item.get("source_type")=="user_blocklist_or_forum_list" for item in records): gate_failures.append("approved_user_blocklist")
+    if any(any(term in str(item.get("evidence_summary","")) for term in prohibited_tone) for item in records): gate_failures.append("unrestrained_summary")
+    result = {
         "total_records": count,
         "real_records": sum(item.get("is_synthetic") is False for item in records),
         "synthetic_records": sum(item.get("is_synthetic") is True for item in records),
@@ -67,7 +75,19 @@ def build_evidence_quality_summary(evidence_packs) -> dict:
         "evidence_quality_score": round(sum(item["quality_score"] for item in scores) / count, 1) if count else 0.0,
         "record_scores": scores,
         "execution_authorized": False,
+        "cn_win_approved_count":sum(item.get("language")=="zh-CN" and item.get("entity_scope") in {"windows_desktop_software","windows_installer"} and item.get("review_status")=="approved_for_explanation" for item in records),
+        "cn_win_candidate_count":len(cn_candidates),"cn_win_review_backlog_count":len(review_backlog),
+        "cn_win_direct_entity_count":sum(item.get("language")=="zh-CN" and item.get("mapping_type")=="direct_entity" for item in records),
+        "cn_win_installer_artifact_count":sum(item.get("language")=="zh-CN" and item.get("mapping_type")=="installer_artifact" for item in records),
+        "cn_win_behavior_coverage":round(sum(bool(item.get("observed_behaviors")) for item in records)/count,3) if count else 0,
+        "records_with_corroboration_hints":sum(bool(item.get("observed_behaviors")) for item in records),
+        "records_without_time_scope":sum(not str(item.get("version_or_time_scope",item.get("source_date",""))).strip() for item in records),
+        "records_without_second_source":sum(item.get("false_positive_risk")=="high" for item in records),
+        "high_false_positive_risk_records":sum(item.get("false_positive_risk")=="high" for item in records),
+        "quality_gate_failures":gate_failures,"quality_gate_passed":not gate_failures,
     }
+    if corroboration is not None: result["corroborated_match_count"]=corroboration.get("corroborated_match_count",0)
+    return result
 
 
 def render_evidence_quality_markdown(summary: dict) -> str:
@@ -84,6 +104,7 @@ def render_evidence_quality_markdown(summary: dict) -> str:
         f"- high_false_positive_risk_count: `{summary['high_false_positive_risk_count']}`",
         f"- records_requiring_second_source: `{summary['records_requiring_second_source']}`",
         f"- execution_gating_eligible_count: `{summary['execution_gating_eligible_count']}`", "",
+        f"- quality_gate_passed: `{str(summary.get('quality_gate_passed', False)).lower()}`",
         "所有线索仍需人工复核；installer artifact 只描述特定安装器、组件或渠道。",
     ]
     return "\n".join(lines).rstrip() + "\n"

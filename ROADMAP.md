@@ -1,5 +1,7 @@
 # Roadmap
 
+v0.3.2：中文 Windows PUP evidence 扩充、行为佐证闭环、真实报告试跑、no-match 价值报告与质量门。
+
 PC CleanGuard 以用户可见闭环为 Sprint PR 单位快速推进，同时保持“不静默删除、不绕过确认、不联网泄露、不把 AI/声誉建议当授权”的安全底线。
 
 PR29 在 v0.3.1 基础上补齐少量中文 Windows direct/installer-artifact evidence、Evidence Quality Dashboard 与真实 report 本地验证；不进入 PR30，不扩大系统执行权限。

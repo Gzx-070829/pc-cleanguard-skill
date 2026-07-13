@@ -29,7 +29,10 @@
         "summarize_cn_source_matrix",
         "build_evidence_quality_summary",
         "validate_real_report_shape",
-        "build_cn_win_pup_review_pack"
+        "build_cn_win_pup_review_pack",
+        "build_pup_corroboration",
+        "build_real_report_trial",
+        "build_no_match_report"
       ]
     },
     "payload": {"type": "object"}
@@ -282,6 +285,34 @@
         "type": "object",
         "required": ["path"],
         "properties": {"path": {"type": "string", "minLength": 1}},
+        "additionalProperties": false
+      }}}
+    },
+    {
+      "if": {"properties": {"action": {"const": "build_pup_corroboration"}}},
+      "then": {"properties": {"payload": {
+        "type": "object", "required": ["matches", "behavior_indicators"],
+        "properties": {"matches": {"type": "array", "items": {"type": "object"}}, "behavior_indicators": {"type": "array", "items": {"type": "object"}}},
+        "additionalProperties": false
+      }}}
+    },
+    {
+      "if": {"properties": {"action": {"const": "build_no_match_report"}}},
+      "then": {"properties": {"payload": {
+        "type": "object", "required": ["report", "evidence_packs", "matchability_summary"],
+        "properties": {"report": {"type": "object"}, "evidence_packs": {"type": "array", "items": {"type": "array", "items": {"type": "object"}}}, "matchability_summary": {"type": "object"}},
+        "additionalProperties": false
+      }}}
+    },
+    {
+      "if": {"properties": {"action": {"const": "build_real_report_trial"}}},
+      "then": {"properties": {"payload": {
+        "type": "object", "required": ["report", "output_dir", "evidence_pack"],
+        "properties": {
+          "report": {"type": "object"}, "output_dir": {"type": "string", "minLength": 1}, "evidence_pack": {"type": "string", "minLength": 1},
+          "cn_win_evidence_pack": {"type": "string", "minLength": 1}, "cn_source_matrix": {"type": "string", "minLength": 1},
+          "include_behavior_indicators": {"type": "boolean"}, "include_evidence_quality": {"type": "boolean"}, "overwrite": {"type": "boolean"}
+        },
         "additionalProperties": false
       }}}
     }
