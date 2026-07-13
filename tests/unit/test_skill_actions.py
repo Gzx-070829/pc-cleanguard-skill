@@ -49,6 +49,8 @@ class SkillActionsTest(unittest.TestCase):
                 "build_pup_insight",
                 "inspect_pup_risk",
                 "build_pup_review_pack",
+                "build_behavior_indicators",
+                "validate_cn_evidence_pack",
             },
             set(ACTION_NAMES),
         )

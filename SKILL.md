@@ -113,6 +113,10 @@ PR26 indicator matching is conservative and opt-in. A detection family is report
 
 PR26 Review Pack 只能把显式 report 与本地 Evidence Pack 编排成解释文件。它不得联网、上传、调用外部工具或生成系统修改指令；Skill action `build_pup_review_pack` 保持 Level 0。
 
+PR27 adversarial guard applies even to real, direct, high-confidence evidence. CN APP/SDK evidence remains mobile and analogical; behavior indicators are derived only from caller-supplied report metadata. Neither can form a PUP verdict or enter execution gating. `build_behavior_indicators` and `validate_cn_evidence_pack` remain Level 0.
+
+中文 PUP evidence 不是黑名单，行为线索不是定罪。PUP 层不得触发自动执行；所有线索需要人工复核，且不联网、不上传、不静默删除。
+
 For the v0.3.0 Public Preview, `doctor release-check` may read version, documentation, seed, showcase, and issue-template metadata only. It must not execute cleanup, access the network, read API keys, or mutate system state. PC CleanGuard does not replace antivirus software.
 
 ## Read-only collectors / 只读采集器

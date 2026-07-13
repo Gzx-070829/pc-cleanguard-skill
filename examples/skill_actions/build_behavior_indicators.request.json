@@ -1,0 +1,12 @@
+{
+  "schema_version": "0.1",
+  "request_id": "pr27-behavior-indicators-example",
+  "action": "build_behavior_indicators",
+  "payload": {
+    "report": {
+      "startup_items": [
+        {"target_id": "startup:example", "name": "ExampleUpdater"}
+      ]
+    }
+  }
+}

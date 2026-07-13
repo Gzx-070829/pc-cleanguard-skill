@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PC CleanGuard Chinese PUP Source Review Rubric",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["source_reliability", "entity_clarity", "risk_category", "allowed_use", "forbidden_use"],
+    "properties": {
+      "source_reliability": {"enum": ["official", "vendor_public_article", "reputable_media", "security_vendor_public_article", "community_multi_report", "weak_source"]},
+      "entity_clarity": {"enum": ["exact_windows_desktop_entity", "installer_or_bundle_artifact", "publisher_level_only", "name_collision_possible", "mobile_only", "unclear"]},
+      "risk_category": {"enum": ["forced_install", "difficult_uninstall", "browser_hijack", "adware_popup", "bundled_install", "misleading_scan_or_repair", "privacy_overreach", "startup_persistence", "scheduled_task_persistence", "unknown"]},
+      "allowed_use": {"enum": ["explanation_only", "review_hint", "publisher_level_warning", "name_collision_warning"]},
+      "forbidden_use": {
+        "type": "array",
+        "minItems": 4,
+        "maxItems": 4,
+        "uniqueItems": true,
+        "items": {"enum": ["delete_authorization", "uninstall_authorization", "disable_authorization", "registry_edit_authorization"]}
+      }
+    },
+    "additionalProperties": false
+  }
+}

@@ -11,6 +11,14 @@ class EvidenceUse(str, Enum):
     BLOCKED_FROM_EXECUTION = "blocked_from_execution"
 
 
+EVIDENCE_BLOCKED_ACTIONS = (
+    "no_delete_authorization",
+    "no_uninstall_authorization",
+    "no_disable_authorization",
+    "no_registry_edit_authorization",
+)
+
+
 def classify_evidence_use(record: dict) -> EvidenceUse:
     mapping = record.get("mapping_type")
     if mapping == "related_publisher":
@@ -24,6 +32,25 @@ def classify_evidence_use(record: dict) -> EvidenceUse:
 
 def is_execution_gating_eligible(record: dict) -> bool:
     return False
+
+
+def evidence_guard_status(records: list[dict]) -> dict:
+    """Return a fail-closed summary for even the strongest reviewed evidence."""
+
+    if not isinstance(records, list) or any(not isinstance(item, dict) for item in records):
+        raise TypeError("records must be a list of evidence objects")
+    if any(item.get("execution_authorized") is not False for item in records):
+        raise ValueError("evidence cannot authorize execution")
+    eligible = sum(is_execution_gating_eligible(item) for item in records)
+    if eligible:
+        raise ValueError("evidence execution gating must remain disabled")
+    return {
+        "status": "enforced",
+        "record_count": len(records),
+        "execution_gating_eligible_count": 0,
+        "allowed_uses": sorted({classify_evidence_use(item).value for item in records}),
+        "blocked_actions": list(EVIDENCE_BLOCKED_ACTIONS),
+    }
 
 
 def build_evidence_guard_reason(record: dict) -> list[str]:

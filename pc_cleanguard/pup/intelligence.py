@@ -9,8 +9,10 @@ from ..reputation import (
     build_human_review_checklist,
     build_indicators_from_evidence,
     build_pup_insight,
+    evidence_guard_status,
     load_evidence_pack,
 )
+from .behavior_indicators import build_behavior_indicators_from_report
 
 
 BLOCKED_ACTIONS = [
@@ -37,18 +39,45 @@ def _records(value) -> list[dict]:
     return value
 
 
-def build_pup_intelligence_report(report: dict, evidence_pack, include_indicators: bool = True) -> dict:
+def build_pup_intelligence_report(
+    report: dict,
+    evidence_pack,
+    include_indicators: bool = True,
+    *,
+    cn_evidence_pack=None,
+    include_behavior_indicators: bool = False,
+) -> dict:
     if not isinstance(report, dict):
         raise TypeError("report must be a dict")
     if not isinstance(include_indicators, bool):
         raise TypeError("include_indicators must be bool")
-    records = _records(evidence_pack)
+    if not isinstance(include_behavior_indicators, bool):
+        raise TypeError("include_behavior_indicators must be bool")
+    primary_records = _records(evidence_pack)
+    cn_records = _records(cn_evidence_pack) if cn_evidence_pack is not None else []
+    records = [*primary_records, *cn_records]
     indicators = [item for record in records for item in build_indicators_from_evidence(record)] if include_indicators else []
     matches = ReputationMatcher(records, include_indicators=include_indicators).match(report)
     insight = build_pup_insight(matches)
     counts = insight["summary"]
+    behavior_indicators = build_behavior_indicators_from_report(report) if include_behavior_indicators else []
+    cn_record_ids = {item["record_id"] for item in cn_records}
+    cn_match_count = sum(item.get("matched_record_id") in cn_record_ids for item in matches)
+    guard = evidence_guard_status(records)
+    uncertainty_notes = list(insight["uncertainty_notes"])
+    uncertainty_notes.extend(
+        f"{item['target_id']}: behavior_type={item['behavior_type']} 误伤风险高，只能人工复核。"
+        for item in behavior_indicators
+        if item["false_positive_risk"] == "high"
+    )
     return {
-        "summary": dict(counts),
+        "summary": {
+            **counts,
+            "cn_real_source_count": len(cn_records),
+            "cn_match_count": cn_match_count,
+            "behavior_indicator_count": len(behavior_indicators),
+            "adversarial_guard_status": guard["status"],
+        },
         "risk_overview": {
             strength: sum(match.get("match_strength") == strength for match in matches)
             for strength in ("exact", "strong", "medium", "weak", "informational")
@@ -64,11 +93,18 @@ def build_pup_intelligence_report(report: dict, evidence_pack, include_indicator
         "publisher_hint_match_count": counts["publisher_hint_match_count"],
         "high_uncertainty_match_count": counts["high_uncertainty_match_count"],
         "human_review_required_count": counts["human_review_required_count"],
+        "cn_real_source_count": len(cn_records),
+        "cn_match_count": cn_match_count,
+        "behavior_indicator_count": len(behavior_indicators),
+        "adversarial_guard_status": guard["status"],
         "execution_gating_eligible_count": 0,
         "matches": matches,
         "evidence_indicators": indicators,
-        "human_review_checklist": build_human_review_checklist(matches),
-        "uncertainty_notes": list(insight["uncertainty_notes"]),
+        "behavior_indicators": behavior_indicators,
+        "human_review_checklist": build_human_review_checklist(
+            matches, behavior_indicators=behavior_indicators
+        ),
+        "uncertainty_notes": uncertainty_notes,
         "blocked_actions": list(BLOCKED_ACTIONS),
         "safety_notice": build_safety_notice(),
         "next_steps_for_user": [

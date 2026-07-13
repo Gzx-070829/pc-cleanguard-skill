@@ -23,7 +23,15 @@ from .matcher import ReputationMatcher, normalize_reputation_name
 from .insight import build_pup_insight
 from .reporting import render_pup_insight_markdown, write_pup_insight_markdown
 from .evidence_pack_loader import load_evidence_pack, validate_evidence_record, evidence_pack_stats
-from .evidence_policy import EvidenceUse, classify_evidence_use, is_execution_gating_eligible, build_evidence_guard_reason
+from .evidence_policy import (
+    EVIDENCE_BLOCKED_ACTIONS,
+    EvidenceUse,
+    build_evidence_guard_reason,
+    classify_evidence_use,
+    evidence_guard_status,
+    is_execution_gating_eligible,
+)
+from .cn_source_rubric import load_cn_source_rubric, validate_cn_source_rubric
 from .evidence_intake import (
     EvidenceCandidate,
     build_evidence_pack,
@@ -67,7 +75,9 @@ __all__ = [
     "render_pup_insight_markdown",
     "write_pup_insight_markdown",
     "load_evidence_pack", "validate_evidence_record", "evidence_pack_stats",
-    "EvidenceUse", "classify_evidence_use", "is_execution_gating_eligible", "build_evidence_guard_reason",
+    "EvidenceUse", "EVIDENCE_BLOCKED_ACTIONS", "classify_evidence_use",
+    "is_execution_gating_eligible", "evidence_guard_status", "build_evidence_guard_reason",
+    "load_cn_source_rubric", "validate_cn_source_rubric",
     "EvidenceCandidate", "ReviewQueueItem", "load_evidence_candidates", "validate_evidence_candidate",
     "load_evidence_review_queue", "validate_review_queue_item", "build_evidence_record_from_candidate",
     "build_evidence_pack", "write_evidence_pack",

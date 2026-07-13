@@ -9,3 +9,5 @@ python -m pc_cleanguard.cli pup review-pack --input report.json --evidence-pack 
 目录包含 START HERE、用户/机器摘要、PUP insight、matches、indicators、人工 checklist、source trace、误报反馈模板和 safety notice。已有输出目录默认拒绝；只有显式 `--overwrite` 才更新这 10 个已知产物，不清空目录或删除其他文件。
 
 Matcher 是 conservative matching，不是 AV engine。Microsoft PUA detection family 不等于本机 installed app display name；indicator overlap 只能提示人工复核。Review Pack 不联网、不上传、不执行 PowerShell，也不提供删除、卸载、禁用或注册表修改授权。PC CleanGuard 不替代 Microsoft Defender 或其他安全工具。
+
+PR27 Review Pack 增加 `behavior_indicators.json/md`、`cn_evidence_summary.md` 和 `adversarial_safety_summary.md`。中文 evidence 不是黑名单，behavior indicator 也不是 PUP 定罪；两者都进入人工复核且 `execution_gating_eligible_count=0`。
