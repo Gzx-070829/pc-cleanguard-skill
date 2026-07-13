@@ -33,7 +33,10 @@ from ..reputation import (
     load_cn_source_matrix,
     summarize_cn_source_matrix as summarize_cn_source_matrix_data,
     build_evidence_quality_summary as build_evidence_quality_summary_data,
+    build_evidence_coverage_summary as build_evidence_coverage_summary_data,
+    build_false_positive_feedback_template as build_false_positive_feedback_template_data,
 )
+from ..reporting import build_user_friendly_pup_report as build_user_friendly_pup_report_data
 from ..validation import (
     build_no_match_report as build_no_match_report_data,
     build_real_report_trial as build_real_report_trial_data,
@@ -66,6 +69,9 @@ ACTION_NAMES = (
     "build_pup_corroboration",
     "build_real_report_trial",
     "build_no_match_report",
+    "build_evidence_coverage_summary",
+    "build_user_friendly_pup_report",
+    "build_false_positive_feedback_template",
 )
 REVERSIBLE_EXECUTION_LEVEL = "LEVEL_2_REVERSIBLE"
 
@@ -734,6 +740,10 @@ def build_cn_win_pup_review_pack(
         cn_win_evidence_pack=cn_win_evidence_pack_path,
         include_behavior_indicators=True,
         include_evidence_quality=True,
+        include_corroboration=True,
+        include_coverage=True,
+        include_user_friendly_report=True,
+        include_false_positive_template=True,
         include_real_report_validation_summary=True,
         overwrite=overwrite,
     )
@@ -773,6 +783,24 @@ def build_real_report_trial(report, output_dir, evidence_pack, *, request_id=Non
         evidence=({"source": "explicit_local_report_and_evidence", "fact": "wrote a Level 0 offline report trial"},),
         result=result,
     )
+
+
+def build_evidence_coverage_summary(evidence_packs, candidates, backlog, *, request_id=None):
+    result = build_evidence_coverage_summary_data(evidence_packs, candidates, backlog)
+    return _response(action="build_evidence_coverage_summary", request_id=request_id, requires_user_confirmation=False,
+        evidence=({"source":"caller_supplied_evidence_metadata","fact":"summarized offline evidence coverage and data gaps"},), result=result)
+
+
+def build_user_friendly_pup_report(review_pack_summary, *, request_id=None):
+    result = build_user_friendly_pup_report_data(review_pack_summary)
+    return _response(action="build_user_friendly_pup_report", request_id=request_id, requires_user_confirmation=False,
+        evidence=({"source":"caller_supplied_review_summary","fact":"rendered a non-authorizing plain-language summary"},), result=result)
+
+
+def build_false_positive_feedback_template(match, report_metadata, *, request_id=None):
+    result = build_false_positive_feedback_template_data(match, report_metadata)
+    return _response(action="build_false_positive_feedback_template", request_id=request_id, requires_user_confirmation=False,
+        evidence=({"source":"caller_supplied_redacted_metadata","fact":"built a local review-queue feedback template"},), result=result)
 
 
 def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionResponse:
@@ -938,7 +966,7 @@ def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionRespon
     if request.action == "build_real_report_trial":
         _validated_payload(
             payload, {"report", "output_dir", "evidence_pack"},
-            {"cn_win_evidence_pack", "cn_source_matrix", "include_behavior_indicators", "include_evidence_quality", "overwrite"},
+            {"cn_win_evidence_pack", "cn_source_matrix", "include_behavior_indicators", "include_evidence_quality", "include_coverage", "include_user_friendly_report", "overwrite"},
         )
         return build_real_report_trial(
             payload["report"], payload["output_dir"], payload["evidence_pack"],
@@ -946,6 +974,17 @@ def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionRespon
             cn_source_matrix=payload.get("cn_source_matrix"),
             include_behavior_indicators=payload.get("include_behavior_indicators", False),
             include_evidence_quality=payload.get("include_evidence_quality", False),
+            include_coverage=payload.get("include_coverage", False),
+            include_user_friendly_report=payload.get("include_user_friendly_report", False),
             overwrite=payload.get("overwrite", False), request_id=request.request_id,
         )
+    if request.action == "build_evidence_coverage_summary":
+        _validated_payload(payload, {"evidence_packs", "candidates", "backlog"}, set())
+        return build_evidence_coverage_summary(payload["evidence_packs"], payload["candidates"], payload["backlog"], request_id=request.request_id)
+    if request.action == "build_user_friendly_pup_report":
+        _validated_payload(payload, {"review_pack_summary"}, set())
+        return build_user_friendly_pup_report(payload["review_pack_summary"], request_id=request.request_id)
+    if request.action == "build_false_positive_feedback_template":
+        _validated_payload(payload, {"match", "report_metadata"}, set())
+        return build_false_positive_feedback_template(payload["match"], payload["report_metadata"], request_id=request.request_id)
     raise ValueError("unsupported skill action")

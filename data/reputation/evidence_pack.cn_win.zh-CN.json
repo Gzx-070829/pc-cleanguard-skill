@@ -30,7 +30,10 @@
     "observed_behaviors": ["bundled_installer_trace", "scheduled_task_persistence", "ad_popup_signal"],
     "source_quote_summary": "公开文章描述该下载链路默认勾选捆绑组件，并分析其后台推广、计划任务和弹窗行为。",
     "reviewer_notes": "只允许以 installer artifact 线索展示；复核本机安装来源、签名、版本和用户意图。",
-    "guard_reason": "特定安装链路事件不能扩大为软件本体、厂商全部产品或未来版本的结论；不是系统动作授权。"
+    "guard_reason": "特定安装链路事件不能扩大为软件本体、厂商全部产品或未来版本的结论；不是系统动作授权。",
+    "uncertainty_notes": ["本机安装器身份、签名和渠道仍需核验。"],
+    "why_not_execution_authorization": "单一公开来源与安装链 metadata 不能确认当前实体和用户意图。",
+    "recommended_human_checks": ["核对安装来源、签名、版本和计划任务。"]
   },
   {
     "record_id": "ev-cn-win-2025-dxrepair-public-analysis",
@@ -63,7 +66,10 @@
     "observed_behaviors": ["ad_popup_signal", "browser_search_change", "bundled_installer_trace"],
     "source_quote_summary": "公开文章点名分析该 Windows 实体，并概述多种推广与浏览器跳转行为。",
     "reviewer_notes": "匹配后必须核对本机发布者、签名、版本、安装来源和用户意图；同名不能确认同一实体。",
-    "guard_reason": "公开分析只能形成可追溯复核线索；不允许单独触发删除、卸载、禁用或注册表修改。"
+    "guard_reason": "公开分析只能形成可追溯复核线索；不允许单独触发系统动作。",
+    "uncertainty_notes": ["同名文件、其他版本或渠道可能不是同一实体。"],
+    "why_not_execution_authorization": "名称和公开行为描述不足以确认本机实体与用户意图。",
+    "recommended_human_checks": ["核对发布者、签名、版本、来源和浏览器变化。"]
   },
   {
     "record_id": "ev-cn-win-2025-ludashi-traffic-analysis",
@@ -89,7 +95,10 @@
     "observed_behaviors": ["browser_search_change", "ad_popup_signal", "bundled_installer_trace"],
     "source_quote_summary": "公开文章概述相关组件的推广与流量影响行为。",
     "reviewer_notes": "必须核对本机签名、版本、组件、安装来源和用户意图。",
-    "guard_reason": "时间与组件范围严格受限；direct entity 仍只形成解释和人工复核线索。"
+    "guard_reason": "时间与组件范围严格受限；direct entity 仍只形成解释和人工复核线索。",
+    "uncertainty_notes": ["不能外推到厂商其他产品、版本或当前安装。"],
+    "why_not_execution_authorization": "公开文章中的组件关系不等于本机当前状态或用户处置意愿。",
+    "recommended_human_checks": ["核对组件、版本、签名、渠道和浏览器扩展。"]
   },
   {
     "record_id": "ev-cn-win-2026-kingsoft-promotion-installer",
@@ -113,7 +122,10 @@
     "observed_behaviors": ["bundled_installer_trace", "silent_install_signal"],
     "source_quote_summary": "公开文章描述下载站安装包中的推广组件与静默安装链路。",
     "reviewer_notes": "只按 installer artifact 展示，并核对哈希、签名、来源和时间范围。",
-    "guard_reason": "安装器 artifact 不是软件本体结论，不能单独形成卸载或其他系统动作建议。"
+    "guard_reason": "安装器 artifact 不是软件本体结论，不能单独形成系统动作建议。",
+    "uncertainty_notes": ["下载站外壳与软件本体必须分开判断。"],
+    "why_not_execution_authorization": "安装链线索不能确认软件本体或当前机器状态。",
+    "recommended_human_checks": ["核对安装包来源、组件签名、哈希和时间范围。"]
   },
   {
     "record_id": "ev-cn-win-2018-kuaizip-scoped-analysis",
@@ -137,6 +149,44 @@
     "observed_behaviors": ["browser_search_change", "ad_popup_signal", "bundled_installer_trace"],
     "source_quote_summary": "公开文章描述历史版本的更新、推广与流量影响行为。",
     "reviewer_notes": "历史记录必须核对当前版本、签名和来源；不能按名称直接映射。",
-    "guard_reason": "历史 evidence 只支持范围受限的解释和人工复核，不是现代软件名单。"
+    "guard_reason": "历史 evidence 只支持范围受限的解释和人工复核，不是现代软件名单。",
+    "uncertainty_notes": ["2018 年历史记录不能代表当前版本。"],
+    "why_not_execution_authorization": "历史来源无法确认当前版本、组件和用户意图。",
+    "recommended_human_checks": ["核对当前版本、签名、更新组件和安装来源。"]
+  },
+  {
+    "record_id":"ev-cn-win-2025-sogou-browser-config-module","software_name":"搜狗输入法（2025-09 公开分析版本）","publisher":"北京搜狗科技发展有限公司（来源文章所述）","aliases":["搜狗输入法 15.7.0.2192"],
+    "source_type":"security_vendor_public_article","source_name":"火绒安全","source_url":"https://www.huorong.cn/document/tech/vir_report/1845","source_title":"搜狗输入法云控下发模块，“暗中”篡改浏览器配置","source_date":"2025-09-20",
+    "evidence_summary":"公开文章分析搜狗输入法 15.7.0.2192 中经 Shiply 下发的推广模块及 Edge/Chrome 主页、默认搜索配置影响；记录只覆盖该版本、模块和文章时间，不外推其他版本或输入法核心功能。",
+    "behavior_categories":["browser_hijacking","ad_popup"],"jurisdiction":"CN","language":"zh-CN","review_status":"approved_for_explanation","confidence":0.82,"false_positive_risk":"high","execution_authorized":false,"license_note":"仅保存公开页面元数据与克制摘要，不复制检测逻辑、签名或样本。","evidence_scope":"review","mapping_type":"direct_entity","is_synthetic":false,"entity_scope":"windows_desktop_software","relation_confidence":"high",
+    "version_or_time_scope":"来源文章 2025-09-20，明确提及版本 15.7.0.2192","affected_component":"SGBizLauncher/Shiply 配置与文章所述推广模块","installer_or_bundle_artifact":"unknown（direct entity 组件记录）","distribution_channel":"来源文章所述输入法组件云控链路","observed_behaviors":["browser_homepage_change","browser_search_change"],"source_quote_summary":"公开文章描述特定版本推广模块影响 Edge/Chrome 主页和默认搜索配置。","reviewer_notes":"匹配时必须核对版本、签名、模块与本机行为。","guard_reason":"只覆盖特定版本和推广组件，不评价所有版本或核心输入功能。","uncertainty_notes":["云控灰度条件和本机是否接收相关配置无法由名称确认。"],"why_not_execution_authorization":"公开文章与名称匹配不能确认本机实际配置变化和用户意图。","recommended_human_checks":["核对版本、签名、浏览器主页/搜索设置和相关组件。"]
+  },
+  {
+    "record_id":"ev-cn-win-2020-sogou-popup-component","software_name":"搜狗输入法 618 广告组件（2020-06 分析范围）","publisher":"来源文章所述搜狗输入法组件","aliases":["showinfo.exe","sgutil.dll","sgtool.exe"],
+    "source_type":"security_vendor_public_article","source_name":"火绒安全","source_url":"https://huorong.cn/document/tech/vir_report/825","source_title":"搜狗输入法强制推广“618红包广告” 用户不堪其扰","source_date":"2020-06-05",
+    "evidence_summary":"公开文章分析 2020 年 6 月搜狗输入法中的 showinfo.exe/sgutil.dll/sgtool.exe 弹窗组件链；记录仅用于历史组件复核，不代表当前版本或输入法本体。",
+    "behavior_categories":["ad_popup","malicious_collection"],"jurisdiction":"CN","language":"zh-CN","review_status":"approved_for_explanation","confidence":0.76,"false_positive_risk":"high","execution_authorized":false,"license_note":"仅引用公开文章的组件名称与行为概述。","evidence_scope":"review","mapping_type":"installer_artifact","is_synthetic":false,"entity_scope":"windows_installer","relation_confidence":"medium",
+    "version_or_time_scope":"来源文章发表于 2020-06-05，仅覆盖当时 618 推广组件","affected_component":"showinfo.exe、sgutil.dll 与 sgtool.exe 组件链","installer_or_bundle_artifact":"来源文章所述云控释放与执行的广告组件","distribution_channel":"输入法工具/云控组件链","observed_behaviors":["ad_popup_signal"],"source_quote_summary":"公开文章描述云端配置释放并执行托盘广告模块。","reviewer_notes":"历史组件名可能碰撞，必须核对签名、版本与来源。","guard_reason":"组件 artifact 不代表软件本体或当前版本。","uncertainty_notes":["2020 历史组件关系不能外推到当前版本。"],"why_not_execution_authorization":"组件线索不能确认当前机器存在相同行为。","recommended_human_checks":["核对组件签名、版本、弹窗来源与用户设置。"]
+  },
+  {
+    "record_id":"ev-cn-win-2018-fakekms-2345-installer-chain","software_name":"FakeKMS→2345 浏览器推广安装链（2018-08）","publisher":"来源文章所述伪装激活工具传播者（未稳定映射）","aliases":["xiaoma201808281210.exe","FakeKMS"],
+    "source_type":"security_vendor_public_article","source_name":"火绒安全","source_url":"https://www.huorong.cn/document/tech/vir_report/741.html","source_title":"火绒安全警报：病毒伪装成激活工具 强制安装360、2345浏览器","source_date":"2018-08-30",
+    "evidence_summary":"公开文章分析 2018 年伪装激活工具 FakeKMS 的静默推广安装链及首页影响；记录只描述该传播样本与 2345 浏览器被推广关系，不归因于被分发软件本体。",
+    "behavior_categories":["forced_installation","browser_hijacking","malicious_bundling"],"jurisdiction":"CN","language":"zh-CN","review_status":"approved_for_explanation","confidence":0.84,"false_positive_risk":"high","execution_authorized":false,"license_note":"只保存公开元数据和安装链摘要。","evidence_scope":"review","mapping_type":"installer_artifact","is_synthetic":false,"entity_scope":"windows_installer","relation_confidence":"high",
+    "version_or_time_scope":"来源文章发表于 2018-08-30，仅覆盖文中 FakeKMS 样本","affected_component":"AutoIt 安装包与静默推广安装流程","installer_or_bundle_artifact":"伪装激活工具 xiaoma201808281210.exe / FakeKMS 链路","distribution_channel":"来源文章所述激活工具下载站","observed_behaviors":["bundled_installer_trace","browser_homepage_change"],"source_quote_summary":"公开文章描述伪装激活工具静默推广浏览器并影响主页。","reviewer_notes":"只匹配安装器/传播样本，不把被推广软件视为同一实体。","guard_reason":"下载器问题不能泛化成所有被分发软件问题。","uncertainty_notes":["历史下载域名、样本与当前安装无直接对应关系。"],"why_not_execution_authorization":"第三方传播链不能确认被推广软件本体或当前机器状态。","recommended_human_checks":["核对安装来源、时间、签名及浏览器主页变化。"]
+  },
+  {
+    "record_id":"ev-cn-win-2022-activator-2345-promotion-chain","software_name":"带毒激活工具→2345 系列推广链（2022-10）","publisher":"桂林市木兮网络科技有限公司（来源文章所述传播站点备案）","aliases":["Setup_Activator.exe","kmsactivation.exe"],
+    "source_type":"security_vendor_public_article","source_name":"火绒安全","source_url":"https://www.huorong.cn/document/tech/vir_report/1671.html","source_title":"激活工具带毒，静默安装360、2345系列软件","source_date":"2022-10-10",
+    "evidence_summary":"公开文章分析 2022 年带毒激活工具及其静默安装、计划任务链路；记录只覆盖该激活工具 artifact 和第三方推广渠道，不评价 2345 或其他被推广软件本体。",
+    "behavior_categories":["forced_installation","malicious_bundling"],"jurisdiction":"CN","language":"zh-CN","review_status":"approved_for_explanation","confidence":0.84,"false_positive_risk":"high","execution_authorized":false,"license_note":"只保存公开页面元数据和传播链摘要。","evidence_scope":"review","mapping_type":"installer_artifact","is_synthetic":false,"entity_scope":"windows_installer","relation_confidence":"high",
+    "version_or_time_scope":"来源文章发表于 2022-10-10，仅覆盖文中激活工具样本","affected_component":"Setup_Activator.exe、kmsactivation.exe 与计划任务链路","installer_or_bundle_artifact":"来源文章所述带毒小马激活工具","distribution_channel":"搜索推广的激活工具站点","observed_behaviors":["bundled_installer_trace","scheduled_task_persistence"],"source_quote_summary":"公开文章描述激活工具释放模块、创建计划任务并静默推广软件。","reviewer_notes":"不能把第三方推广链归因于被推广产品。","guard_reason":"installer artifact 与被推广软件本体必须分开复核。","uncertainty_notes":["来源时间与样本范围不能映射到当前所有激活工具。"],"why_not_execution_authorization":"传播链 evidence 不能确认当前安装实体和用户意图。","recommended_human_checks":["核对安装器来源、签名、计划任务和安装时间。"]
+  },
+  {
+    "record_id":"ev-cn-win-2019-driverlife-promo-component","software_name":"驱动人生系 Realtek 音频管理器推广组件（2019-11）","publisher":"驱动人生（来源文章所述签名关系）","aliases":["realtek.exe","AERTSrv.exe"],
+    "source_type":"security_vendor_public_article","source_name":"火绒安全","source_url":"https://www.huorong.cn/document/tech/vir_report/803","source_title":"双十一成流氓推广狂欢节 单日侵扰千万量级电脑","source_date":"2019-11-08",
+    "evidence_summary":"公开文章分析 2019 年驱动人生系 Realtek 音频管理器及 AERTSrv/DTLPlugs 推广组件的托盘广告与快捷方式行为；记录仅覆盖该历史组件链，不评价当前驱动工具或同名官方驱动组件。",
+    "behavior_categories":["ad_popup","forced_installation","malicious_bundling"],"jurisdiction":"CN","language":"zh-CN","review_status":"approved_for_explanation","confidence":0.74,"false_positive_risk":"high","execution_authorized":false,"license_note":"仅保存公开文章元数据和组件级摘要。","evidence_scope":"review","mapping_type":"installer_artifact","is_synthetic":false,"entity_scope":"windows_installer","relation_confidence":"medium",
+    "version_or_time_scope":"来源文章发表于 2019-11-08，仅覆盖当时分析组件","affected_component":"realtek.exe、AERTSrv.exe 与 DTLPlugs 推广模块","installer_or_bundle_artifact":"来源文章所述驱动人生系静默推广组件链","distribution_channel":"来源文章所述驱动人生系推广环境","observed_behaviors":["bundled_installer_trace","ad_popup_signal"],"source_quote_summary":"公开文章描述推广服务组件调用模块产生托盘广告和快捷方式。","reviewer_notes":"Realtek 名称碰撞风险高，必须核对签名与真实硬件驱动来源。","guard_reason":"同名官方驱动/组件与推广 artifact 必须严格区分。","uncertainty_notes":["Realtek 名称非常常见，名称本身不构成实体确认。"],"why_not_execution_authorization":"历史组件名和发布者关系不足以确认本机对象。","recommended_human_checks":["核对数字签名、文件路径、驱动来源、安装时间与广告行为。"]
   }
 ]

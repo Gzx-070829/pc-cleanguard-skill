@@ -32,7 +32,10 @@
         "build_cn_win_pup_review_pack",
         "build_pup_corroboration",
         "build_real_report_trial",
-        "build_no_match_report"
+        "build_no_match_report",
+        "build_evidence_coverage_summary",
+        "build_user_friendly_pup_report",
+        "build_false_positive_feedback_template"
       ]
     },
     "payload": {"type": "object"}
@@ -311,9 +314,35 @@
         "properties": {
           "report": {"type": "object"}, "output_dir": {"type": "string", "minLength": 1}, "evidence_pack": {"type": "string", "minLength": 1},
           "cn_win_evidence_pack": {"type": "string", "minLength": 1}, "cn_source_matrix": {"type": "string", "minLength": 1},
-          "include_behavior_indicators": {"type": "boolean"}, "include_evidence_quality": {"type": "boolean"}, "overwrite": {"type": "boolean"}
+          "include_behavior_indicators": {"type": "boolean"}, "include_evidence_quality": {"type": "boolean"},
+          "include_coverage": {"type": "boolean"}, "include_user_friendly_report": {"type": "boolean"}, "overwrite": {"type": "boolean"}
         },
         "additionalProperties": false
+      }}}
+    },
+    {
+      "if": {"properties": {"action": {"const": "build_evidence_coverage_summary"}}},
+      "then": {"properties": {"payload": {
+        "type": "object", "required": ["evidence_packs", "candidates", "backlog"],
+        "properties": {
+          "evidence_packs": {"type": "array", "items": {"type": "array", "items": {"type": "object"}}},
+          "candidates": {"type": "array", "items": {"type": "object"}},
+          "backlog": {"type": "array", "items": {"type": "object"}}
+        }, "additionalProperties": false
+      }}}
+    },
+    {
+      "if": {"properties": {"action": {"const": "build_user_friendly_pup_report"}}},
+      "then": {"properties": {"payload": {
+        "type": "object", "required": ["review_pack_summary"],
+        "properties": {"review_pack_summary": {"type": "object"}}, "additionalProperties": false
+      }}}
+    },
+    {
+      "if": {"properties": {"action": {"const": "build_false_positive_feedback_template"}}},
+      "then": {"properties": {"payload": {
+        "type": "object", "required": ["match", "report_metadata"],
+        "properties": {"match": {"type": "object"}, "report_metadata": {"type": "object"}}, "additionalProperties": false
       }}}
     }
   ],

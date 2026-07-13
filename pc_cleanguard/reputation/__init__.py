@@ -62,6 +62,8 @@ from .indicators import (
     write_indicators,
 )
 from .review_checklist import build_human_review_checklist, render_human_review_checklist
+from .evidence_coverage import build_evidence_coverage_summary, render_evidence_coverage_markdown
+from .false_positive_feedback import build_false_positive_feedback_template, validate_false_positive_feedback, render_false_positive_feedback_markdown
 
 __all__ = [
     "EvidenceType",
@@ -103,6 +105,9 @@ __all__ = [
     "build_human_review_checklist", "render_human_review_checklist",
     "build_evidence_quality_summary", "render_evidence_quality_markdown",
     "score_evidence_record_quality",
+    "build_evidence_coverage_summary", "render_evidence_coverage_markdown",
+    "build_false_positive_feedback_template", "validate_false_positive_feedback",
+    "render_false_positive_feedback_markdown",
 ]
 from .evidence_quality import (
     build_evidence_quality_summary,

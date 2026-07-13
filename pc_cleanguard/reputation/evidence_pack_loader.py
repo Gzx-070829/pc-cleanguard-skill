@@ -11,7 +11,7 @@ ENTITY_SCOPES={"windows_desktop_software","windows_installer","mobile_app","mobi
 RELATION_CONFIDENCE={"low","medium","high","unknown"}
 REVIEW_STATUS={"needs_human_review","approved_for_explanation"}
 REQUIRED={"record_id","software_name","publisher","aliases","source_type","source_name","source_url","source_title","source_date","evidence_summary","behavior_categories","jurisdiction","language","review_status","confidence","false_positive_risk","execution_authorized","license_note","evidence_scope","mapping_type","is_synthetic","entity_scope","relation_confidence"}
-PRECISION_FIELDS={"version_or_time_scope","affected_component","installer_or_bundle_artifact","distribution_channel","observed_behaviors","source_quote_summary","reviewer_notes","guard_reason"}
+PRECISION_FIELDS={"version_or_time_scope","affected_component","installer_or_bundle_artifact","distribution_channel","observed_behaviors","source_quote_summary","reviewer_notes","guard_reason","uncertainty_notes","why_not_execution_authorization","recommended_human_checks"}
 
 
 def validate_evidence_record(record: dict) -> dict:

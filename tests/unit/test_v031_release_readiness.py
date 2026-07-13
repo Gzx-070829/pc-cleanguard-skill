@@ -13,12 +13,12 @@ ROOT = Path(__file__).resolve().parents[2]
 
 class V031ReleaseReadinessTest(unittest.TestCase):
     def test_current_version_and_cli_are_032_while_v031_assets_remain(self):
-        self.assertEqual("0.3.2", pc_cleanguard.__version__)
+        self.assertEqual("0.3.3", pc_cleanguard.__version__)
         output = io.StringIO()
         with redirect_stdout(output), self.assertRaises(SystemExit) as context:
             main(["--version"])
         self.assertEqual(0, context.exception.code)
-        self.assertEqual("PC CleanGuard Skill 0.3.2", output.getvalue().strip())
+        self.assertEqual("PC CleanGuard Skill 0.3.3", output.getvalue().strip())
 
     def test_release_documents_and_showcase_exist(self):
         required = [

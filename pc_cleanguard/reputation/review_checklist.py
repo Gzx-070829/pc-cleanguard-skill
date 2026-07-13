@@ -42,6 +42,7 @@ def build_human_review_checklist(matches: list[dict], *, behavior_indicators: li
             "why_not_execution_authorization": match.get("why_not_execution_authorization", "人工复核线索不能授权系统动作。"),
             "checks": list(match.get("human_review_checklist") or USER_CHECKS),
             "suggested_actions": list(SAFE_ACTIONS),
+            "false_positive_feedback_route": "仅生成去标识化本地模板并进入 review queue；不会自动改库或上传。",
         })
     behavior_items = []
     for indicator in behavior_indicators or ():
@@ -83,6 +84,7 @@ def render_human_review_checklist(checklist: dict) -> str:
             f"- requires_second_source: `{str(item.get('requires_second_source')).lower()}`",
             f"- review_hint: {item.get('review_hint')}",
             f"- why_not_execution_authorization: {item.get('why_not_execution_authorization')}",
+            f"- false_positive_feedback: {item.get('false_positive_feedback_route')}",
             "", "用户应检查：", "",
             *[f"- [ ] {check}" for check in item.get("checks", ())],
             "", "允许的后续建议：", "",
