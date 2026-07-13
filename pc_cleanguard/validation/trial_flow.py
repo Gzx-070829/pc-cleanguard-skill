@@ -21,7 +21,7 @@ def _text(path:Path,value:str,overwrite:bool):
 def _json(path:Path,value,overwrite:bool):
     with path.open("w" if overwrite else "x",encoding="utf-8",newline="\n") as stream: json.dump(value,stream,ensure_ascii=False,indent=2); stream.write("\n")
 
-def build_real_report_trial(report:dict,output_dir,evidence_pack,*,cn_win_evidence_pack=None,cn_source_matrix=None,include_behavior_indicators=False,include_evidence_quality=False,include_coverage=False,include_user_friendly_report=False,overwrite=False)->dict:
+def build_real_report_trial(report:dict,output_dir,evidence_pack,*,cn_win_evidence_pack=None,cn_source_matrix=None,include_behavior_indicators=False,include_evidence_quality=False,include_coverage=False,include_user_friendly_report=False,include_persistence_chain=False,overwrite=False)->dict:
     if not isinstance(report,dict): raise TypeError("report must be dict")
     destination=Path(output_dir); _validated_explicit_local_path(destination/"report_shape_summary.json",allowed_suffixes={".json"})
     if destination.exists() and not overwrite: raise FileExistsError(f"trial output already exists: {destination}")
@@ -29,7 +29,7 @@ def build_real_report_trial(report:dict,output_dir,evidence_pack,*,cn_win_eviden
     destination.mkdir(parents=True,exist_ok=True)
     primary=_records(evidence_pack); cnwin=_records(cn_win_evidence_pack) if cn_win_evidence_pack is not None else []
     shape=validate_real_report_shape(report)
-    review=build_pup_review_pack(report,primary,destination/"pup_review_pack",cn_win_evidence_pack=cnwin,cn_source_matrix=cn_source_matrix,include_behavior_indicators=include_behavior_indicators,include_evidence_quality=include_evidence_quality,include_real_report_validation_summary=True,include_corroboration=True,include_coverage=include_coverage,include_user_friendly_report=include_user_friendly_report,overwrite=overwrite)
+    review=build_pup_review_pack(report,primary,destination/"pup_review_pack",cn_win_evidence_pack=cnwin,cn_source_matrix=cn_source_matrix,include_behavior_indicators=include_behavior_indicators,include_evidence_quality=include_evidence_quality,include_real_report_validation_summary=True,include_corroboration=True,include_coverage=include_coverage,include_user_friendly_report=include_user_friendly_report,include_persistence_chain=include_persistence_chain,overwrite=overwrite)
     quality=build_evidence_quality_summary([primary,cnwin])
     _text(destination/"START_HERE.md","# Real Report Trial\n\n本地离线验证、PUP 复核、quality 与 match/no-match 说明；不上传、不修改系统。",overwrite)
     _json(destination/"report_shape_summary.json",shape,overwrite)
@@ -42,4 +42,4 @@ def build_real_report_trial(report:dict,output_dir,evidence_pack,*,cn_win_eviden
         no_match=build_no_match_report(report,[primary,cnwin],shape); _text(destination/"no_match_report.md",render_no_match_report_markdown(no_match),overwrite); report_kind="no_match"
     _text(destination/"next_steps.md","# Next Steps\n\n核对发布者、签名、版本、安装来源和行为 metadata；必要时提交去标识化反馈。",overwrite)
     _text(destination/"safety_notice.md","# Safety Notice\n\nEvidence、corroboration 和 no-match 都不是删除、卸载、禁用或注册表修改授权。",overwrite)
-    return {"output_dir":str(destination),"report_kind":report_kind,"matchability_score":shape["matchability_score"],"quality_gate_passed":quality["quality_gate_passed"],"execution_gating_eligible_count":0,"execution_authorized":False,"runtime_network_access":False}
+    return {"output_dir":str(destination),"report_kind":report_kind,"matchability_score":shape["matchability_score"],"quality_gate_passed":quality["quality_gate_passed"],"persistence_chain_available":include_persistence_chain,"execution_gating_eligible_count":0,"execution_authorized":False,"runtime_network_access":False}

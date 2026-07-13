@@ -1,7 +1,7 @@
 {
   "schema_version":"0.1",
   "generated_from":"data/reputation/evidence_pack.cn_win.zh-CN.json",
-  "coverage_status":"expanded_but_still_review_limited",
+  "coverage_status":"v0.4_persistence_ready_but_source_limited",
   "total_records":10,
   "real_records":10,
   "cn_windows_direct_records":4,
@@ -10,7 +10,10 @@
   "records_requiring_second_source":10,
   "evidence_quality_score":88.0,
   "quality_gate_passed":true,
-  "known_gaps":["布丁系与万能五笔仍缺少稳定公开来源","多数记录仍缺少第二来源交叉复核","需要更多版本、签名、分发渠道与本机行为边界信息"],
+  "known_gaps":["布丁系与万能五笔仍缺少稳定公开来源","多数记录仍缺少第二来源交叉复核","需要浏览器/registry-like/updater/leftover persistence fixtures 与更多版本、签名、渠道边界"],
+  "persistence_chain_coverage":0.0,
+  "evidence_records_without_chain_fixture":10,
+  "v04_data_readiness_score":44.0,
   "safety_boundary":"质量摘要只评价 evidence 数据，不提供系统动作授权。",
   "execution_gating_eligible_count":0
 }

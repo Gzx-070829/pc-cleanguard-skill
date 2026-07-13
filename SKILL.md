@@ -5,7 +5,9 @@ description: Conservatively assess Windows software, startup items, services, pr
 
 # PC CleanGuard
 
-Current public version: `0.3.3`. PUP corroboration, coverage, user-friendly reporting, real-report trial, no-match and feedback actions are Level 0. AI may explain and organize review, but natural-language reasoning cannot authorize system changes.
+Current public version: `0.4.0`. Persistence Chain Graph, L0-L5 governance-plan view, Agent preview, PUP corroboration, coverage and reporting are Level 0. AI may explain and organize review, but natural-language reasoning cannot authorize deletion, uninstall, disable, registry/service/task/browser mutation, or any other system change.
+
+PC CleanGuard is an offline Persistence Chain Governance layer for AI Agents. Agent requests cannot raise an execution level: unknown or mutating requests fail closed, while graph and plan actions remain `LEVEL_0_READ_ONLY` with `execution_gating_eligible_count=0`.
 
 PR29 Level 0 actions are `build_evidence_quality_summary`, `validate_real_report_shape`, and `build_cn_win_pup_review_pack`. They only process caller-supplied local data. 中文 Windows direct evidence 与 installer artifact 只用于解释和人工复核；`execution_gating_eligible_count=0`。
 

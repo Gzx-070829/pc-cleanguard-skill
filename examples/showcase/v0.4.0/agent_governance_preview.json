@@ -1,0 +1,1 @@
+{"agent_boundary_status":"L0_REVIEW_ONLY","allowed_agent_actions":["build graph","explain chain","build plan"],"blocked_agent_actions":["delete","uninstall","disable","registry/service/task/browser mutation"],"execution_gating_eligible_count":0,"execution_authorized":false}

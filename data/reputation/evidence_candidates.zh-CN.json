@@ -23,6 +23,7 @@
     "license_note": "Public Microsoft page; store citation metadata and a short Chinese paraphrase only.",
     "submitted_by": "PC CleanGuard maintainers",
     "review_notes": "页面明确给出 Windows detection family、发布日期和可观察行为；不外推到同名普通软件。",
+    "recommended_human_checks": ["核对本机签名、版本、安装来源与实际持久化行为。"],
     "created_at": "2026-07-13"
   },
   {
@@ -49,6 +50,7 @@
     "license_note": "Public Microsoft page; store citation metadata and a short Chinese paraphrase only.",
     "submitted_by": "PC CleanGuard maintainers",
     "review_notes": "页面给出发布日期和明确的 Windows bundler 行为描述。",
+    "recommended_human_checks": ["核对本机签名、版本、安装来源与实际持久化行为。"],
     "created_at": "2026-07-13"
   },
   {
@@ -75,6 +77,7 @@
     "license_note": "Public Microsoft page; store citation metadata and a short Chinese paraphrase only.",
     "submitted_by": "PC CleanGuard maintainers",
     "review_notes": "实体名称限定为页面 detection family；别名命中仍需核对发布者和本地证据。",
+    "recommended_human_checks": ["核对本机签名、版本、安装来源与实际持久化行为。"],
     "created_at": "2026-07-13"
   },
   {
@@ -101,6 +104,7 @@
     "license_note": "Public Microsoft page; store citation metadata and a short Chinese paraphrase only.",
     "submitted_by": "PC CleanGuard maintainers",
     "review_notes": "必须保留‘特定安装器’限定，不能将产品名或发布者整体映射为执行建议。",
+    "recommended_human_checks": ["核对本机签名、版本、安装来源与实际持久化行为。"],
     "created_at": "2026-07-13"
   },
   {
@@ -127,6 +131,7 @@
     "license_note": "Public Microsoft page; store citation metadata and a short Chinese paraphrase only.",
     "submitted_by": "PC CleanGuard maintainers",
     "review_notes": "页面提供 Windows detection family、发布日期与具体浏览器行为描述。",
+    "recommended_human_checks": ["核对本机签名、版本、安装来源与实际持久化行为。"],
     "created_at": "2026-07-13"
   }
 ]

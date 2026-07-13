@@ -23,7 +23,7 @@ def _flatten(packs) -> list[dict]:
     return records
 
 
-def build_evidence_coverage_summary(evidence_packs, candidates, backlog) -> dict:
+def build_evidence_coverage_summary(evidence_packs, candidates, backlog, persistence_graphs=()) -> dict:
     records = _flatten(evidence_packs)
     if not isinstance(candidates, list) or not isinstance(backlog, list):
         raise TypeError("candidates and backlog must be lists")
@@ -44,6 +44,14 @@ def build_evidence_coverage_summary(evidence_packs, candidates, backlog) -> dict
     cn_win = [item for item in records if item.get("language") == "zh-CN" and item.get("entity_scope") in {"windows_desktop_software", "windows_installer", "browser_extension", "publisher_level"}]
     approved = len(records)
     gap_count = len(MISSING_TARGETS)
+    graphs = list(persistence_graphs or ())
+    matched_record_ids = {match.get("matched_record_id") for graph in graphs for match in graph.get("evidence_matches", ()) if isinstance(match, dict) and match.get("matched_record_id")}
+    chain_nodes = sum(len(graph.get("nodes", ())) for graph in graphs)
+    evidence_edges = sum(sum(edge.get("edge_type") == "evidence_match" for edge in graph.get("edges", ())) for graph in graphs)
+    behavior_edges = sum(sum(edge.get("edge_type") == "behavior_corroborates" for edge in graph.get("edges", ())) for graph in graphs)
+    nodes_with_evidence = sum(len({edge.get("target") for edge in graph.get("edges", ()) if edge.get("edge_type") == "evidence_match"}) for graph in graphs)
+    persistence_coverage = round(100 * nodes_with_evidence / chain_nodes, 1) if chain_nodes else 0.0
+    coverage_score = round(min(100.0, len(cn_win) / 15 * 100), 1)
     return {
         "approved_total": approved,
         "approved_cn_win_total": len(cn_win),
@@ -64,7 +72,14 @@ def build_evidence_coverage_summary(evidence_packs, candidates, backlog) -> dict
         "next_data_priorities": ["为缺口寻找稳定公开来源并限定版本、组件和渠道。", "优先增加第二来源和去标识化真实报告反馈。"],
         "quality_warnings": ["覆盖数量不代表本机结论。", "高误报风险记录必须人工复核。"],
         "why_coverage_is_not_blacklist": "Coverage 只描述 evidence 数据覆盖，不是黑名单，也不是系统动作授权。",
-        "coverage_score": round(min(100.0, len(cn_win) / 15 * 100), 1),
+        "coverage_score": coverage_score,
+        "persistence_chain_coverage": persistence_coverage,
+        "evidence_to_persistence_match_count": evidence_edges,
+        "behavior_to_persistence_match_count": behavior_edges,
+        "chain_nodes_without_evidence": max(0, chain_nodes - nodes_with_evidence),
+        "evidence_records_without_chain_fixture": sum(item.get("record_id") not in matched_record_ids for item in records),
+        "top_missing_persistence_targets": ["browser homepage/search/extension clues", "registry-like report clues", "updater and promo components", "leftovers linked to installed software"],
+        "v04_data_readiness_score": round((coverage_score + persistence_coverage) / 2, 1) if graphs else round(coverage_score / 2, 1),
         "data_gap_count": gap_count,
         "execution_gating_eligible_count": 0,
         "execution_authorized": False,
@@ -83,9 +98,13 @@ def render_evidence_coverage_markdown(summary: dict) -> str:
         f"- candidate_total: `{summary['candidate_total']}`",
         f"- backlog_total: `{summary['backlog_total']}`",
         f"- coverage_score: `{summary['coverage_score']}`",
+        f"- persistence_chain_coverage: `{summary.get('persistence_chain_coverage', 0)}`",
+        f"- v04_data_readiness_score: `{summary.get('v04_data_readiness_score', 0)}`",
         f"- execution_gating_eligible_count: `0`", "",
         "## Top missing targets", "",
         *[f"- {item}" for item in summary["top_missing_targets"]], "",
+        "## Missing persistence targets", "",
+        *[f"- {item}" for item in summary.get("top_missing_persistence_targets", ())], "",
         "## Next data priorities", "",
         *[f"- {item}" for item in summary["next_data_priorities"]],
     ]

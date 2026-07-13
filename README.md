@@ -1,12 +1,20 @@
 # PC CleanGuard Skill
 
-> 当前 Public Preview：v0.3.3。新增中文 evidence 扩充、三类报告 fixture、Coverage Dashboard、用户报告与误报反馈；它们只支持解释和人工复核，不是执行授权。
+> 当前 Public Preview：v0.4.0。正式引入 Persistence Chain Governance / 持久化链路治理；图谱和治理计划只支持解释、复核与 proposal，不是执行授权。
 
-PC CleanGuard Skill 让 AI 更安全地分析、解释、预览、隔离和审计 Windows 清理任务。
+PC CleanGuard 不是“更狠的清理器”，而是一个开源、离线、可审计的 AI PC 治理 Skill。它专注于持久化链路治理：发现软件如何通过启动项、服务、计划任务、浏览器改动、注册表线索、更新器、推广组件和残留文件持续存在，并生成可复核、可回滚、可审计的治理计划。
 
-PC CleanGuard Skill helps AI agents safely inspect, explain, preview, quarantine, and audit Windows cleanup tasks.
+PC CleanGuard is an open-source, offline, auditable AI PC governance Skill. It focuses on Persistence Chain Governance: discovering how unwanted software persists through startup items, services, scheduled tasks, browser changes, registry-like clues, updaters, promo components, and leftovers, then producing review-only, reversible, and auditable governance plans.
 
-**v0.3.3 Public Preview · 中文 PUP 用户报告与反馈闭环 · 默认隔离，可恢复 · Offline by default**
+**v0.4.0 Public Preview · Persistence Chain Governance · Agent L0 governed plans · Offline by default**
+
+用户看到“删不干净”，技术原因往往是持久化链路没有被整体治理。PC CleanGuard 不和 360、火绒比较“删得狠”；差异化是开源透明、本地离线、用户确认、可回滚、可审计和 Agent 受控。它不是杀毒软件，不做云查杀，也不采集专有签名库。
+
+```powershell
+python -m pc_cleanguard.cli persistence graph --input report.json --output persistence_chain.md --json-output persistence_chain.json
+python -m pc_cleanguard.cli persistence plan --graph persistence_chain.json --output persistence_governance_plan.md --json-output persistence_governance_plan.json
+python -m pc_cleanguard.cli agent governance-preview --input report.json --output agent_governance_preview.json
+```
 
 PUP Review Pack 可以离线生成带来源追溯的 PUP 线索复核包，但不会删除、卸载、禁用、上传或修改注册表。
 PUP Review Pack can generate a local, offline, source-traceable review folder for suspicious PUP signals without deleting, uninstalling, disabling, uploading, or modifying the registry.

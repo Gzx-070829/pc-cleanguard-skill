@@ -62,6 +62,11 @@ class SkillActionsTest(unittest.TestCase):
             "build_evidence_coverage_summary",
             "build_user_friendly_pup_report",
             "build_false_positive_feedback_template",
+            "build_persistence_chain_graph",
+            "build_persistence_governance_plan",
+            "explain_persistence_chain",
+            "build_agent_governance_preview",
+            "validate_agent_execution_request",
             },
             set(ACTION_NAMES),
         )

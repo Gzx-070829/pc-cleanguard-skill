@@ -14,6 +14,7 @@ class PupIntelligenceEngineTest(unittest.TestCase):
         self.assertGreaterEqual(result["indicator_match_count"], 1)
         self.assertGreaterEqual(result["real_source_match_count"], 1)
         self.assertEqual(0, result["execution_gating_eligible_count"])
+        self.assertEqual("L0_REVIEW_ONLY", result["persistence_governance_boundary"])
         self.assertEqual(
             {"no_delete_authorization", "no_uninstall_authorization", "no_disable_authorization", "no_registry_edit_authorization"},
             set(result["blocked_actions"]),

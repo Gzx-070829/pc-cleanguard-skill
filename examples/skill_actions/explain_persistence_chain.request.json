@@ -1,0 +1,1 @@
+{"schema_version":"0.1","request_id":"v040-explain","action":"explain_persistence_chain","payload":{"graph":{"graph_id":"example","nodes":[],"edges":[],"risk_summary":{},"uncertainty_notes":[]}}}

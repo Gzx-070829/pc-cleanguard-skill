@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import TypedDict
+from typing import NotRequired, TypedDict
 
 from ..pipeline.input_loader import _validated_explicit_local_path
 from .evidence_pack_loader import (
@@ -52,10 +52,13 @@ class EvidenceCandidate(TypedDict):
     license_note: str
     submitted_by: str
     review_notes: str
+    recommended_human_checks: NotRequired[list[str]]
     created_at: str
 
 
-CANDIDATE_REQUIRED = set(EvidenceCandidate.__required_keys__)
+CANDIDATE_OPTIONAL = {"recommended_human_checks"}
+CANDIDATE_REQUIRED = set(EvidenceCandidate.__required_keys__) - CANDIDATE_OPTIONAL
+CANDIDATE_ALLOWED = CANDIDATE_REQUIRED | CANDIDATE_OPTIONAL
 
 
 def _nonempty_string(value: object) -> bool:
@@ -68,7 +71,7 @@ def validate_evidence_candidate(candidate: dict) -> dict:
     if (
         not isinstance(candidate, dict)
         or not CANDIDATE_REQUIRED.issubset(candidate)
-        or set(candidate) - CANDIDATE_REQUIRED
+        or set(candidate) - CANDIDATE_ALLOWED
     ):
         raise ValueError("evidence candidate fields do not match PR25 schema")
     required_strings = CANDIDATE_REQUIRED - {
@@ -87,6 +90,12 @@ def validate_evidence_candidate(candidate: dict) -> dict:
         not isinstance(alias, str) for alias in candidate["claimed_aliases"]
     ):
         raise ValueError("claimed_aliases must be a string array")
+    if "recommended_human_checks" in candidate and (
+        not isinstance(candidate["recommended_human_checks"], list)
+        or not candidate["recommended_human_checks"]
+        or any(not _nonempty_string(check) for check in candidate["recommended_human_checks"])
+    ):
+        raise ValueError("recommended_human_checks must be a non-empty string array")
     taxonomy = {item.value for item in PUPBehaviorCategory}
     categories = candidate["proposed_behavior_categories"]
     if not isinstance(categories, list) or not categories or not set(categories).issubset(taxonomy):
@@ -164,6 +173,8 @@ def build_evidence_record_from_candidate(candidate: dict, review_item: dict) -> 
         "entity_scope": candidate["proposed_entity_scope"],
         "relation_confidence": candidate["proposed_relation_confidence"],
     }
+    if "recommended_human_checks" in candidate:
+        record["recommended_human_checks"] = list(candidate["recommended_human_checks"])
     analogy_basis = candidate.get("proposed_analogy_basis")
     if _nonempty_string(analogy_basis):
         record["analogy_basis"] = analogy_basis

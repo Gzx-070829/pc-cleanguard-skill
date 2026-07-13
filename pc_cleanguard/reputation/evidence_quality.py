@@ -52,9 +52,11 @@ def build_evidence_quality_summary(evidence_packs, *, cn_candidates=(), review_b
     prohibited_tone=("一定是流氓","必须删除","建议卸载","软件本体定罪")
     gate_failures=[]
     if any(item.get("execution_authorized") is not False for item in records): gate_failures.append("execution_authorized_not_false")
-    if any(item.get("execution_gating_eligible") is True for item in records): gate_failures.append("positive_execution_gating")
+    if any(item.get("execution_gating_eligible", 0) not in (0, False, None) for item in records): gate_failures.append("positive_execution_gating")
     if any(not str(item.get(field,"")).strip() for item in records for field in ("source_url","source_title")): gate_failures.append("missing_source_metadata")
     if any(item.get("mapping_type")=="installer_artifact" and not str(item.get("version_or_time_scope","")).strip() for item in records): gate_failures.append("installer_missing_time_scope")
+    if any(item.get("mapping_type")=="installer_artifact" and not str(item.get("affected_component","")).strip() for item in records): gate_failures.append("installer_missing_affected_component")
+    if any(item.get("mapping_type")=="direct_entity" and not item.get("recommended_human_checks") for item in records): gate_failures.append("direct_entity_missing_human_checks")
     if any(item.get("review_status")=="approved_for_explanation" and item.get("source_type")=="user_blocklist_or_forum_list" for item in records): gate_failures.append("approved_user_blocklist")
     if any(any(term in str(item.get("evidence_summary","")) for term in prohibited_tone) for item in records): gate_failures.append("unrestrained_summary")
     result = {
@@ -89,6 +91,14 @@ def build_evidence_quality_summary(evidence_packs, *, cn_candidates=(), review_b
             "补充版本、签名、组件、分发渠道和本机行为 metadata。",
             "继续覆盖布丁系/万能五笔、浏览器主页/搜索修改链路等未充分核验方向。",
         ],
+        "quality_warnings": ["Evidence without a matching persistence fixture remains a coverage warning, not an execution verdict."],
+        "persistence_chain_coverage": 0.0,
+        "evidence_to_persistence_match_count": 0,
+        "behavior_to_persistence_match_count": 0,
+        "chain_nodes_without_evidence": 0,
+        "evidence_records_without_chain_fixture": count,
+        "top_missing_persistence_targets": ["browser clues", "registry-like report clues", "updaters", "promo components", "leftovers"],
+        "v04_data_readiness_score": round((sum(item["quality_score"] for item in scores) / count if count else 0.0) / 2, 1),
         "quality_gate_failures":gate_failures,"quality_gate_passed":not gate_failures,
     }
     if corroboration is not None: result["corroborated_match_count"]=corroboration.get("corroborated_match_count",0)

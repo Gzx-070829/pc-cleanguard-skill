@@ -6,6 +6,14 @@ import json
 from pathlib import Path
 
 from ..pipeline.input_loader import _validated_explicit_local_path
+from ..persistence import (
+    build_agent_governance_preview,
+    build_persistence_chain_graph,
+    build_persistence_governance_plan,
+    render_persistence_chain_markdown,
+    render_persistence_chain_mermaid,
+    render_persistence_governance_plan_markdown,
+)
 from ..reputation import load_evidence_pack, render_human_review_checklist, render_pup_insight_markdown
 from ..reputation import (
     build_evidence_coverage_summary,
@@ -77,6 +85,7 @@ def build_pup_review_pack(
     include_coverage: bool = False,
     include_user_friendly_report: bool = False,
     include_false_positive_template: bool = False,
+    include_persistence_chain: bool = False,
     overwrite: bool = False,
 ) -> dict:
     if not isinstance(overwrite, bool):
@@ -184,6 +193,46 @@ def build_pup_review_pack(
         "user_friendly_report_available": include_user_friendly_report,
         "false_positive_feedback_available": include_false_positive_template,
     })
+    persistence_graph = None
+    persistence_plan = None
+    agent_preview = None
+    if include_persistence_chain:
+        persistence_graph = build_persistence_chain_graph(
+            report, intelligence["matches"], intelligence["behavior_indicators"]
+        )
+        coverage = build_evidence_coverage_summary(
+            [[*records, *cn_records, *cn_win_records]], coverage_candidates, backlog_records,
+            [persistence_graph],
+        )
+        persistence_plan = build_persistence_governance_plan(persistence_graph)
+        agent_preview = build_agent_governance_preview(
+            report, intelligence["matches"], intelligence["behavior_indicators"]
+        )
+        risk = persistence_graph["risk_summary"]
+        summary.update({
+            "persistence_node_count": risk["node_count"],
+            "persistence_edge_count": risk["edge_count"],
+            "persistence_chain_score": risk["persistence_chain_score"],
+            "persistence_high_risk_node_count": risk["high_risk_node_count"],
+            "persistence_missing_metadata_count": risk["missing_metadata_count"],
+            "governance_plan_available": True,
+            "blocked_auto_execution_count": persistence_plan["blocked_auto_execution_count"],
+            "agent_boundary_status": "L0_REVIEW_ONLY",
+            "persistence_chain_coverage": coverage["persistence_chain_coverage"],
+            "evidence_to_persistence_match_count": coverage["evidence_to_persistence_match_count"],
+            "behavior_to_persistence_match_count": coverage["behavior_to_persistence_match_count"],
+            "chain_nodes_without_evidence": coverage["chain_nodes_without_evidence"],
+            "evidence_records_without_chain_fixture": coverage["evidence_records_without_chain_fixture"],
+            "v04_data_readiness_score": coverage["v04_data_readiness_score"],
+        })
+        quality.update({
+            "persistence_chain_coverage": coverage["persistence_chain_coverage"],
+            "evidence_to_persistence_match_count": coverage["evidence_to_persistence_match_count"],
+            "behavior_to_persistence_match_count": coverage["behavior_to_persistence_match_count"],
+            "chain_nodes_without_evidence": coverage["chain_nodes_without_evidence"],
+            "evidence_records_without_chain_fixture": coverage["evidence_records_without_chain_fixture"],
+            "v04_data_readiness_score": coverage["v04_data_readiness_score"],
+        })
     start_here = "\n".join([
         "# START HERE — PUP Intelligence Review Pack", "",
         "这是本地、离线、带来源追溯的 PUP 线索复核包。它展示命中的 evidence/indicator、匹配原因和误报风险。", "",
@@ -235,6 +284,15 @@ def build_pup_review_pack(
             "- 误报请填写本地模板；反馈不会自动改库。",
             "- 补充 publisher、签名、版本、路径和行为 metadata 可改善复核质量。",
             "- 本复核包不能触发自动清理。",
+        ])
+    if include_persistence_chain:
+        start_here += "\n\n" + "\n".join([
+            "## 持久化链路治理", "",
+            "- 软件之所以看起来‘删不干净’，通常是启动项、服务、计划任务、浏览器线索、更新器和残留没有被整体复核。",
+            f"- 本报告发现 {summary['persistence_node_count']} 个节点、{summary['persistence_edge_count']} 条关系。",
+            "- weak_name_overlap 与 related publisher 只是弱线索，不能形成实体结论。",
+            "- 当前只输出图谱和 L0-L5 治理 proposal，不自动断链。",
+            "- 用户应核对身份、签名、来源、行为与恢复路径；Agent 只能请求 L0 分析和计划。",
         ])
     user_summary = "\n".join([
         "# PUP 用户摘要", "",
@@ -341,6 +399,14 @@ def build_pup_review_pack(
         friendly = build_user_friendly_pup_report(summary)
         _write_text(destination / "user_friendly_summary.md", render_user_friendly_pup_report_markdown(friendly), overwrite)
         extra_artifacts += 1
+    if include_persistence_chain:
+        _write_text(destination / "persistence_chain.md", render_persistence_chain_markdown(persistence_graph), overwrite)
+        _write_json(destination / "persistence_chain.json", persistence_graph, overwrite)
+        _write_text(destination / "persistence_chain_mermaid.md", render_persistence_chain_mermaid(persistence_graph), overwrite)
+        _write_text(destination / "persistence_governance_plan.md", render_persistence_governance_plan_markdown(persistence_plan), overwrite)
+        _write_json(destination / "persistence_governance_plan.json", persistence_plan, overwrite)
+        _write_json(destination / "agent_governance_preview.json", agent_preview, overwrite)
+        extra_artifacts += 6
     if include_false_positive_template:
         structured_feedback = build_structured_feedback_template(
             intelligence["matches"][0] if intelligence["matches"] else {}, {}
