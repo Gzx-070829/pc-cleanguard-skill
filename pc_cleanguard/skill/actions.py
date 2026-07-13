@@ -17,7 +17,10 @@ from ..external_tools import ExternalToolCatalog, ToolRecommender, ToolTrustPoli
 from ..pipeline import run_readonly_scan_pipeline
 from ..pipeline.input_loader import _validated_explicit_local_path
 from ..quarantine import QuarantineManager
-from ..pup import inspect_pup_risk as inspect_pup_risk_offline
+from ..pup import (
+    build_pup_review_pack as build_pup_review_pack_offline,
+    inspect_pup_risk as inspect_pup_risk_offline,
+)
 from ..reputation import ReputationMatcher, build_pup_insight as build_pup_insight_data, load_seed_records
 from .cleanup_plan import READ_ONLY_EXECUTION_LEVEL, build_cleanup_plan_from_report
 
@@ -35,6 +38,7 @@ ACTION_NAMES = (
     "match_reputation",
     "build_pup_insight",
     "inspect_pup_risk",
+    "build_pup_review_pack",
 )
 REVERSIBLE_EXECUTION_LEVEL = "LEVEL_2_REVERSIBLE"
 
@@ -555,13 +559,45 @@ def build_pup_insight(matches: list[dict], *, request_id: str | None = None) -> 
     )
 
 
-def inspect_pup_risk(report: dict, seed_path, *, request_id: str | None = None) -> SkillActionResponse:
-    result = inspect_pup_risk_offline(report, seed_path)
+def inspect_pup_risk(
+    report: dict,
+    seed_path,
+    *,
+    evidence_pack: bool = False,
+    include_indicators: bool = False,
+    request_id: str | None = None,
+) -> SkillActionResponse:
+    result = inspect_pup_risk_offline(
+        report, seed_path, evidence_pack=evidence_pack, include_indicators=include_indicators
+    )
     return _response(
         action="inspect_pup_risk",
         request_id=request_id,
         requires_user_confirmation=True,
         evidence=({"source": "pup_inspector", "fact": f"built insight for {result['match_count']} local seed match(es)"},),
+        result=result,
+    )
+
+
+def build_pup_review_pack(
+    report: dict,
+    evidence_pack_path,
+    output_dir,
+    *,
+    overwrite: bool = False,
+    request_id: str | None = None,
+) -> SkillActionResponse:
+    result = build_pup_review_pack_offline(
+        report, evidence_pack_path, output_dir, overwrite=overwrite
+    )
+    return _response(
+        action="build_pup_review_pack",
+        request_id=request_id,
+        requires_user_confirmation=True,
+        evidence=({
+            "source": "pup_review_pack",
+            "fact": f"wrote {result['artifact_count']} local explanation/review artifact(s)",
+        },),
         result=result,
     )
 
@@ -665,6 +701,21 @@ def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionRespon
         _validated_payload(payload, {"matches"}, set())
         return build_pup_insight(payload["matches"], request_id=request.request_id)
     if request.action == "inspect_pup_risk":
-        _validated_payload(payload, {"report", "seed_path"}, set())
-        return inspect_pup_risk(payload["report"], payload["seed_path"], request_id=request.request_id)
+        _validated_payload(payload, {"report", "seed_path"}, {"evidence_pack", "include_indicators"})
+        return inspect_pup_risk(
+            payload["report"], payload["seed_path"],
+            evidence_pack=payload.get("evidence_pack", False),
+            include_indicators=payload.get("include_indicators", False),
+            request_id=request.request_id,
+        )
+    if request.action == "build_pup_review_pack":
+        _validated_payload(
+            payload,
+            {"report", "evidence_pack_path", "output_dir"},
+            {"overwrite"},
+        )
+        return build_pup_review_pack(
+            payload["report"], payload["evidence_pack_path"], payload["output_dir"],
+            overwrite=payload.get("overwrite", False), request_id=request.request_id,
+        )
     raise ValueError("unsupported skill action")

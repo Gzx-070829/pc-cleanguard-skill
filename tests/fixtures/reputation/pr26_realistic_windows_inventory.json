@@ -1,0 +1,21 @@
+{
+  "fixture_notice": "Synthetic-but-realistic test inventory; not a real machine scan and not a software accusation.",
+  "synthetic_but_realistic": true,
+  "installed_apps": [
+    {"target_id": "app:installcore", "display_name": "Example InstallCore Bundle Helper", "publisher": "Example Fixture Publisher"},
+    {"target_id": "app:slimware", "display_name": "Example Slimware Driver Utility", "publisher": "Example Fixture Publisher"},
+    {"target_id": "app:mediaarena", "display_name": "Example MediaArena Search Tool", "publisher": "Example Fixture Publisher"},
+    {"target_id": "app:fusioncore", "display_name": "Example FusionCore Offer Manager", "publisher": "Example Fixture Publisher"},
+    {"target_id": "app:piriform", "display_name": "Example PiriformBundler Installer Artifact", "publisher": "Example Fixture Publisher"}
+  ],
+  "startup_items": [
+    {"target_id": "startup:offer", "name": "ExampleOfferStartup", "publisher": "Example Fixture Publisher"},
+    {"target_id": "startup:media", "name": "ExampleMediaSearchUpdater", "publisher": "Example Fixture Publisher"}
+  ],
+  "services": [
+    {"target_id": "service:offer", "display_name": "ExampleOfferService", "publisher": "Example Fixture Publisher"}
+  ],
+  "scheduled_tasks": [
+    {"target_id": "task:bundle", "task_name": "ExampleBundleUpdaterTask", "author": "Example Fixture Publisher"}
+  ]
+}

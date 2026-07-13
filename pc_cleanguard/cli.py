@@ -37,6 +37,7 @@ from .pipeline import (
 )
 from .quarantine import QuarantineManager
 from .pup import inspect_pup_risk
+from .pup import build_pup_review_pack
 from .reputation import (
     ReputationMatcher,
     build_pup_insight,
@@ -49,6 +50,11 @@ from .reputation import (
     load_evidence_candidates,
     load_evidence_review_queue,
     write_evidence_pack,
+    build_indicators_from_evidence,
+    summarize_indicators,
+    write_indicators,
+    build_human_review_checklist,
+    render_human_review_checklist,
 )
 from .skill import invoke_skill_action, write_report
 from .experience import run_release_smoke_check, run_user_trial
@@ -352,6 +358,12 @@ def _parser() -> argparse.ArgumentParser:
     evidence_build.add_argument("--candidates", required=True, type=Path)
     evidence_build.add_argument("--reviews", required=True, type=Path)
     evidence_build.add_argument("--output", required=True, type=Path)
+    evidence_indicators = evidence_commands.add_parser("indicators")
+    evidence_indicators.add_argument("--input", required=True, type=Path)
+    evidence_indicators.add_argument("--output", required=True, type=Path)
+    evidence_indicators.add_argument("--overwrite", action="store_true")
+    evidence_indicator_stats = evidence_commands.add_parser("indicators-stats")
+    evidence_indicator_stats.add_argument("--input", required=True, type=Path)
     pup = subcommands.add_parser("pup", help="inspect PUP evidence without execution")
     pup_commands = pup.add_subparsers(dest="pup_command", required=True)
     pup_inspect = pup_commands.add_parser("inspect")
@@ -360,6 +372,17 @@ def _parser() -> argparse.ArgumentParser:
     pup_source.add_argument("--seed", type=Path)
     pup_source.add_argument("--evidence-pack", type=Path)
     pup_inspect.add_argument("--output", required=True, type=Path)
+    pup_inspect.add_argument("--include-indicators", action="store_true")
+    pup_inspect.add_argument("--human-review-checklist", type=Path)
+    pup_review_pack = pup_commands.add_parser("review-pack")
+    pup_review_pack.add_argument("--input", required=True, type=Path)
+    pup_review_pack.add_argument("--evidence-pack", required=True, type=Path)
+    pup_review_pack.add_argument("--output", required=True, type=Path)
+    pup_review_pack.add_argument("--include-indicators", action="store_true")
+    pup_review_pack.add_argument("--human-review-checklist", action="store_true")
+    pup_review_pack.add_argument("--source-trace", action="store_true")
+    pup_review_pack.add_argument("--feedback-template", action="store_true")
+    pup_review_pack.add_argument("--overwrite", action="store_true")
     trial = subcommands.add_parser("trial", help="run the bounded five-minute product trial")
     trial_commands = trial.add_subparsers(dest="trial_command", required=True)
     trial_run = trial_commands.add_parser("run")
@@ -588,6 +611,18 @@ def _run_reputation(arguments: argparse.Namespace) -> dict:
                 "runtime_network_access": False,
                 "execution_authorized": False,
             }
+        if arguments.evidence_command in {"indicators", "indicators-stats"}:
+            records = load_evidence_pack(arguments.input)
+            indicators = [
+                item for record in records for item in build_indicators_from_evidence(record)
+            ]
+            stats = summarize_indicators(indicators)
+            if arguments.evidence_command == "indicators":
+                destination = write_indicators(
+                    arguments.output, indicators, overwrite=arguments.overwrite
+                )
+                return {"output": str(destination), **stats, "execution_authorized": False}
+            return {**stats, "execution_authorized": False}
         records = load_evidence_pack(arguments.input)
         stats = evidence_pack_stats(records)
         return {"valid": True, "record_count": len(records), **stats, "execution_authorized": False}
@@ -607,9 +642,25 @@ def _run_reputation(arguments: argparse.Namespace) -> dict:
 
 
 def _run_pup(arguments: argparse.Namespace) -> dict:
+    if arguments.pup_command == "review-pack":
+        return build_pup_review_pack(
+            load_scan_json_file(arguments.input),
+            arguments.evidence_pack,
+            arguments.output,
+            overwrite=arguments.overwrite,
+        )
     source = arguments.evidence_pack or arguments.seed
-    result = inspect_pup_risk(load_scan_json_file(arguments.input), source, evidence_pack=arguments.evidence_pack is not None)
+    result = inspect_pup_risk(
+        load_scan_json_file(arguments.input), source,
+        evidence_pack=arguments.evidence_pack is not None,
+        include_indicators=arguments.include_indicators,
+    )
     write_pup_insight_markdown(arguments.output, result["markdown"])
+    if arguments.human_review_checklist is not None:
+        write_pup_insight_markdown(
+            arguments.human_review_checklist,
+            render_human_review_checklist(build_human_review_checklist(result["matches"])),
+        )
     return {"output": str(arguments.output), "match_count": result["match_count"], "execution_authorized": False}
 
 
@@ -677,7 +728,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             summary = _run_quarantine(arguments)
         elif arguments.command == "reputation":
             summary = _run_reputation(arguments)
-        elif arguments.command == "pup" and arguments.pup_command == "inspect":
+        elif arguments.command == "pup":
             summary = _run_pup(arguments)
         elif arguments.command == "trial" and arguments.trial_command == "run":
             summary = run_user_trial(

@@ -1,0 +1,18 @@
+{
+  "schema_version": "0.1",
+  "request_id": "pr26-review-pack-example",
+  "action": "build_pup_review_pack",
+  "payload": {
+    "report": {
+      "targets": [
+        {
+          "target_id": "example:installcore-helper",
+          "object_type": "SOFTWARE",
+          "name": "Example InstallCore Bundle Helper"
+        }
+      ]
+    },
+    "evidence_pack_path": "data/reputation/evidence_pack.real.zh-CN.json",
+    "output_dir": ".pcg-pup-review"
+  }
+}

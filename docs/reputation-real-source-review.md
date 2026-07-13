@@ -11,3 +11,5 @@ PR25 首批加入 5 条人工核验记录，均来自 Microsoft Security Intelli
 这些 detection-family 记录采用 `direct_entity + windows_desktop_software`，但 direct entity 只表示来源页面与检测族名称直接对应。它不证明本机同名文件属于该家族，更不授权删除、卸载或禁用。`relation_confidence` 描述关系质量，不是执行置信度；`false_positive_risk` 继续要求本地身份与用户意图复核。
 
 真实 evidence 不是黑名单。真实来源 evidence 仅用于解释、排序和人工复核，不是删除、卸载、禁用授权。运行时完全离线，也不会自动访问上述 URL。
+
+PR26 未扩充这 5 条记录：现有官方来源足以验证 indicator/review-pack 闭环，继续为数量加入实体会增加核验和误伤风险。本轮优先把来源追溯、保守匹配和反馈闭环做完整；新增真实记录仍必须走 PR25 intake/review 流程。

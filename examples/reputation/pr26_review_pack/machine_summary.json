@@ -1,0 +1,17 @@
+{
+  "real_source_match_count": 5,
+  "synthetic_match_count": 0,
+  "indicator_match_count": 5,
+  "detection_family_match_count": 0,
+  "publisher_hint_match_count": 0,
+  "high_uncertainty_match_count": 1,
+  "human_review_required_count": 5,
+  "execution_gating_eligible_count": 0,
+  "blocked_actions": [
+    "no_delete_authorization",
+    "no_uninstall_authorization",
+    "no_disable_authorization",
+    "no_registry_edit_authorization"
+  ],
+  "execution_authorized": false
+}

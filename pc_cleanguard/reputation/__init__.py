@@ -33,6 +33,15 @@ from .evidence_intake import (
     write_evidence_pack,
 )
 from .evidence_review import ReviewQueueItem, load_evidence_review_queue, validate_review_queue_item
+from .indicators import (
+    EvidenceIndicator,
+    build_indicators_from_evidence,
+    normalize_indicator_value,
+    summarize_indicators,
+    validate_indicator,
+    write_indicators,
+)
+from .review_checklist import build_human_review_checklist, render_human_review_checklist
 
 __all__ = [
     "EvidenceType",
@@ -62,4 +71,8 @@ __all__ = [
     "EvidenceCandidate", "ReviewQueueItem", "load_evidence_candidates", "validate_evidence_candidate",
     "load_evidence_review_queue", "validate_review_queue_item", "build_evidence_record_from_candidate",
     "build_evidence_pack", "write_evidence_pack",
+    "EvidenceIndicator", "build_indicators_from_evidence", "normalize_indicator_value",
+    "summarize_indicators", "validate_indicator",
+    "write_indicators",
+    "build_human_review_checklist", "render_human_review_checklist",
 ]
