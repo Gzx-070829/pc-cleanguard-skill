@@ -105,6 +105,10 @@ PR24 confirmed cleanup defaults to `.pcg-quarantine` when no root is supplied. R
 
 PR24 Evidence Guard treats mapping relation and synthetic status as orthogonal axes. Analogical behavior requires an explicit analogy basis. Mobile APP/SDK evidence, related publishers, name collisions, synthetic data, and even direct Windows evidence are never execution-gating eligible. Evidence Pack is not a blacklist.
 
+PR25 real-source evidence must enter through the offline candidate → human review → guarded build flow. Only `accept_as_evidence` may build a record, and the PR24 loader must validate it again with `execution_authorized=false`. Runtime must not resolve source URLs or perform online reputation lookup.
+
+PR25 真实 evidence 不是黑名单。真实来源只用于解释、排序和人工复核；`mapping_type`、`entity_scope`、`is_synthetic`、`relation_confidence` 是防误用核心字段。MIIT APP/SDK 通报不得直接映射为 Windows 删除名单。
+
 For the v0.3.0 Public Preview, `doctor release-check` may read version, documentation, seed, showcase, and issue-template metadata only. It must not execute cleanup, access the network, read API keys, or mutate system state. PC CleanGuard does not replace antivirus software.
 
 ## Read-only collectors / 只读采集器

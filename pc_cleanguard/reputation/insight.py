@@ -2,7 +2,8 @@
 
 SAFETY_NOTICE = (
     "此洞察不是删除授权、不是卸载授权、不是禁用授权；"
-    "Reputation KB 只能解释、排序和提示风险，所有不确定项需要用户确认。"
+    "真实来源 evidence 仅用于解释、排序和人工复核，不是删除、卸载、禁用授权；"
+    "所有不确定项需要用户确认。"
 )
 
 
@@ -12,13 +13,43 @@ def build_pup_insight(matches: list[dict]) -> dict:
     if any(item.get("execution_authorized") is not False for item in matches):
         raise ValueError("reputation matches cannot authorize execution")
     categories = sorted({category for item in matches for category in item.get("behavior_categories", ())})
-    uncertain = [
-        f"{item.get('target_id', 'unknown')}: mapping_type={item.get('mapping_type', 'unknown')}, false_positive_risk={item.get('false_positive_risk', 'high')}"
-        for item in matches
-        if item.get("mapping_type") in {"analogical_behavior","name_collision_candidate","related_publisher"} or item.get("false_positive_risk") != "low" or item.get("review_status") != "approved_for_explanation"
-    ]
+    uncertain = []
+    for item in matches:
+        mapping = item.get("mapping_type", "unknown")
+        if mapping == "analogical_behavior":
+            uncertain.append(
+                f"{item.get('target_id', 'unknown')}: analogical_behavior 仅为行为类比；basis={item.get('analogy_basis') or 'missing'}"
+            )
+        elif mapping == "related_publisher":
+            uncertain.append(
+                f"{item.get('target_id', 'unknown')}: publisher-level warning only，不能归因到具体软件。"
+            )
+        elif mapping == "name_collision_candidate":
+            uncertain.append(
+                f"{item.get('target_id', 'unknown')}: name collision candidate，置信度已降低并需要身份复核。"
+            )
+        elif item.get("false_positive_risk") != "low" or item.get("review_status") != "approved_for_explanation":
+            uncertain.append(
+                f"{item.get('target_id', 'unknown')}: mapping_type={mapping}, false_positive_risk={item.get('false_positive_risk', 'high')}"
+            )
+    mapping_counts = {
+        f"{mapping}_count": sum(item.get("mapping_type") == mapping for item in matches)
+        for mapping in (
+            "direct_entity",
+            "analogical_behavior",
+            "related_publisher",
+            "name_collision_candidate",
+        )
+    }
     return {
-        "summary": {"matched_targets": len(matches), "behavior_category_count": len(categories)},
+        "summary": {
+            "matched_targets": len(matches),
+            "behavior_category_count": len(categories),
+            "real_source_match_count": sum(item.get("is_synthetic") is False for item in matches),
+            "synthetic_match_count": sum(item.get("is_synthetic") is True for item in matches),
+            **mapping_counts,
+            "execution_gating_eligible_count": 0,
+        },
         "suspicious_behaviors": categories,
         "matched_targets": [dict(item) for item in matches],
         "uncertainty_notes": uncertain or ["没有命中并不证明安全；仍需结合本地证据人工复核。"],

@@ -45,6 +45,10 @@ from .reputation import (
     write_pup_insight_markdown,
     load_evidence_pack,
     evidence_pack_stats,
+    build_evidence_pack,
+    load_evidence_candidates,
+    load_evidence_review_queue,
+    write_evidence_pack,
 )
 from .skill import invoke_skill_action, write_report
 from .experience import run_release_smoke_check, run_user_trial
@@ -332,6 +336,22 @@ def _parser() -> argparse.ArgumentParser:
     for evidence_command in ("validate", "stats"):
         evidence_parser = evidence_commands.add_parser(evidence_command)
         evidence_parser.add_argument("--input", required=True, type=Path)
+    evidence_intake = evidence_commands.add_parser("intake")
+    evidence_intake_commands = evidence_intake.add_subparsers(
+        dest="evidence_flow_command", required=True
+    )
+    evidence_intake_validate = evidence_intake_commands.add_parser("validate")
+    evidence_intake_validate.add_argument("--input", required=True, type=Path)
+    evidence_review = evidence_commands.add_parser("review")
+    evidence_review_commands = evidence_review.add_subparsers(
+        dest="evidence_flow_command", required=True
+    )
+    evidence_review_validate = evidence_review_commands.add_parser("validate")
+    evidence_review_validate.add_argument("--input", required=True, type=Path)
+    evidence_build = evidence_commands.add_parser("build")
+    evidence_build.add_argument("--candidates", required=True, type=Path)
+    evidence_build.add_argument("--reviews", required=True, type=Path)
+    evidence_build.add_argument("--output", required=True, type=Path)
     pup = subcommands.add_parser("pup", help="inspect PUP evidence without execution")
     pup_commands = pup.add_subparsers(dest="pup_command", required=True)
     pup_inspect = pup_commands.add_parser("inspect")
@@ -540,6 +560,34 @@ def _run_quarantine(arguments: argparse.Namespace) -> dict:
 
 def _run_reputation(arguments: argparse.Namespace) -> dict:
     if arguments.reputation_command == "evidence":
+        if arguments.evidence_command == "intake":
+            candidates = load_evidence_candidates(arguments.input)
+            return {
+                "valid": True,
+                "candidate_count": len(candidates),
+                "runtime_network_access": False,
+                "execution_authorized": False,
+            }
+        if arguments.evidence_command == "review":
+            reviews = load_evidence_review_queue(arguments.input)
+            return {
+                "valid": True,
+                "review_count": len(reviews),
+                "runtime_network_access": False,
+                "execution_authorized": False,
+            }
+        if arguments.evidence_command == "build":
+            candidates = load_evidence_candidates(arguments.candidates)
+            reviews = load_evidence_review_queue(arguments.reviews)
+            records = build_evidence_pack(candidates, reviews)
+            destination = write_evidence_pack(arguments.output, records)
+            return {
+                "output": str(destination),
+                "record_count": len(records),
+                **evidence_pack_stats(records),
+                "runtime_network_access": False,
+                "execution_authorized": False,
+            }
         records = load_evidence_pack(arguments.input)
         stats = evidence_pack_stats(records)
         return {"valid": True, "record_count": len(records), **stats, "execution_authorized": False}

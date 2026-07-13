@@ -67,6 +67,8 @@ PR22 把上述能力编排为 `trial run` 产品体验：自动生成 START HERE
 
 PR24 增加默认 `.pcg-quarantine` 与 Evidence Guard。Evidence Pack 不是黑名单；mapping relation 与 synthetic 状态是正交轴，所有 evidence 均被阻断在执行门之外。
 
+PR25 增加离线 Evidence Intake/Review/Build 和首批 5 条人工核验公开来源记录。真实来源只让 PUP insight 更有信息量，`execution_gating_eligible_count` 始终为 0。
+
 ## 5 分钟试用 / Try it in five minutes
 
 要求 Python 3.10+。克隆仓库并在根目录运行：
@@ -168,6 +170,15 @@ python -m pc_cleanguard.cli pup inspect --input report.json --seed examples/repu
 
 输出不是删除、卸载或禁用授权；高误报风险和未审核记录会明确要求用户复核。
 
+人工核验证据可通过离线 intake/review/build 流程重建，再用于 PUP 洞察：
+
+```powershell
+python -m pc_cleanguard.cli reputation evidence intake validate --input data/reputation/evidence_candidates.zh-CN.json
+python -m pc_cleanguard.cli reputation evidence review validate --input data/reputation/evidence_review_queue.zh-CN.json
+python -m pc_cleanguard.cli reputation evidence stats --input data/reputation/evidence_pack.real.zh-CN.json
+python -m pc_cleanguard.cli pup inspect --input report.json --evidence-pack data/reputation/evidence_pack.real.zh-CN.json --output pup_insight.md
+```
+
 ## AI / Skill 调用
 
 外部 Agent 可以通过 `invoke_skill_action` 调用 `scan_from_json`、`explain_report`、`build_cleanup_plan`、`write_report`、`write_audit` 和 `recommend_external_tools`：
@@ -197,7 +208,7 @@ v0.2 编排示例：[examples/skill_actions/v0.2_cleanup_agent_flow.json](exampl
 - 不自动运行 Windows PowerShell collectors，也不扫描全盘。
 - 没有真实在线 AI provider、GUI、后台监控、遥测或云同步。
 - 垃圾规则以明确 metadata 为主，仍需要社区反馈持续降低误报。
-- PR20 Reputation Seed Pack 目前提供 20 条 synthetic/placeholder 中文记录，不联网抓取声誉数据，也不包含专有检测库。
+- PR20 Seed Pack 提供 20 条 synthetic/placeholder 中文记录；PR25 另提供 5 条人工核验公开来源 detection-family 记录。两者都在本地离线加载，不联网抓取声誉数据，也不包含专有检测库。
 
 ## 安全边界 / Safety boundaries
 
@@ -231,6 +242,8 @@ v0.2 编排示例：[examples/skill_actions/v0.2_cleanup_agent_flow.json](exampl
 - Reputation Source Policy：[docs/reputation-source-policy.md](docs/reputation-source-policy.md)
 - Reputation Evidence Pack：[docs/reputation-evidence-pack.md](docs/reputation-evidence-pack.md)
 - Reputation Source Review Policy：[docs/reputation-source-review-policy.md](docs/reputation-source-review-policy.md)
+- Evidence Intake：[docs/reputation-evidence-intake.md](docs/reputation-evidence-intake.md)
+- Real-source Evidence Review：[docs/reputation-real-source-review.md](docs/reputation-real-source-review.md)
 - Reputation Matching：[docs/reputation-matching.md](docs/reputation-matching.md)
 - PUP Insight Flow：[docs/pup-insight-user-flow.md](docs/pup-insight-user-flow.md)
 - User Trial：[docs/user-trial.md](docs/user-trial.md)
