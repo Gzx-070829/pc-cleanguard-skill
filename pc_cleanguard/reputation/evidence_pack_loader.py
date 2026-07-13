@@ -36,8 +36,8 @@ def validate_evidence_record(record: dict) -> dict:
     if record["is_synthetic"] is False:
         if record["source_type"] == "synthetic_example":
             raise ValueError("real evidence requires a public source type")
-        if not all(str(record[field]).strip() for field in ("source_url", "source_title", "evidence_summary")):
-            raise ValueError("real evidence requires source URL, title, and summary")
+        if not all(str(record[field]).strip() for field in ("source_url", "source_title", "source_date", "evidence_summary")):
+            raise ValueError("real evidence requires source URL, title, date, and summary")
         if not record["source_url"].startswith(("https://", "http://")):
             raise ValueError("real evidence requires a public source URL")
     is_miit = "miit" in record["source_name"].casefold() or "工信" in record["source_name"]

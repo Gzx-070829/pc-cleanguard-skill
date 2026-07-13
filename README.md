@@ -80,6 +80,8 @@ PR25 增加离线 Evidence Intake/Review/Build 和首批 5 条人工核验公开
 
 PR26 增加保守 Evidence Indicator matching、PUP Intelligence Engine 和一条命令生成的本地 Review Pack。detection family 不等于 installed app display name；所有 match 仍需人工复核。
 
+PR27 增加 Adversarial Evidence Guard、5 条批次级中文官方来源、Behavior Indicators 和 v0.3.1 发布准备。中文 evidence 不是黑名单，behavior indicator 不是 PUP 定罪；PC CleanGuard 不是杀毒软件，也不替代 Microsoft Defender。
+
 ## 5 分钟试用 / Try it in five minutes
 
 要求 Python 3.10+。克隆仓库并在根目录运行：
@@ -261,6 +263,10 @@ v0.2 编排示例：[examples/skill_actions/v0.2_cleanup_agent_flow.json](exampl
 - PUP Intelligence Review Pack：[docs/pup-intelligence-review-pack.md](docs/pup-intelligence-review-pack.md)
 - PUP Human Review Checklist：[docs/pup-human-review-checklist.md](docs/pup-human-review-checklist.md)
 - PUP False-positive Feedback：[docs/pup-false-positive-feedback.md](docs/pup-false-positive-feedback.md)
+- 中文 PUP Evidence Policy：[docs/reputation-cn-pup-evidence-policy.md](docs/reputation-cn-pup-evidence-policy.md)
+- 中文来源 Rubric：[docs/reputation-cn-source-rubric.md](docs/reputation-cn-source-rubric.md)
+- Behavior Indicators：[docs/pup-behavior-indicators.md](docs/pup-behavior-indicators.md)
+- v0.3.1 Preview Notes：[docs/v0.3.1-preview-notes.md](docs/v0.3.1-preview-notes.md)
 - User Trial：[docs/user-trial.md](docs/user-trial.md)
 - Product Positioning：[docs/product-positioning.md](docs/product-positioning.md)
 - v0.3 Public Preview：[docs/v0.3-public-preview.md](docs/v0.3-public-preview.md)

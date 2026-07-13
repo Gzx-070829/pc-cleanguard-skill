@@ -13,3 +13,5 @@ PR25 首批加入 5 条人工核验记录，均来自 Microsoft Security Intelli
 真实 evidence 不是黑名单。真实来源 evidence 仅用于解释、排序和人工复核，不是删除、卸载、禁用授权。运行时完全离线，也不会自动访问上述 URL。
 
 PR26 未扩充这 5 条记录：现有官方来源足以验证 indicator/review-pack 闭环，继续为数量加入实体会增加核验和误伤风险。本轮优先把来源追溯、保守匹配和反馈闭环做完整；新增真实记录仍必须走 PR25 intake/review 流程。
+
+PR27 另建中文 pack，加入 5 条人工核验的工信部公开批次页面。它们不复制具体 APP 名单，只作为移动端行为类比；不能映射为 Windows direct entity、发布者黑名单或 PUP 执行建议。

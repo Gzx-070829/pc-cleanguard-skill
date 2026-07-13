@@ -1,0 +1,7 @@
+[
+  {"source_reliability":"official","entity_clarity":"mobile_only","risk_category":"privacy_overreach","allowed_use":"explanation_only","forbidden_use":["delete_authorization","uninstall_authorization","disable_authorization","registry_edit_authorization"]},
+  {"source_reliability":"security_vendor_public_article","entity_clarity":"installer_or_bundle_artifact","risk_category":"bundled_install","allowed_use":"review_hint","forbidden_use":["delete_authorization","uninstall_authorization","disable_authorization","registry_edit_authorization"]},
+  {"source_reliability":"reputable_media","entity_clarity":"publisher_level_only","risk_category":"unknown","allowed_use":"publisher_level_warning","forbidden_use":["delete_authorization","uninstall_authorization","disable_authorization","registry_edit_authorization"]},
+  {"source_reliability":"community_multi_report","entity_clarity":"name_collision_possible","risk_category":"difficult_uninstall","allowed_use":"name_collision_warning","forbidden_use":["delete_authorization","uninstall_authorization","disable_authorization","registry_edit_authorization"]},
+  {"source_reliability":"weak_source","entity_clarity":"unclear","risk_category":"unknown","allowed_use":"explanation_only","forbidden_use":["delete_authorization","uninstall_authorization","disable_authorization","registry_edit_authorization"]}
+]

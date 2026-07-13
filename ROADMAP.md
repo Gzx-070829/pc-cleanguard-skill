@@ -36,6 +36,8 @@ PR25 增加真实公开来源的人工 intake/review/build 流程和首批核验
 
 PR26 将 evidence indicators、保守匹配、PUP Intelligence、来源追溯、人工 checklist 和误报反馈编排为一条命令生成的本地 Review Pack。它提升可用性，但不扩大系统执行权限。
 
+PR27 用对抗测试焊死 Evidence Guard，加入批次级中文官方来源、report-metadata Behavior Indicators，并准备 v0.3.1 showcase/checklist。版本号、tag 和 Release 留给独立发布任务。
+
 ## v0.4 — Reputation adapters + PUP planner + registry backup planning
 
 在明确来源许可和人工审核下接入真实公开 Reputation adapter；构建 PUP 声明式 planner 与注册表备份规划。声誉证据仍不授权执行，registry backup planning 不提供任意写入口。

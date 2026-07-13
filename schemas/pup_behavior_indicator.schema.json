@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PC CleanGuard PUP Behavior Indicator",
+  "type": "object",
+  "required": ["indicator_id", "target_id", "target_type", "behavior_type", "observed_value", "evidence_source", "confidence", "false_positive_risk", "requires_human_review", "notes", "execution_gating_eligible"],
+  "properties": {
+    "indicator_id": {"type": "string", "minLength": 1},
+    "target_id": {"type": "string", "minLength": 1},
+    "target_type": {"enum": ["installed_app", "startup_item", "service", "scheduled_task", "browser_extension", "file_observation", "unknown"]},
+    "behavior_type": {"enum": ["startup_persistence", "scheduled_task_persistence", "service_persistence", "browser_homepage_change", "browser_search_change", "browser_extension_presence", "bundled_installer_trace", "misleading_scan_claim", "difficult_uninstall_signal", "ad_popup_signal", "publisher_mismatch", "unsigned_or_unknown_publisher", "suspicious_install_location"]},
+    "observed_value": {"type": "string", "minLength": 1},
+    "evidence_source": {"type": "string", "minLength": 1},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "false_positive_risk": {"enum": ["low", "medium", "high"]},
+    "requires_human_review": {"const": true},
+    "notes": {"type": "string", "minLength": 1},
+    "execution_gating_eligible": {"const": false}
+  },
+  "additionalProperties": false
+}

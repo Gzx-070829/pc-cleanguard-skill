@@ -18,10 +18,18 @@ from ..pipeline import run_readonly_scan_pipeline
 from ..pipeline.input_loader import _validated_explicit_local_path
 from ..quarantine import QuarantineManager
 from ..pup import (
+    build_behavior_indicators_from_report,
     build_pup_review_pack as build_pup_review_pack_offline,
     inspect_pup_risk as inspect_pup_risk_offline,
+    summarize_behavior_indicators,
 )
-from ..reputation import ReputationMatcher, build_pup_insight as build_pup_insight_data, load_seed_records
+from ..reputation import (
+    ReputationMatcher,
+    build_pup_insight as build_pup_insight_data,
+    evidence_pack_stats,
+    load_evidence_pack,
+    load_seed_records,
+)
 from .cleanup_plan import READ_ONLY_EXECUTION_LEVEL, build_cleanup_plan_from_report
 
 
@@ -39,6 +47,8 @@ ACTION_NAMES = (
     "build_pup_insight",
     "inspect_pup_risk",
     "build_pup_review_pack",
+    "build_behavior_indicators",
+    "validate_cn_evidence_pack",
 )
 REVERSIBLE_EXECUTION_LEVEL = "LEVEL_2_REVERSIBLE"
 
@@ -584,11 +594,18 @@ def build_pup_review_pack(
     evidence_pack_path,
     output_dir,
     *,
+    cn_evidence_pack_path=None,
+    include_behavior_indicators: bool = False,
     overwrite: bool = False,
     request_id: str | None = None,
 ) -> SkillActionResponse:
     result = build_pup_review_pack_offline(
-        report, evidence_pack_path, output_dir, overwrite=overwrite
+        report,
+        evidence_pack_path,
+        output_dir,
+        cn_evidence_pack=cn_evidence_pack_path,
+        include_behavior_indicators=include_behavior_indicators,
+        overwrite=overwrite,
     )
     return _response(
         action="build_pup_review_pack",
@@ -602,6 +619,36 @@ def build_pup_review_pack(
     )
 
 
+def build_behavior_indicators(report: dict, *, request_id: str | None = None) -> SkillActionResponse:
+    indicators = build_behavior_indicators_from_report(report)
+    summary = summarize_behavior_indicators(indicators)
+    return _response(
+        action="build_behavior_indicators",
+        request_id=request_id,
+        requires_user_confirmation=True,
+        evidence=({"source": "report_metadata", "fact": f"derived {len(indicators)} review-only behavior indicator(s)"},),
+        result={**summary, "indicators": indicators, "execution_authorized": False},
+    )
+
+
+def validate_cn_evidence_pack(path, *, request_id: str | None = None) -> SkillActionResponse:
+    records = load_evidence_pack(path)
+    if any(item["language"] != "zh-CN" for item in records):
+        raise ValueError("CN evidence pack requires language=zh-CN")
+    stats = evidence_pack_stats(records)
+    return _response(
+        action="validate_cn_evidence_pack",
+        request_id=request_id,
+        requires_user_confirmation=False,
+        evidence=({"source": "explicit_local_cn_evidence_pack", "fact": f"validated {len(records)} guarded record(s)"},),
+        result={
+            "valid": True,
+            "cn_real_source_count": sum(item["is_synthetic"] is False for item in records),
+            **stats,
+            "runtime_network_access": False,
+            "execution_authorized": False,
+        },
+    )
 def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionResponse:
     """Validate and dispatch one external AI action request."""
 
@@ -712,10 +759,18 @@ def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionRespon
         _validated_payload(
             payload,
             {"report", "evidence_pack_path", "output_dir"},
-            {"overwrite"},
+            {"cn_evidence_pack_path", "include_behavior_indicators", "overwrite"},
         )
         return build_pup_review_pack(
             payload["report"], payload["evidence_pack_path"], payload["output_dir"],
+            cn_evidence_pack_path=payload.get("cn_evidence_pack_path"),
+            include_behavior_indicators=payload.get("include_behavior_indicators", False),
             overwrite=payload.get("overwrite", False), request_id=request.request_id,
         )
+    if request.action == "build_behavior_indicators":
+        _validated_payload(payload, {"report"}, set())
+        return build_behavior_indicators(payload["report"], request_id=request.request_id)
+    if request.action == "validate_cn_evidence_pack":
+        _validated_payload(payload, {"path"}, set())
+        return validate_cn_evidence_pack(payload["path"], request_id=request.request_id)
     raise ValueError("unsupported skill action")

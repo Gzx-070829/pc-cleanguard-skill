@@ -14,6 +14,7 @@ def build_source_trace(matches: list[dict], evidence_pack: list[dict]) -> str:
         "# Source Trace / 来源追溯", "",
         "Microsoft Security Intelligence 的 PUA detection family 是公开安全情报来源，"
         "但 detection family 不等于本机 installed app display name，也不是 PC CleanGuard 的删除授权。",
+        "中文 APP/SDK 监管 evidence 保持 mobile/analogical 范围；它不是 Windows 黑名单，也不能跨平台识别本机软件。",
         "",
     ]
     for record_id, group in grouped.items():

@@ -1,0 +1,12 @@
+{
+  "preview_version": "0.3.1-prep",
+  "synthetic_but_realistic": true,
+  "real_source_match_count": 5,
+  "cn_real_source_count": 5,
+  "cn_match_count": 0,
+  "behavior_indicator_count": 7,
+  "adversarial_guard_status": "enforced",
+  "execution_gating_eligible_count": 0,
+  "execution_authorized": false,
+  "runtime_network_access": false
+}

@@ -1,0 +1,8 @@
+{
+  "schema_version": "0.1",
+  "request_id": "pr27-cn-evidence-example",
+  "action": "validate_cn_evidence_pack",
+  "payload": {
+    "path": "data/reputation/evidence_pack.cn.zh-CN.json"
+  }
+}

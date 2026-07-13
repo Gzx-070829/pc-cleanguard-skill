@@ -18,7 +18,7 @@ USER_CHECKS = (
 )
 
 
-def build_human_review_checklist(matches: list[dict]) -> dict:
+def build_human_review_checklist(matches: list[dict], *, behavior_indicators: list[dict] | None = None) -> dict:
     if not isinstance(matches, list) or any(not isinstance(item, dict) for item in matches):
         raise TypeError("matches must be a list of objects")
     items = []
@@ -37,7 +37,24 @@ def build_human_review_checklist(matches: list[dict]) -> dict:
             "checks": list(match.get("human_review_checklist") or USER_CHECKS),
             "suggested_actions": list(SAFE_ACTIONS),
         })
-    return {"items": items, "allowed_actions": list(SAFE_ACTIONS), "execution_gating_eligible_count": 0}
+    behavior_items = []
+    for indicator in behavior_indicators or ():
+        if not isinstance(indicator, dict) or indicator.get("execution_gating_eligible") is not False:
+            raise ValueError("behavior checklist items must remain non-authorizing")
+        behavior_items.append({
+            "target_id": indicator.get("target_id", "unknown"),
+            "behavior_type": indicator.get("behavior_type", "unknown"),
+            "observed_value": indicator.get("observed_value", "unknown"),
+            "false_positive_risk": indicator.get("false_positive_risk", "high"),
+            "checks": ["核对该元数据是否属于用户预期软件。", "结合发布者、来源和安全工具独立结果人工复核。"],
+            "suggested_actions": list(SAFE_ACTIONS),
+        })
+    return {
+        "items": items,
+        "behavior_items": behavior_items,
+        "allowed_actions": list(SAFE_ACTIONS),
+        "execution_gating_eligible_count": 0,
+    }
 
 
 def render_human_review_checklist(checklist: dict) -> str:
@@ -59,4 +76,17 @@ def render_human_review_checklist(checklist: dict) -> str:
             "", "允许的后续建议：", "",
             *[f"- `{action}`" for action in item.get("suggested_actions", ())], "",
         ])
+    if checklist.get("behavior_items"):
+        lines.extend(["# Behavior Review Items / 行为线索复核", ""])
+        for item in checklist["behavior_items"]:
+            lines.extend([
+                f"## {item.get('target_id')}", "",
+                f"- behavior_type: `{item.get('behavior_type')}`",
+                f"- observed_value: {item.get('observed_value')}",
+                f"- false_positive_risk: `{item.get('false_positive_risk')}`",
+                "", "用户应检查：", "",
+                *[f"- [ ] {check}" for check in item.get("checks", ())],
+                "", "允许的后续建议：", "",
+                *[f"- `{action}`" for action in item.get("suggested_actions", ())], "",
+            ])
     return "\n".join(lines).rstrip() + "\n"

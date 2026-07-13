@@ -13,6 +13,8 @@ ARTIFACTS = {
     "START_HERE.md", "user_summary.md", "machine_summary.json", "pup_insight.md",
     "reputation_matches.json", "evidence_indicators.json", "human_review_checklist.md",
     "source_trace.md", "false_positive_feedback.md", "safety_notice.md",
+    "behavior_indicators.json", "behavior_indicators.md", "cn_evidence_summary.md",
+    "adversarial_safety_summary.md",
 }
 
 

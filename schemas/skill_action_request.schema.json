@@ -22,7 +22,9 @@
         "match_reputation",
         "build_pup_insight",
         "inspect_pup_risk",
-        "build_pup_review_pack"
+        "build_pup_review_pack",
+        "build_behavior_indicators",
+        "validate_cn_evidence_pack"
       ]
     },
     "payload": {"type": "object"}
@@ -241,9 +243,29 @@
         "properties": {
           "report": {"type": "object"},
           "evidence_pack_path": {"type": "string", "minLength": 1},
+          "cn_evidence_pack_path": {"type": "string", "minLength": 1},
+          "include_behavior_indicators": {"type": "boolean", "default": false},
           "output_dir": {"type": "string", "minLength": 1},
           "overwrite": {"type": "boolean", "default": false}
         },
+        "additionalProperties": false
+      }}}
+    },
+    {
+      "if": {"properties": {"action": {"const": "build_behavior_indicators"}}},
+      "then": {"properties": {"payload": {
+        "type": "object",
+        "required": ["report"],
+        "properties": {"report": {"type": "object"}},
+        "additionalProperties": false
+      }}}
+    },
+    {
+      "if": {"properties": {"action": {"const": "validate_cn_evidence_pack"}}},
+      "then": {"properties": {"payload": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {"path": {"type": "string", "minLength": 1}},
         "additionalProperties": false
       }}}
     }

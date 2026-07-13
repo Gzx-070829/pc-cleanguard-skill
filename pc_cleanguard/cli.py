@@ -36,8 +36,13 @@ from .pipeline import (
     write_pipeline_report,
 )
 from .quarantine import QuarantineManager
-from .pup import inspect_pup_risk
-from .pup import build_pup_review_pack
+from .pup import (
+    build_behavior_indicators_from_report,
+    build_pup_review_pack,
+    inspect_pup_risk,
+    summarize_behavior_indicators,
+    write_behavior_indicators,
+)
 from .reputation import (
     ReputationMatcher,
     build_pup_insight,
@@ -339,7 +344,7 @@ def _parser() -> argparse.ArgumentParser:
     reputation_insight.add_argument("--output", required=True, type=Path)
     evidence = reputation_commands.add_parser("evidence")
     evidence_commands = evidence.add_subparsers(dest="evidence_command", required=True)
-    for evidence_command in ("validate", "stats"):
+    for evidence_command in ("validate", "stats", "cn-validate", "cn-stats"):
         evidence_parser = evidence_commands.add_parser(evidence_command)
         evidence_parser.add_argument("--input", required=True, type=Path)
     evidence_intake = evidence_commands.add_parser("intake")
@@ -377,12 +382,18 @@ def _parser() -> argparse.ArgumentParser:
     pup_review_pack = pup_commands.add_parser("review-pack")
     pup_review_pack.add_argument("--input", required=True, type=Path)
     pup_review_pack.add_argument("--evidence-pack", required=True, type=Path)
+    pup_review_pack.add_argument("--cn-evidence-pack", type=Path)
     pup_review_pack.add_argument("--output", required=True, type=Path)
     pup_review_pack.add_argument("--include-indicators", action="store_true")
     pup_review_pack.add_argument("--human-review-checklist", action="store_true")
     pup_review_pack.add_argument("--source-trace", action="store_true")
     pup_review_pack.add_argument("--feedback-template", action="store_true")
     pup_review_pack.add_argument("--overwrite", action="store_true")
+    pup_review_pack.add_argument("--include-behavior-indicators", action="store_true")
+    pup_behavior = pup_commands.add_parser("behavior")
+    pup_behavior.add_argument("--input", required=True, type=Path)
+    pup_behavior.add_argument("--output", required=True, type=Path)
+    pup_behavior.add_argument("--overwrite", action="store_true")
     trial = subcommands.add_parser("trial", help="run the bounded five-minute product trial")
     trial_commands = trial.add_subparsers(dest="trial_command", required=True)
     trial_run = trial_commands.add_parser("run")
@@ -625,7 +636,13 @@ def _run_reputation(arguments: argparse.Namespace) -> dict:
             return {**stats, "execution_authorized": False}
         records = load_evidence_pack(arguments.input)
         stats = evidence_pack_stats(records)
-        return {"valid": True, "record_count": len(records), **stats, "execution_authorized": False}
+        result = {"valid": True, "record_count": len(records), **stats, "execution_authorized": False}
+        if arguments.evidence_command in {"cn-validate", "cn-stats"}:
+            if any(item["language"] != "zh-CN" for item in records):
+                raise ValueError("CN evidence pack requires language=zh-CN")
+            result["cn_real_source_count"] = sum(item["is_synthetic"] is False for item in records)
+            result["runtime_network_access"] = False
+        return result
     if arguments.reputation_command == "match":
         report = load_scan_json_file(arguments.input)
         matches = ReputationMatcher(load_seed_records(arguments.seed)).match(report)
@@ -642,11 +659,24 @@ def _run_reputation(arguments: argparse.Namespace) -> dict:
 
 
 def _run_pup(arguments: argparse.Namespace) -> dict:
+    if arguments.pup_command == "behavior":
+        indicators = build_behavior_indicators_from_report(load_scan_json_file(arguments.input))
+        destination = write_behavior_indicators(
+            arguments.output, indicators, overwrite=arguments.overwrite
+        )
+        return {
+            "output": str(destination),
+            **summarize_behavior_indicators(indicators),
+            "execution_authorized": False,
+            "runtime_network_access": False,
+        }
     if arguments.pup_command == "review-pack":
         return build_pup_review_pack(
             load_scan_json_file(arguments.input),
             arguments.evidence_pack,
             arguments.output,
+            cn_evidence_pack=arguments.cn_evidence_pack,
+            include_behavior_indicators=arguments.include_behavior_indicators,
             overwrite=arguments.overwrite,
         )
     source = arguments.evidence_pack or arguments.seed
