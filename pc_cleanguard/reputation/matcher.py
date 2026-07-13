@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from typing import Iterable
 
 from .indicators import build_indicators_from_evidence
@@ -11,7 +12,8 @@ from .indicators import build_indicators_from_evidence
 def normalize_reputation_name(value: object) -> str:
     if not isinstance(value, str):
         return ""
-    return "".join(re.findall(r"[\w]+", value.casefold(), flags=re.UNICODE))
+    normalized = unicodedata.normalize("NFKC", value).casefold()
+    return "".join(re.findall(r"[\w]+", normalized, flags=re.UNICODE))
 
 
 def _first(data: dict, *names: str) -> str:
@@ -96,6 +98,10 @@ class ReputationMatcher:
                 continue
             target_publisher = normalize_reputation_name(target["publisher"])
             for record in self._records:
+                # Publisher-level evidence may inform a separate human review,
+                # but must never be converted into a concrete software match.
+                if record.get("mapping_type") == "related_publisher":
+                    continue
                 names = [record.get("software_name"), *record.get("aliases", [])]
                 normalized_names = [normalize_reputation_name(name) for name in names]
                 normalized_names = [name for name in normalized_names if name]
@@ -162,6 +168,10 @@ class ReputationMatcher:
                     "source_title": record.get("source_title", record.get("source_name")),
                     "source_date": record.get("source_date"),
                     "guard_reason": guard_reason,
+                    "uncertainty_notes": (
+                        ["名称碰撞候选不能确认实体身份，匹配置信度已降级。"]
+                        if record.get("mapping_type") == "name_collision_candidate" else []
+                    ),
                     "evidence_use": classify_evidence_use(record).value,
                     "match_basis": match_basis,
                     "matched_indicator_type": indicator["indicator_type"] if indicator else None,
@@ -178,6 +188,15 @@ class ReputationMatcher:
                         "source_url": record.get("source_url"),
                         "source_date": record.get("source_date"),
                     },
+                    "review_hint": (
+                        "此命中只指向特定安装器、捆绑器或推广链路，不代表软件本体，也不是系统动作授权。"
+                        if record.get("mapping_type") == "installer_artifact"
+                        else "仅供本地人工复核。"
+                    ),
+                    "affected_component": record.get("affected_component"),
+                    "installer_or_bundle_artifact": record.get("installer_or_bundle_artifact"),
+                    "distribution_channel": record.get("distribution_channel"),
+                    "version_or_time_scope": record.get("version_or_time_scope"),
                     "execution_gating_eligible": False,
                 })
         return matches

@@ -1,0 +1,17 @@
+{
+  "fixture_metadata":{"synthetic_but_realistic":true,"notice":"Synthetic-but-realistic PR29 inventory. It is not a real machine report or an accusation."},
+  "installed_apps":[
+    {"target_id":"app:cn-bundle","display_name":"Example CN Bundle Helper","publisher":"Example Fixture Publisher","behavior_metadata":["bundled_installer_trace"]},
+    {"target_id":"app:cn-search","display_name":"Example CN Search Assistant","publisher":"Example Fixture Publisher","behavior_metadata":["browser_search_change","browser_homepage_change"]},
+    {"target_id":"app:cn-driver","display_name":"Example CN Driver Repair Utility","publisher":"Example Fixture Publisher","behavior_metadata":["misleading_scan_claim","ad_popup_signal"]},
+    {"target_id":"app:cn-input","display_name":"Example CN Input Method Promo Component","publisher":"Example Fixture Publisher","behavior_metadata":["ad_popup_signal"]},
+    {"target_id":"app:cn-archive","display_name":"Example CN Archive Popup Component","publisher":"Example Fixture Publisher","behavior_metadata":["difficult_uninstall_signal"]},
+    {"target_id":"app:dx-fixture","display_name":"ＤＸ 强力修复","publisher":"Example Unverified Publisher","install_location":"C:/Users/Example/AppData/Local/DXRepair","behavior_metadata":["ad_popup_signal","browser_search_change","bundled_installer_trace"]}
+  ],
+  "startup_items":[
+    {"target_id":"startup:cn-promo","name":"ExampleCNPromoStartup","publisher":"Example Fixture Publisher"},
+    {"target_id":"startup:cn-search","name":"ExampleCNSearchUpdater","publisher":"Example Fixture Publisher"}
+  ],
+  "services":[{"target_id":"service:cn-promo","display_name":"ExampleCNPromoService","publisher":"Example Fixture Publisher"}],
+  "scheduled_tasks":[{"target_id":"task:cn-bundle","task_name":"ExampleCNBundleUpdateTask","author":"Example Fixture Publisher"}]
+}

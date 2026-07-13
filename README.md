@@ -9,6 +9,8 @@ PC CleanGuard Skill helps AI agents safely inspect, explain, preview, quarantine
 PUP Review Pack 可以离线生成带来源追溯的 PUP 线索复核包，但不会删除、卸载、禁用、上传或修改注册表。
 PUP Review Pack can generate a local, offline, source-traceable review folder for suspicious PUP signals without deleting, uninstalling, disabling, uploading, or modifying the registry.
 
+PR29 adds a small manually reviewed Chinese Windows evidence pack, evidence-quality dashboard, and local real-report validation. 中文 Windows evidence 不是黑名单；installer artifact 不代表软件本体，所有命中仍需人工复核且执行门控为 0。
+
 快速试用：
 
 ```powershell

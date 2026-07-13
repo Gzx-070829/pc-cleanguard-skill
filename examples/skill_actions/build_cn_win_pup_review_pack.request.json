@@ -1,0 +1,11 @@
+{
+  "schema_version":"0.1",
+  "request_id":"example:pr29:cn-win-review-pack",
+  "action":"build_cn_win_pup_review_pack",
+  "payload":{
+    "report":{"installed_apps":[],"startup_items":[],"services":[],"scheduled_tasks":[]},
+    "evidence_pack_path":[],
+    "cn_win_evidence_pack_path":"data/reputation/evidence_pack.cn_win.zh-CN.json",
+    "output_dir":".pcg-pr29-cn-win-review"
+  }
+}

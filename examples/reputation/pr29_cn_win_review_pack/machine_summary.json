@@ -1,0 +1,11 @@
+{
+  "cn_win_real_source_count":2,
+  "cn_win_direct_entity_count":1,
+  "cn_win_installer_artifact_count":1,
+  "cn_win_match_count":1,
+  "evidence_quality_score":91.8,
+  "matchability_score":100.0,
+  "high_false_positive_risk_count":2,
+  "execution_gating_eligible_count":0,
+  "execution_authorized":false
+}

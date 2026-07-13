@@ -101,4 +101,11 @@ __all__ = [
     "summarize_indicators", "validate_indicator",
     "write_indicators",
     "build_human_review_checklist", "render_human_review_checklist",
+    "build_evidence_quality_summary", "render_evidence_quality_markdown",
+    "score_evidence_record_quality",
 ]
+from .evidence_quality import (
+    build_evidence_quality_summary,
+    render_evidence_quality_markdown,
+    score_evidence_record_quality,
+)

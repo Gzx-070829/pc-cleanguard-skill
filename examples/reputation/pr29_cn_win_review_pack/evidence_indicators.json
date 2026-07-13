@@ -1,0 +1,4 @@
+[
+  {"indicator_type":"installer_artifact","indicator_value":"云即玩模拟器下载/安装链路及其捆绑的天空压缩组件","requires_human_review":true,"execution_gating_eligible":false},
+  {"indicator_type":"time_scope_hint","indicator_value":"2023-12-04 分析链路","requires_human_review":true,"execution_gating_eligible":false}
+]

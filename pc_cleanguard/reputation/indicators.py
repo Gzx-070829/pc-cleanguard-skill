@@ -12,7 +12,7 @@ from ..pipeline.input_loader import _validated_explicit_local_path
 
 INDICATOR_TYPES = {
     "detection_family", "installer_family", "bundle_name", "display_name_hint",
-    "publisher_hint", "file_name_hint", "startup_name_hint", "service_name_hint",
+    "publisher_hint", "installer_artifact", "distribution_channel_hint", "affected_component_hint", "time_scope_hint", "file_name_hint", "startup_name_hint", "service_name_hint",
     "scheduled_task_hint", "browser_extension_hint", "behavior_hint",
 }
 MATCH_SCOPES = {
@@ -126,6 +126,20 @@ def build_indicators_from_evidence(record: dict) -> list[dict]:
                 "weak", "Publisher evidence is auxiliary and cannot form a match by itself.", len(result),
             )
         )
+    if record.get("mapping_type") == "installer_artifact":
+        for kind, field in (
+            ("installer_artifact", "installer_or_bundle_artifact"),
+            ("distribution_channel_hint", "distribution_channel"),
+            ("affected_component_hint", "affected_component"),
+            ("time_scope_hint", "version_or_time_scope"),
+        ):
+            value = str(record.get(field, "")).strip()
+            if value:
+                result.append(_indicator(
+                    record, kind, value, field, "installed_app", "weak",
+                    "Installer/component context is a review hint only; it does not identify or authorize action against a whole product.",
+                    len(result),
+                ))
     for category in record.get("behavior_categories", ()):
         if isinstance(category, str) and category.strip():
             result.append(

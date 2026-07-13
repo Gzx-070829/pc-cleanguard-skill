@@ -47,6 +47,7 @@ def build_pup_intelligence_report(
     include_indicators: bool = True,
     *,
     cn_evidence_pack=None,
+    cn_win_evidence_pack=None,
     cn_sources=None,
     cn_candidates=None,
     include_behavior_indicators: bool = False,
@@ -59,9 +60,10 @@ def build_pup_intelligence_report(
         raise TypeError("include_behavior_indicators must be bool")
     primary_records = _records(evidence_pack)
     cn_records = _records(cn_evidence_pack) if cn_evidence_pack is not None else []
+    cn_win_records = _records(cn_win_evidence_pack) if cn_win_evidence_pack is not None else []
     source_stats = summarize_cn_source_matrix(cn_sources or [])
     candidate_stats = summarize_cn_candidate_sources(cn_candidates or [])
-    records = [*primary_records, *cn_records]
+    records = [*primary_records, *cn_records, *cn_win_records]
     indicators = [item for record in records for item in build_indicators_from_evidence(record)] if include_indicators else []
     matches = ReputationMatcher(records, include_indicators=include_indicators).match(report)
     insight = build_pup_insight(matches)
@@ -69,6 +71,8 @@ def build_pup_intelligence_report(
     behavior_indicators = build_behavior_indicators_from_report(report) if include_behavior_indicators else []
     cn_record_ids = {item["record_id"] for item in cn_records}
     cn_match_count = sum(item.get("matched_record_id") in cn_record_ids for item in matches)
+    cn_win_record_ids = {item["record_id"] for item in cn_win_records}
+    cn_win_match_count = sum(item.get("matched_record_id") in cn_win_record_ids for item in matches)
     guard = evidence_guard_status(records)
     uncertainty_notes = list(insight["uncertainty_notes"])
     uncertainty_notes.extend(
@@ -81,6 +85,8 @@ def build_pup_intelligence_report(
             **counts,
             "cn_real_source_count": len(cn_records),
             "cn_match_count": cn_match_count,
+            "cn_win_real_source_count": sum(item.get("is_synthetic") is False for item in cn_win_records),
+            "cn_win_match_count": cn_win_match_count,
             "behavior_indicator_count": len(behavior_indicators),
             "adversarial_guard_status": guard["status"],
             **source_stats,
@@ -103,6 +109,10 @@ def build_pup_intelligence_report(
         "human_review_required_count": counts["human_review_required_count"],
         "cn_real_source_count": len(cn_records),
         "cn_match_count": cn_match_count,
+        "cn_win_real_source_count": sum(item.get("is_synthetic") is False for item in cn_win_records),
+        "cn_win_direct_entity_count": sum(item.get("mapping_type") == "direct_entity" for item in cn_win_records),
+        "cn_win_installer_artifact_count": sum(item.get("mapping_type") == "installer_artifact" for item in cn_win_records),
+        "cn_win_match_count": cn_win_match_count,
         "behavior_indicator_count": len(behavior_indicators),
         "adversarial_guard_status": guard["status"],
         **source_stats,

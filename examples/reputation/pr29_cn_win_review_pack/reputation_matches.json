@@ -1,0 +1,3 @@
+[
+  {"target_id":"app:dx-fixture","matched_record_id":"ev-cn-win-2025-dxrepair-public-analysis","mapping_type":"direct_entity","match_basis":"normalized_name","false_positive_risk":"high","source_url":"https://www.huorong.cn/document/tech/vir_report/1839","source_title":"流氓联盟欺软怕硬，多链路恶意推广","source_date":"2025-08-14","execution_authorized":false,"execution_gating_eligible":false}
+]

@@ -31,7 +31,9 @@ from ..reputation import (
     load_seed_records,
     load_cn_source_matrix,
     summarize_cn_source_matrix as summarize_cn_source_matrix_data,
+    build_evidence_quality_summary as build_evidence_quality_summary_data,
 )
+from ..validation import validate_real_report_shape as validate_real_report_shape_data
 from .cleanup_plan import READ_ONLY_EXECUTION_LEVEL, build_cleanup_plan_from_report
 
 
@@ -53,6 +55,9 @@ ACTION_NAMES = (
     "validate_cn_evidence_pack",
     "validate_cn_source_matrix",
     "summarize_cn_source_matrix",
+    "build_evidence_quality_summary",
+    "validate_real_report_shape",
+    "build_cn_win_pup_review_pack",
 )
 REVERSIBLE_EXECUTION_LEVEL = "LEVEL_2_REVERSIBLE"
 
@@ -687,6 +692,49 @@ def summarize_cn_source_matrix(path, *, request_id: str | None = None) -> SkillA
         },),
         result=summary,
     )
+
+
+def build_evidence_quality_summary(inputs, *, request_id: str | None = None) -> SkillActionResponse:
+    if not isinstance(inputs, list) or not inputs:
+        raise ValueError("inputs must be a non-empty list")
+    records = [load_evidence_pack(path) for path in inputs]
+    summary = build_evidence_quality_summary_data(records)
+    return _response(
+        action="build_evidence_quality_summary", request_id=request_id,
+        requires_user_confirmation=False,
+        evidence=({"source": "explicit_local_evidence_packs", "fact": f"scored {summary['total_records']} record(s) offline"},),
+        result={**summary, "runtime_network_access": False, "execution_authorized": False},
+    )
+
+
+def validate_real_report_shape(report: dict, *, request_id: str | None = None) -> SkillActionResponse:
+    summary = validate_real_report_shape_data(report)
+    return _response(
+        action="validate_real_report_shape", request_id=request_id,
+        requires_user_confirmation=False,
+        evidence=({"source": "caller_supplied_report", "fact": "validated report shape without reading other files"},),
+        result=summary,
+    )
+
+
+def build_cn_win_pup_review_pack(
+    report: dict, evidence_pack_path, cn_win_evidence_pack_path, output_dir, *,
+    overwrite: bool = False, request_id: str | None = None,
+) -> SkillActionResponse:
+    result = build_pup_review_pack_offline(
+        report, evidence_pack_path, output_dir,
+        cn_win_evidence_pack=cn_win_evidence_pack_path,
+        include_behavior_indicators=True,
+        include_evidence_quality=True,
+        include_real_report_validation_summary=True,
+        overwrite=overwrite,
+    )
+    return _response(
+        action="build_cn_win_pup_review_pack", request_id=request_id,
+        requires_user_confirmation=True,
+        evidence=({"source": "explicit_local_cn_win_evidence", "fact": f"wrote {result['artifact_count']} offline review artifact(s)"},),
+        result=result,
+    )
 def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionResponse:
     """Validate and dispatch one external AI action request."""
 
@@ -822,4 +870,18 @@ def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionRespon
     if request.action == "summarize_cn_source_matrix":
         _validated_payload(payload, {"path"}, set())
         return summarize_cn_source_matrix(payload["path"], request_id=request.request_id)
+    if request.action == "build_evidence_quality_summary":
+        _validated_payload(payload, {"inputs"}, set())
+        return build_evidence_quality_summary(payload["inputs"], request_id=request.request_id)
+    if request.action == "validate_real_report_shape":
+        _validated_payload(payload, {"report"}, set())
+        return validate_real_report_shape(payload["report"], request_id=request.request_id)
+    if request.action == "build_cn_win_pup_review_pack":
+        _validated_payload(
+            payload, {"report", "evidence_pack_path", "cn_win_evidence_pack_path", "output_dir"}, {"overwrite"}
+        )
+        return build_cn_win_pup_review_pack(
+            payload["report"], payload["evidence_pack_path"], payload["cn_win_evidence_pack_path"], payload["output_dir"],
+            overwrite=payload.get("overwrite", False), request_id=request.request_id,
+        )
     raise ValueError("unsupported skill action")

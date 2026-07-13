@@ -2,6 +2,8 @@
 
 `data/reputation/cn_source_matrix.zh-CN.json` 把公开来源分为六类：历史公开材料、安全厂商公开文章、官方/监管通报、可信媒体、社区多源反馈、网友屏蔽/论坛名单。它是来源准入表，不是黑名单。
 
+PR29 的中文 Windows 安全厂商公开文章仍先经过 source candidate 和人工 review。只有实体、时间、组件与引用均清晰的少量记录进入 explanation pack；不复制专有签名、规则、检测逻辑或样本。
+
 每条来源记录必须有 URL、标题、日期或 `unknown`、平台范围、许可说明、允许用途和四项固定禁止用途。`unknown` 日期不能配高可靠性；社区与网友列表必须要求第二来源；历史材料只能解释历史背景；移动 APP/SDK 通报不能映射 Windows direct entity。
 
 ```powershell

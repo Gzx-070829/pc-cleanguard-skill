@@ -13,3 +13,5 @@ Matcher 是 conservative matching，不是 AV engine。Microsoft PUA detection f
 PR27 Review Pack 增加 `behavior_indicators.json/md`、`cn_evidence_summary.md` 和 `adversarial_safety_summary.md`。中文 evidence 不是黑名单，behavior indicator 也不是 PUP 定罪；两者都进入人工复核且 `execution_gating_eligible_count=0`。
 
 PR28 在显式提供 `--cn-source-matrix` 时增加 `cn_source_matrix.md`、`cn_candidate_sources.md` 和 `cn_source_policy_summary.md`，并把来源/候选数量写入 machine summary。新增文件解释为什么网友名单、历史榜、移动端通报和厂商文章不能直接生成 Windows 动作。
+
+PR29 可显式加入 `--cn-win-evidence-pack`、`--include-evidence-quality` 和 `--include-real-report-validation-summary`。新增中文 Windows、quality 与 matchability 产物只支持本地人工复核；installer artifact 不是软件本体结论，execution gating 仍为 0。

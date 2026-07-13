@@ -2,6 +2,8 @@
 
 PR25 首批加入 5 条人工核验记录，均来自 Microsoft Security Intelligence 的公开 Windows PUA description 页面。核验于 2026-07-13 完成，记录了页面标题、页面展示的发布日期和克制的中文行为摘要：
 
+PR29 增加的中文 Windows records 额外核对 `version_or_time_scope`、`affected_component`、`installer_or_bundle_artifact`、`distribution_channel`、`source_quote_summary` 与 `guard_reason`；缺失时留在 backlog，不进入 approved explanation pack。
+
 - [PUA:Win32/InstallCore](https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FInstallCore) — 页面发布日期 2015-03-11；只记录捆绑、浏览器修改和非预期安装行为。
 - [PUA:Win32/FusionCore](https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FFusionCore) — 页面发布日期 2016-06-28；只记录 bundling 描述。
 - [PUA:Win32/Slimware](https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FSlimware) — 页面发布日期 2017-02-08；只记录页面展示的广告、可疑问题提示和捆绑行为。

@@ -64,7 +64,10 @@ from .reputation import (
     load_cn_source_matrix,
     summarize_cn_candidate_sources,
     summarize_cn_source_matrix,
+    build_evidence_quality_summary,
+    render_evidence_quality_markdown,
 )
+from .validation import write_real_report_validation_pack
 from .skill import invoke_skill_action, write_report
 from .experience import run_release_smoke_check, run_user_trial
 from . import __version__
@@ -373,6 +376,10 @@ def _parser() -> argparse.ArgumentParser:
     evidence_indicators.add_argument("--overwrite", action="store_true")
     evidence_indicator_stats = evidence_commands.add_parser("indicators-stats")
     evidence_indicator_stats.add_argument("--input", required=True, type=Path)
+    evidence_quality = evidence_commands.add_parser("quality")
+    evidence_quality.add_argument("--inputs", required=True, nargs="+", type=Path)
+    evidence_quality.add_argument("--output", required=True, type=Path)
+    evidence_quality.add_argument("--overwrite", action="store_true")
     cn_source = reputation_commands.add_parser("cn-source")
     cn_source_commands = cn_source.add_subparsers(dest="cn_source_command", required=True)
     for cn_source_command in ("validate", "stats"):
@@ -396,6 +403,7 @@ def _parser() -> argparse.ArgumentParser:
     pup_review_pack.add_argument("--input", required=True, type=Path)
     pup_review_pack.add_argument("--evidence-pack", required=True, type=Path)
     pup_review_pack.add_argument("--cn-evidence-pack", type=Path)
+    pup_review_pack.add_argument("--cn-win-evidence-pack", type=Path)
     pup_review_pack.add_argument("--cn-source-matrix", type=Path)
     pup_review_pack.add_argument("--output", required=True, type=Path)
     pup_review_pack.add_argument("--include-indicators", action="store_true")
@@ -404,10 +412,18 @@ def _parser() -> argparse.ArgumentParser:
     pup_review_pack.add_argument("--feedback-template", action="store_true")
     pup_review_pack.add_argument("--overwrite", action="store_true")
     pup_review_pack.add_argument("--include-behavior-indicators", action="store_true")
+    pup_review_pack.add_argument("--include-evidence-quality", action="store_true")
+    pup_review_pack.add_argument("--include-real-report-validation-summary", action="store_true")
     pup_behavior = pup_commands.add_parser("behavior")
     pup_behavior.add_argument("--input", required=True, type=Path)
     pup_behavior.add_argument("--output", required=True, type=Path)
     pup_behavior.add_argument("--overwrite", action="store_true")
+    validate = subcommands.add_parser("validate", help="validate explicit local artifacts offline")
+    validate_commands = validate.add_subparsers(dest="validate_command", required=True)
+    validate_report = validate_commands.add_parser("report")
+    validate_report.add_argument("--input", required=True, type=Path)
+    validate_report.add_argument("--output", required=True, type=Path)
+    validate_report.add_argument("--overwrite", action="store_true")
     trial = subcommands.add_parser("trial", help="run the bounded five-minute product trial")
     trial_commands = trial.add_subparsers(dest="trial_command", required=True)
     trial_run = trial_commands.add_parser("run")
@@ -624,6 +640,16 @@ def _run_reputation(arguments: argparse.Namespace) -> dict:
         write_report(arguments.output, payload, explicit_overwrite=arguments.overwrite)
         return {"output": str(arguments.output), **result}
     if arguments.reputation_command == "evidence":
+        if arguments.evidence_command == "quality":
+            records = [load_evidence_pack(path) for path in arguments.inputs]
+            summary = build_evidence_quality_summary(records)
+            destination = arguments.output
+            from .pipeline.input_loader import _validated_explicit_local_path
+            _validated_explicit_local_path(destination, allowed_suffixes={".md"})
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            with destination.open("w" if arguments.overwrite else "x", encoding="utf-8", newline="\n") as stream:
+                stream.write(render_evidence_quality_markdown(summary))
+            return {"output": str(destination), **summary}
         if arguments.evidence_command == "intake":
             candidates = load_evidence_candidates(arguments.input)
             return {
@@ -706,8 +732,11 @@ def _run_pup(arguments: argparse.Namespace) -> dict:
             arguments.evidence_pack,
             arguments.output,
             cn_evidence_pack=arguments.cn_evidence_pack,
+            cn_win_evidence_pack=arguments.cn_win_evidence_pack,
             cn_source_matrix=arguments.cn_source_matrix,
             include_behavior_indicators=arguments.include_behavior_indicators,
+            include_evidence_quality=arguments.include_evidence_quality,
+            include_real_report_validation_summary=arguments.include_real_report_validation_summary,
             overwrite=arguments.overwrite,
         )
     source = arguments.evidence_pack or arguments.seed
@@ -791,6 +820,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             summary = _run_reputation(arguments)
         elif arguments.command == "pup":
             summary = _run_pup(arguments)
+        elif arguments.command == "validate" and arguments.validate_command == "report":
+            summary = write_real_report_validation_pack(
+                load_scan_json_file(arguments.input), arguments.output, overwrite=arguments.overwrite
+            )
         elif arguments.command == "trial" and arguments.trial_command == "run":
             summary = run_user_trial(
                 arguments.root,
