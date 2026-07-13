@@ -38,6 +38,10 @@ PR26 将 evidence indicators、保守匹配、PUP Intelligence、来源追溯、
 
 PR27 用对抗测试焊死 Evidence Guard，加入批次级中文官方来源、report-metadata Behavior Indicators，并准备 v0.3.1 showcase/checklist。版本号、tag 和 Release 留给独立发布任务。
 
+## v0.3.1 — Chinese source matrix + guarded candidate intake
+
+已发布准备：PR28 把历史公开材料、安全厂商公开文章、官方/监管来源、可信媒体、社区多源反馈和网友屏蔽名单分层。只有满足契约的本地公开来源才可进入 candidate/review；历史榜、网友名单和移动端通报不得成为现代 Windows 删除名单。PUP 层执行门控仍为 0。
+
 ## v0.4 — Reputation adapters + PUP planner + registry backup planning
 
 在明确来源许可和人工审核下接入真实公开 Reputation adapter；构建 PUP 声明式 planner 与注册表备份规划。声誉证据仍不授权执行，registry backup planning 不提供任意写入口。

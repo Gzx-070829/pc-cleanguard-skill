@@ -9,3 +9,5 @@ Rubric 位于 `data/reputation/cn_source_rubric.zh-CN.json`，由离线 validato
 - `forbidden_use`：固定包含删除、卸载、禁用、注册表修改授权四项。
 
 实体不清、跨平台或仅发布者级来源必须降级。中文俗称不能作为 direct entity，社区多报告也不能自动升级为 approved evidence。
+
+PR28 将 rubric 扩展为可校验的 source matrix：缺 URL/标题会拒绝，未知日期不能标高可靠性，社区/网友来源必须第二来源，历史榜固定 historical，APP/SDK 官方通报固定 mobile scope。详见 [中文来源矩阵](reputation-cn-source-matrix.md)。

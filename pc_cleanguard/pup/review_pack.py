@@ -7,6 +7,13 @@ from pathlib import Path
 
 from ..pipeline.input_loader import _validated_explicit_local_path
 from ..reputation import load_evidence_pack, render_human_review_checklist, render_pup_insight_markdown
+from ..reputation import (
+    build_cn_source_guard_reason,
+    load_cn_candidate_sources,
+    load_cn_source_matrix,
+    summarize_cn_candidate_sources,
+    summarize_cn_source_matrix,
+)
 from .behavior_indicators import render_behavior_indicator_section
 from .feedback_template import build_false_positive_feedback_template
 from .intelligence import build_pup_intelligence_report
@@ -19,6 +26,9 @@ ARTIFACT_NAMES = (
     "behavior_indicators.md", "human_review_checklist.md", "source_trace.md",
     "false_positive_feedback.md", "safety_notice.md", "cn_evidence_summary.md",
     "adversarial_safety_summary.md",
+)
+CN_SOURCE_ARTIFACT_NAMES = (
+    "cn_source_matrix.md", "cn_candidate_sources.md", "cn_source_policy_summary.md",
 )
 
 
@@ -47,6 +57,8 @@ def build_pup_review_pack(
     output_dir,
     *,
     cn_evidence_pack=None,
+    cn_source_matrix=None,
+    cn_candidate_sources=None,
     include_behavior_indicators: bool = False,
     overwrite: bool = False,
 ) -> dict:
@@ -63,11 +75,28 @@ def build_pup_review_pack(
         if isinstance(cn_evidence_pack, (str, Path))
         else (cn_evidence_pack or [])
     )
+    cn_sources = (
+        load_cn_source_matrix(cn_source_matrix)
+        if isinstance(cn_source_matrix, (str, Path))
+        else (cn_source_matrix or [])
+    )
+    if cn_sources and cn_candidate_sources is None and isinstance(cn_source_matrix, (str, Path)):
+        sibling = Path(cn_source_matrix).with_name("cn_candidate_sources.zh-CN.json")
+        cn_candidate_sources = sibling if sibling.is_file() else []
+    cn_candidates = (
+        load_cn_candidate_sources(cn_candidate_sources)
+        if isinstance(cn_candidate_sources, (str, Path))
+        else (cn_candidate_sources or [])
+    )
+    source_stats = summarize_cn_source_matrix(cn_sources)
+    candidate_stats = summarize_cn_candidate_sources(cn_candidates)
     intelligence = build_pup_intelligence_report(
         report,
         records,
         include_indicators=True,
         cn_evidence_pack=cn_records,
+        cn_sources=cn_sources,
+        cn_candidates=cn_candidates,
         include_behavior_indicators=include_behavior_indicators,
     )
     destination.mkdir(parents=True, exist_ok=True)
@@ -81,6 +110,9 @@ def build_pup_review_pack(
             "execution_gating_eligible_count",
         )
     }
+    if cn_sources:
+        summary.update(source_stats)
+        summary.update(candidate_stats)
     start_here = "\n".join([
         "# START HERE — PUP Intelligence Review Pack", "",
         "这是本地、离线、带来源追溯的 PUP 线索复核包。它展示命中的 evidence/indicator、匹配原因和误报风险。", "",
@@ -92,6 +124,16 @@ def build_pup_review_pack(
         "若认为误报，填写 false_positive_feedback.md；该文件不会自动上传。", "",
         "下一步只能保留、询问用户、核验厂商/安全工具或收集更多证据。明确禁止把本复核包当作系统修改授权。",
     ])
+    if cn_sources:
+        start_here += "\n\n" + "\n".join([
+            "## 中文公开来源矩阵状态", "",
+            f"- 已校验公开来源：{source_stats['cn_source_count']}",
+            f"- 候选来源：{candidate_stats['cn_candidate_source_count']}",
+            "- 网友名单不能直接入库：它只能 candidate-only，并必须有更强第二来源。",
+            "- 历史榜不能当现代删除名单：版本、时间和实体关系已经变化。",
+            "- 安全厂商公开文章只取公开行为描述，不复制签名、规则库、检测逻辑或样本库。",
+            "- 中文证据仍不是删除、卸载、禁用或注册表修改授权。",
+        ])
     user_summary = "\n".join([
         "# PUP 用户摘要", "",
         f"- 真实来源命中：{intelligence['real_source_match_count']}",
@@ -119,7 +161,7 @@ def build_pup_review_pack(
     _write_json(destination / "behavior_indicators.json", intelligence["behavior_indicators"], overwrite)
     _write_text(destination / "behavior_indicators.md", render_behavior_indicator_section(intelligence["behavior_indicators"]), overwrite)
     _write_text(destination / "human_review_checklist.md", render_human_review_checklist(intelligence["human_review_checklist"]), overwrite)
-    _write_text(destination / "source_trace.md", build_source_trace(intelligence["matches"], [*records, *cn_records]), overwrite)
+    _write_text(destination / "source_trace.md", build_source_trace(intelligence["matches"], [*records, *cn_records], cn_sources), overwrite)
     _write_text(destination / "false_positive_feedback.md", build_false_positive_feedback_template(intelligence["matches"]), overwrite)
     _write_text(destination / "safety_notice.md", f"# Safety Notice\n\n{intelligence['safety_notice']}", overwrite)
     cn_lines = [
@@ -143,4 +185,44 @@ def build_pup_review_pack(
         "", "即使来源真实、实体直接、关系置信度高，也不能成为系统动作授权。",
     ]
     _write_text(destination / "adversarial_safety_summary.md", "\n".join(guard_lines), overwrite)
-    return {"output_dir": str(destination), "artifact_count": len(ARTIFACT_NAMES), **summary, "execution_authorized": False, "runtime_network_access": False}
+    if cn_sources:
+        source_lines = [
+            "# 中文公开来源矩阵", "",
+            "这是一张来源准入矩阵，不是黑名单，也不提供执行授权。", "",
+        ]
+        for source in cn_sources:
+            source_lines.extend([
+                f"## {source['source_title']}", "",
+                f"- source_class: `{source['source_class']}`",
+                f"- source_url: {source['source_url']}",
+                f"- platform_scope: `{source['platform_scope']}`",
+                f"- allowed_use: `{source['allowed_use']}`",
+                f"- requires_second_source: `{str(source['requires_second_source']).lower()}`",
+                *[f"- guard: {reason}" for reason in build_cn_source_guard_reason(source)], "",
+            ])
+        candidate_lines = [
+            "# 中文候选来源", "",
+            "候选池只帮助人工复核；所有项目 execution_authorized=false。", "",
+        ]
+        for candidate in cn_candidates:
+            candidate_lines.extend([
+                f"## {candidate['candidate_entity']}", "",
+                f"- status: `{candidate['candidate_status']}`",
+                f"- source: [{candidate['source_title']}]({candidate['source_url']})",
+                f"- summary: {candidate['evidence_summary']}",
+                "- execution_authorized: `false`", "",
+            ])
+        policy_lines = [
+            "# 中文来源准入策略摘要", "",
+            f"- source_count: {source_stats['cn_source_count']}",
+            f"- candidate_source_count: {candidate_stats['cn_candidate_source_count']}",
+            f"- candidate_only_count: {candidate_stats['cn_candidate_only_count']}",
+            f"- requires_second_source_count: {source_stats['cn_requires_second_source_count']}",
+            "- execution_gating_eligible_count: 0", "",
+            "网友名单、历史榜、单篇媒体报道和移动端类比不能直接进入 Windows 执行链。",
+        ]
+        _write_text(destination / "cn_source_matrix.md", "\n".join(source_lines), overwrite)
+        _write_text(destination / "cn_candidate_sources.md", "\n".join(candidate_lines), overwrite)
+        _write_text(destination / "cn_source_policy_summary.md", "\n".join(policy_lines), overwrite)
+    artifact_count = len(ARTIFACT_NAMES) + (len(CN_SOURCE_ARTIFACT_NAMES) if cn_sources else 0)
+    return {"output_dir": str(destination), "artifact_count": artifact_count, **summary, "execution_authorized": False, "runtime_network_access": False}

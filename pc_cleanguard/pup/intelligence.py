@@ -11,6 +11,8 @@ from ..reputation import (
     build_pup_insight,
     evidence_guard_status,
     load_evidence_pack,
+    summarize_cn_candidate_sources,
+    summarize_cn_source_matrix,
 )
 from .behavior_indicators import build_behavior_indicators_from_report
 
@@ -45,6 +47,8 @@ def build_pup_intelligence_report(
     include_indicators: bool = True,
     *,
     cn_evidence_pack=None,
+    cn_sources=None,
+    cn_candidates=None,
     include_behavior_indicators: bool = False,
 ) -> dict:
     if not isinstance(report, dict):
@@ -55,6 +59,8 @@ def build_pup_intelligence_report(
         raise TypeError("include_behavior_indicators must be bool")
     primary_records = _records(evidence_pack)
     cn_records = _records(cn_evidence_pack) if cn_evidence_pack is not None else []
+    source_stats = summarize_cn_source_matrix(cn_sources or [])
+    candidate_stats = summarize_cn_candidate_sources(cn_candidates or [])
     records = [*primary_records, *cn_records]
     indicators = [item for record in records for item in build_indicators_from_evidence(record)] if include_indicators else []
     matches = ReputationMatcher(records, include_indicators=include_indicators).match(report)
@@ -77,6 +83,8 @@ def build_pup_intelligence_report(
             "cn_match_count": cn_match_count,
             "behavior_indicator_count": len(behavior_indicators),
             "adversarial_guard_status": guard["status"],
+            **source_stats,
+            **candidate_stats,
         },
         "risk_overview": {
             strength: sum(match.get("match_strength") == strength for match in matches)
@@ -97,6 +105,8 @@ def build_pup_intelligence_report(
         "cn_match_count": cn_match_count,
         "behavior_indicator_count": len(behavior_indicators),
         "adversarial_guard_status": guard["status"],
+        **source_stats,
+        **candidate_stats,
         "execution_gating_eligible_count": 0,
         "matches": matches,
         "evidence_indicators": indicators,

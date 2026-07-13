@@ -11,3 +11,5 @@ python -m pc_cleanguard.cli pup review-pack --input report.json --evidence-pack 
 Matcher 是 conservative matching，不是 AV engine。Microsoft PUA detection family 不等于本机 installed app display name；indicator overlap 只能提示人工复核。Review Pack 不联网、不上传、不执行 PowerShell，也不提供删除、卸载、禁用或注册表修改授权。PC CleanGuard 不替代 Microsoft Defender 或其他安全工具。
 
 PR27 Review Pack 增加 `behavior_indicators.json/md`、`cn_evidence_summary.md` 和 `adversarial_safety_summary.md`。中文 evidence 不是黑名单，behavior indicator 也不是 PUP 定罪；两者都进入人工复核且 `execution_gating_eligible_count=0`。
+
+PR28 在显式提供 `--cn-source-matrix` 时增加 `cn_source_matrix.md`、`cn_candidate_sources.md` 和 `cn_source_policy_summary.md`，并把来源/候选数量写入 machine summary。新增文件解释为什么网友名单、历史榜、移动端通报和厂商文章不能直接生成 Windows 动作。

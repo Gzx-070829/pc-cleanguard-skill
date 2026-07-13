@@ -32,6 +32,18 @@ from .evidence_policy import (
     is_execution_gating_eligible,
 )
 from .cn_source_rubric import load_cn_source_rubric, validate_cn_source_rubric
+from .cn_source_matrix import (
+    load_cn_candidate_sources,
+    load_cn_source_matrix,
+    validate_cn_candidate_source,
+    validate_cn_source,
+)
+from .cn_source_policy import (
+    build_cn_source_guard_reason,
+    classify_cn_source_use,
+    summarize_cn_candidate_sources,
+    summarize_cn_source_matrix,
+)
 from .evidence_intake import (
     EvidenceCandidate,
     build_evidence_pack,
@@ -78,6 +90,10 @@ __all__ = [
     "EvidenceUse", "EVIDENCE_BLOCKED_ACTIONS", "classify_evidence_use",
     "is_execution_gating_eligible", "evidence_guard_status", "build_evidence_guard_reason",
     "load_cn_source_rubric", "validate_cn_source_rubric",
+    "load_cn_source_matrix", "validate_cn_source",
+    "load_cn_candidate_sources", "validate_cn_candidate_source",
+    "classify_cn_source_use", "build_cn_source_guard_reason",
+    "summarize_cn_source_matrix", "summarize_cn_candidate_sources",
     "EvidenceCandidate", "ReviewQueueItem", "load_evidence_candidates", "validate_evidence_candidate",
     "load_evidence_review_queue", "validate_review_queue_item", "build_evidence_record_from_candidate",
     "build_evidence_pack", "write_evidence_pack",

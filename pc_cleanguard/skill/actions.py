@@ -29,6 +29,8 @@ from ..reputation import (
     evidence_pack_stats,
     load_evidence_pack,
     load_seed_records,
+    load_cn_source_matrix,
+    summarize_cn_source_matrix as summarize_cn_source_matrix_data,
 )
 from .cleanup_plan import READ_ONLY_EXECUTION_LEVEL, build_cleanup_plan_from_report
 
@@ -49,6 +51,8 @@ ACTION_NAMES = (
     "build_pup_review_pack",
     "build_behavior_indicators",
     "validate_cn_evidence_pack",
+    "validate_cn_source_matrix",
+    "summarize_cn_source_matrix",
 )
 REVERSIBLE_EXECUTION_LEVEL = "LEVEL_2_REVERSIBLE"
 
@@ -595,6 +599,8 @@ def build_pup_review_pack(
     output_dir,
     *,
     cn_evidence_pack_path=None,
+    cn_source_matrix_path=None,
+    cn_candidate_sources_path=None,
     include_behavior_indicators: bool = False,
     overwrite: bool = False,
     request_id: str | None = None,
@@ -604,6 +610,8 @@ def build_pup_review_pack(
         evidence_pack_path,
         output_dir,
         cn_evidence_pack=cn_evidence_pack_path,
+        cn_source_matrix=cn_source_matrix_path,
+        cn_candidate_sources=cn_candidate_sources_path,
         include_behavior_indicators=include_behavior_indicators,
         overwrite=overwrite,
     )
@@ -648,6 +656,36 @@ def validate_cn_evidence_pack(path, *, request_id: str | None = None) -> SkillAc
             "runtime_network_access": False,
             "execution_authorized": False,
         },
+    )
+
+
+def validate_cn_source_matrix(path, *, request_id: str | None = None) -> SkillActionResponse:
+    sources = load_cn_source_matrix(path)
+    summary = summarize_cn_source_matrix_data(sources)
+    return _response(
+        action="validate_cn_source_matrix",
+        request_id=request_id,
+        requires_user_confirmation=False,
+        evidence=({
+            "source": "explicit_local_cn_source_matrix",
+            "fact": f"validated {len(sources)} guarded public-source record(s)",
+        },),
+        result={"valid": True, **summary},
+    )
+
+
+def summarize_cn_source_matrix(path, *, request_id: str | None = None) -> SkillActionResponse:
+    sources = load_cn_source_matrix(path)
+    summary = summarize_cn_source_matrix_data(sources)
+    return _response(
+        action="summarize_cn_source_matrix",
+        request_id=request_id,
+        requires_user_confirmation=False,
+        evidence=({
+            "source": "explicit_local_cn_source_matrix",
+            "fact": f"summarized {len(sources)} non-authorizing public source(s)",
+        },),
+        result=summary,
     )
 def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionResponse:
     """Validate and dispatch one external AI action request."""
@@ -759,11 +797,16 @@ def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionRespon
         _validated_payload(
             payload,
             {"report", "evidence_pack_path", "output_dir"},
-            {"cn_evidence_pack_path", "include_behavior_indicators", "overwrite"},
+            {
+                "cn_evidence_pack_path", "cn_source_matrix_path",
+                "cn_candidate_sources_path", "include_behavior_indicators", "overwrite",
+            },
         )
         return build_pup_review_pack(
             payload["report"], payload["evidence_pack_path"], payload["output_dir"],
             cn_evidence_pack_path=payload.get("cn_evidence_pack_path"),
+            cn_source_matrix_path=payload.get("cn_source_matrix_path"),
+            cn_candidate_sources_path=payload.get("cn_candidate_sources_path"),
             include_behavior_indicators=payload.get("include_behavior_indicators", False),
             overwrite=payload.get("overwrite", False), request_id=request.request_id,
         )
@@ -773,4 +816,10 @@ def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionRespon
     if request.action == "validate_cn_evidence_pack":
         _validated_payload(payload, {"path"}, set())
         return validate_cn_evidence_pack(payload["path"], request_id=request.request_id)
+    if request.action == "validate_cn_source_matrix":
+        _validated_payload(payload, {"path"}, set())
+        return validate_cn_source_matrix(payload["path"], request_id=request.request_id)
+    if request.action == "summarize_cn_source_matrix":
+        _validated_payload(payload, {"path"}, set())
+        return summarize_cn_source_matrix(payload["path"], request_id=request.request_id)
     raise ValueError("unsupported skill action")

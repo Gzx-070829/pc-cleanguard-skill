@@ -1,0 +1,8 @@
+{
+  "schema_version": "0.1",
+  "request_id": "example:summarize-cn-source-matrix",
+  "action": "summarize_cn_source_matrix",
+  "payload": {
+    "path": "data/reputation/cn_source_matrix.zh-CN.json"
+  }
+}

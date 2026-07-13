@@ -15,3 +15,5 @@ PR25 首批加入 5 条人工核验记录，均来自 Microsoft Security Intelli
 PR26 未扩充这 5 条记录：现有官方来源足以验证 indicator/review-pack 闭环，继续为数量加入实体会增加核验和误伤风险。本轮优先把来源追溯、保守匹配和反馈闭环做完整；新增真实记录仍必须走 PR25 intake/review 流程。
 
 PR27 另建中文 pack，加入 5 条人工核验的工信部公开批次页面。它们不复制具体 APP 名单，只作为移动端行为类比；不能映射为 Windows direct entity、发布者黑名单或 PUP 执行建议。
+
+PR28 不追求新增 approved 中文 Windows direct-entity 记录。公开来源先按 source matrix 分类，再进入 candidate/review；网友名单和历史材料不能直接入库，厂商级或下载链路级说法不能扩展到全部产品。
