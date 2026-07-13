@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PC CleanGuard Reputation Evidence Indicator",
+  "type": "object",
+  "required": ["indicator_id", "record_id", "indicator_type", "indicator_value", "normalized_value", "source_field", "match_scope", "match_strength", "false_positive_risk", "requires_human_review", "notes", "execution_gating_eligible"],
+  "properties": {
+    "indicator_id": {"type": "string", "minLength": 1},
+    "record_id": {"type": "string", "minLength": 1},
+    "indicator_type": {"enum": ["detection_family", "installer_family", "bundle_name", "display_name_hint", "publisher_hint", "file_name_hint", "startup_name_hint", "service_name_hint", "scheduled_task_hint", "browser_extension_hint", "behavior_hint"]},
+    "indicator_value": {"type": "string", "minLength": 1},
+    "normalized_value": {"type": "string", "minLength": 1},
+    "source_field": {"type": "string", "minLength": 1},
+    "match_scope": {"enum": ["installed_app", "startup_item", "service", "scheduled_task", "browser_extension", "file_observation", "publisher_level", "report_level"]},
+    "match_strength": {"enum": ["exact", "strong", "medium", "weak", "informational"]},
+    "false_positive_risk": {"enum": ["low", "medium", "high"]},
+    "requires_human_review": {"const": true},
+    "notes": {"type": "string", "minLength": 1},
+    "execution_gating_eligible": {"const": false}
+  },
+  "additionalProperties": false
+}

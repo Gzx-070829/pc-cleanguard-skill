@@ -48,6 +48,7 @@ class SkillActionsTest(unittest.TestCase):
                 "match_reputation",
                 "build_pup_insight",
                 "inspect_pup_risk",
+                "build_pup_review_pack",
             },
             set(ACTION_NAMES),
         )

@@ -109,6 +109,10 @@ PR25 real-source evidence must enter through the offline candidate → human rev
 
 PR25 真实 evidence 不是黑名单。真实来源只用于解释、排序和人工复核；`mapping_type`、`entity_scope`、`is_synthetic`、`relation_confidence` 是防误用核心字段。MIIT APP/SDK 通报不得直接映射为 Windows 删除名单。
 
+PR26 indicator matching is conservative and opt-in. A detection family is report context, not an installed-app identity. Publisher and behavior hints cannot independently match a target. Every indicator match must expose source trace, uncertainty, a human checklist, `execution_gating_eligible=false`, and a reason why it cannot authorize execution.
+
+PR26 Review Pack 只能把显式 report 与本地 Evidence Pack 编排成解释文件。它不得联网、上传、调用外部工具或生成系统修改指令；Skill action `build_pup_review_pack` 保持 Level 0。
+
 For the v0.3.0 Public Preview, `doctor release-check` may read version, documentation, seed, showcase, and issue-template metadata only. It must not execute cleanup, access the network, read API keys, or mutate system state. PC CleanGuard does not replace antivirus software.
 
 ## Read-only collectors / 只读采集器

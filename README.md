@@ -6,6 +6,9 @@ PC CleanGuard Skill helps AI agents safely inspect, explain, preview, quarantine
 
 **v0.3.0 Public Preview · 默认隔离，可恢复 · Offline by default**
 
+PUP Review Pack 可以离线生成带来源追溯的 PUP 线索复核包，但不会删除、卸载、禁用、上传或修改注册表。
+PUP Review Pack can generate a local, offline, source-traceable review folder for suspicious PUP signals without deleting, uninstalling, disabling, uploading, or modifying the registry.
+
 快速试用：
 
 ```powershell
@@ -22,6 +25,12 @@ PUP 线索检查：
 
 ```powershell
 python -m pc_cleanguard.cli pup inspect --input <report.json> --seed examples/reputation/seed_records.zh-CN.json --output pup_insight.md
+```
+
+生成完整离线复核包：
+
+```powershell
+python -m pc_cleanguard.cli pup review-pack --input examples/reputation/pr26_realistic_windows_inventory.json --evidence-pack data/reputation/evidence_pack.real.zh-CN.json --output .pcg-pup-review
 ```
 
 恢复隔离文件：
@@ -68,6 +77,8 @@ PR22 把上述能力编排为 `trial run` 产品体验：自动生成 START HERE
 PR24 增加默认 `.pcg-quarantine` 与 Evidence Guard。Evidence Pack 不是黑名单；mapping relation 与 synthetic 状态是正交轴，所有 evidence 均被阻断在执行门之外。
 
 PR25 增加离线 Evidence Intake/Review/Build 和首批 5 条人工核验公开来源记录。真实来源只让 PUP insight 更有信息量，`execution_gating_eligible_count` 始终为 0。
+
+PR26 增加保守 Evidence Indicator matching、PUP Intelligence Engine 和一条命令生成的本地 Review Pack。detection family 不等于 installed app display name；所有 match 仍需人工复核。
 
 ## 5 分钟试用 / Try it in five minutes
 
@@ -246,6 +257,10 @@ v0.2 编排示例：[examples/skill_actions/v0.2_cleanup_agent_flow.json](exampl
 - Real-source Evidence Review：[docs/reputation-real-source-review.md](docs/reputation-real-source-review.md)
 - Reputation Matching：[docs/reputation-matching.md](docs/reputation-matching.md)
 - PUP Insight Flow：[docs/pup-insight-user-flow.md](docs/pup-insight-user-flow.md)
+- Evidence Indicators：[docs/reputation-evidence-indicators.md](docs/reputation-evidence-indicators.md)
+- PUP Intelligence Review Pack：[docs/pup-intelligence-review-pack.md](docs/pup-intelligence-review-pack.md)
+- PUP Human Review Checklist：[docs/pup-human-review-checklist.md](docs/pup-human-review-checklist.md)
+- PUP False-positive Feedback：[docs/pup-false-positive-feedback.md](docs/pup-false-positive-feedback.md)
 - User Trial：[docs/user-trial.md](docs/user-trial.md)
 - Product Positioning：[docs/product-positioning.md](docs/product-positioning.md)
 - v0.3 Public Preview：[docs/v0.3-public-preview.md](docs/v0.3-public-preview.md)

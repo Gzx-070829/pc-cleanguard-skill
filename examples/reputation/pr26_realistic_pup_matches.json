@@ -1,0 +1,303 @@
+[
+  {
+    "target_id": "app:installcore",
+    "target_type": "SOFTWARE",
+    "matched_record_id": "ev-real-ms-installcore",
+    "matched_name": "PUA:Win32/InstallCore",
+    "behavior_categories": [
+      "forced_installation",
+      "browser_hijacking",
+      "malicious_bundling"
+    ],
+    "confidence": 0.36,
+    "false_positive_risk": "medium",
+    "evidence": [
+      {
+        "source": "reputation_matcher",
+        "fact": "installer_family overlap requires human review"
+      },
+      {
+        "source": "reputation_record",
+        "fact": "record_id=ev-real-ms-installcore"
+      }
+    ],
+    "review_status": "approved_for_explanation",
+    "execution_authorized": false,
+    "notes_for_ai": "Explain the match and uncertainty; never treat it as delete, uninstall, or disable authorization.",
+    "mapping_type": "direct_entity",
+    "entity_scope": "windows_desktop_software",
+    "is_synthetic": false,
+    "relation_confidence": "high",
+    "analogy_basis": null,
+    "source_url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FInstallCore",
+    "source_title": "PUA:Win32/InstallCore threat description - Microsoft Security Intelligence",
+    "source_date": "2015-03-11",
+    "guard_reason": [
+      "evidence is explanation/review/sorting/risk-hint only",
+      "execution gating is always blocked",
+      "Family-name overlap is a high-false-positive review hint and requires local identity checks.",
+      "indicator matching cannot authorize execution"
+    ],
+    "evidence_use": "review_hint",
+    "match_basis": "evidence_indicator",
+    "matched_indicator_type": "installer_family",
+    "matched_indicator_value": "InstallCore",
+    "target_observed_value": "Example InstallCore Bundle Helper",
+    "match_scope": "installed_app",
+    "match_strength": "medium",
+    "why_matched": "installer_family overlap requires human review",
+    "why_not_execution_authorization": "Evidence 和 indicator match 只是复核线索，不能确认用户意图，也不能授权任何系统动作。",
+    "human_review_checklist": [
+      "核对软件是否由用户主动安装以及安装来源。",
+      "核对本地发布者、版本、签名与来源页面描述是否属于同一实体。",
+      "检查是否存在捆绑、浏览器修改、异常启动项或安全工具独立提示。"
+    ],
+    "source_trace": {
+      "record_id": "ev-real-ms-installcore",
+      "source_title": "PUA:Win32/InstallCore threat description - Microsoft Security Intelligence",
+      "source_url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FInstallCore",
+      "source_date": "2015-03-11"
+    },
+    "execution_gating_eligible": false
+  },
+  {
+    "target_id": "app:slimware",
+    "target_type": "SOFTWARE",
+    "matched_record_id": "ev-real-ms-slimware",
+    "matched_name": "PUA:Win32/Slimware",
+    "behavior_categories": [
+      "ad_popup",
+      "malicious_bundling",
+      "other_user_rights_violation"
+    ],
+    "confidence": 0.351,
+    "false_positive_risk": "medium",
+    "evidence": [
+      {
+        "source": "reputation_matcher",
+        "fact": "installer_family overlap requires human review"
+      },
+      {
+        "source": "reputation_record",
+        "fact": "record_id=ev-real-ms-slimware"
+      }
+    ],
+    "review_status": "approved_for_explanation",
+    "execution_authorized": false,
+    "notes_for_ai": "Explain the match and uncertainty; never treat it as delete, uninstall, or disable authorization.",
+    "mapping_type": "direct_entity",
+    "entity_scope": "windows_desktop_software",
+    "is_synthetic": false,
+    "relation_confidence": "high",
+    "analogy_basis": null,
+    "source_url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FSlimware",
+    "source_title": "PUA:Win32/Slimware threat description - Microsoft Security Intelligence",
+    "source_date": "2017-02-08",
+    "guard_reason": [
+      "evidence is explanation/review/sorting/risk-hint only",
+      "execution gating is always blocked",
+      "Family-name overlap is a high-false-positive review hint and requires local identity checks.",
+      "indicator matching cannot authorize execution"
+    ],
+    "evidence_use": "review_hint",
+    "match_basis": "evidence_indicator",
+    "matched_indicator_type": "installer_family",
+    "matched_indicator_value": "Slimware",
+    "target_observed_value": "Example Slimware Driver Utility",
+    "match_scope": "installed_app",
+    "match_strength": "medium",
+    "why_matched": "installer_family overlap requires human review",
+    "why_not_execution_authorization": "Evidence 和 indicator match 只是复核线索，不能确认用户意图，也不能授权任何系统动作。",
+    "human_review_checklist": [
+      "核对软件是否由用户主动安装以及安装来源。",
+      "核对本地发布者、版本、签名与来源页面描述是否属于同一实体。",
+      "检查是否存在捆绑、浏览器修改、异常启动项或安全工具独立提示。"
+    ],
+    "source_trace": {
+      "record_id": "ev-real-ms-slimware",
+      "source_title": "PUA:Win32/Slimware threat description - Microsoft Security Intelligence",
+      "source_url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FSlimware",
+      "source_date": "2017-02-08"
+    },
+    "execution_gating_eligible": false
+  },
+  {
+    "target_id": "app:mediaarena",
+    "target_type": "SOFTWARE",
+    "matched_record_id": "ev-real-ms-mediaarena",
+    "matched_name": "PUA:Win32/MediaArena",
+    "behavior_categories": [
+      "browser_hijacking",
+      "malicious_collection"
+    ],
+    "confidence": 0.36,
+    "false_positive_risk": "medium",
+    "evidence": [
+      {
+        "source": "reputation_matcher",
+        "fact": "installer_family overlap requires human review"
+      },
+      {
+        "source": "reputation_record",
+        "fact": "record_id=ev-real-ms-mediaarena"
+      }
+    ],
+    "review_status": "approved_for_explanation",
+    "execution_authorized": false,
+    "notes_for_ai": "Explain the match and uncertainty; never treat it as delete, uninstall, or disable authorization.",
+    "mapping_type": "direct_entity",
+    "entity_scope": "windows_desktop_software",
+    "is_synthetic": false,
+    "relation_confidence": "high",
+    "analogy_basis": null,
+    "source_url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FMediaArena&threatId=359463",
+    "source_title": "PUA:Win32/MediaArena threat description - Microsoft Security Intelligence",
+    "source_date": "2023-03-20",
+    "guard_reason": [
+      "evidence is explanation/review/sorting/risk-hint only",
+      "execution gating is always blocked",
+      "Family-name overlap is a high-false-positive review hint and requires local identity checks.",
+      "indicator matching cannot authorize execution"
+    ],
+    "evidence_use": "review_hint",
+    "match_basis": "evidence_indicator",
+    "matched_indicator_type": "installer_family",
+    "matched_indicator_value": "MediaArena",
+    "target_observed_value": "Example MediaArena Search Tool",
+    "match_scope": "installed_app",
+    "match_strength": "medium",
+    "why_matched": "installer_family overlap requires human review",
+    "why_not_execution_authorization": "Evidence 和 indicator match 只是复核线索，不能确认用户意图，也不能授权任何系统动作。",
+    "human_review_checklist": [
+      "核对软件是否由用户主动安装以及安装来源。",
+      "核对本地发布者、版本、签名与来源页面描述是否属于同一实体。",
+      "检查是否存在捆绑、浏览器修改、异常启动项或安全工具独立提示。"
+    ],
+    "source_trace": {
+      "record_id": "ev-real-ms-mediaarena",
+      "source_title": "PUA:Win32/MediaArena threat description - Microsoft Security Intelligence",
+      "source_url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FMediaArena&threatId=359463",
+      "source_date": "2023-03-20"
+    },
+    "execution_gating_eligible": false
+  },
+  {
+    "target_id": "app:fusioncore",
+    "target_type": "SOFTWARE",
+    "matched_record_id": "ev-real-ms-fusioncore",
+    "matched_name": "PUA:Win32/FusionCore",
+    "behavior_categories": [
+      "malicious_bundling"
+    ],
+    "confidence": 0.338,
+    "false_positive_risk": "medium",
+    "evidence": [
+      {
+        "source": "reputation_matcher",
+        "fact": "installer_family overlap requires human review"
+      },
+      {
+        "source": "reputation_record",
+        "fact": "record_id=ev-real-ms-fusioncore"
+      }
+    ],
+    "review_status": "approved_for_explanation",
+    "execution_authorized": false,
+    "notes_for_ai": "Explain the match and uncertainty; never treat it as delete, uninstall, or disable authorization.",
+    "mapping_type": "direct_entity",
+    "entity_scope": "windows_desktop_software",
+    "is_synthetic": false,
+    "relation_confidence": "high",
+    "analogy_basis": null,
+    "source_url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FFusionCore",
+    "source_title": "PUA:Win32/FusionCore threat description - Microsoft Security Intelligence",
+    "source_date": "2016-06-28",
+    "guard_reason": [
+      "evidence is explanation/review/sorting/risk-hint only",
+      "execution gating is always blocked",
+      "Family-name overlap is a high-false-positive review hint and requires local identity checks.",
+      "indicator matching cannot authorize execution"
+    ],
+    "evidence_use": "review_hint",
+    "match_basis": "evidence_indicator",
+    "matched_indicator_type": "installer_family",
+    "matched_indicator_value": "FusionCore",
+    "target_observed_value": "Example FusionCore Offer Manager",
+    "match_scope": "installed_app",
+    "match_strength": "medium",
+    "why_matched": "installer_family overlap requires human review",
+    "why_not_execution_authorization": "Evidence 和 indicator match 只是复核线索，不能确认用户意图，也不能授权任何系统动作。",
+    "human_review_checklist": [
+      "核对软件是否由用户主动安装以及安装来源。",
+      "核对本地发布者、版本、签名与来源页面描述是否属于同一实体。",
+      "检查是否存在捆绑、浏览器修改、异常启动项或安全工具独立提示。"
+    ],
+    "source_trace": {
+      "record_id": "ev-real-ms-fusioncore",
+      "source_title": "PUA:Win32/FusionCore threat description - Microsoft Security Intelligence",
+      "source_url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FFusionCore",
+      "source_date": "2016-06-28"
+    },
+    "execution_gating_eligible": false
+  },
+  {
+    "target_id": "app:piriform",
+    "target_type": "SOFTWARE",
+    "matched_record_id": "ev-real-ms-piriformbundler",
+    "matched_name": "PUA:Win32/PiriformBundler",
+    "behavior_categories": [
+      "malicious_bundling"
+    ],
+    "confidence": 0.315,
+    "false_positive_risk": "high",
+    "evidence": [
+      {
+        "source": "reputation_matcher",
+        "fact": "installer_family overlap requires human review"
+      },
+      {
+        "source": "reputation_record",
+        "fact": "record_id=ev-real-ms-piriformbundler"
+      }
+    ],
+    "review_status": "approved_for_explanation",
+    "execution_authorized": false,
+    "notes_for_ai": "Explain the match and uncertainty; never treat it as delete, uninstall, or disable authorization.",
+    "mapping_type": "direct_entity",
+    "entity_scope": "windows_desktop_software",
+    "is_synthetic": false,
+    "relation_confidence": "medium",
+    "analogy_basis": null,
+    "source_url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FPiriformBundler",
+    "source_title": "PUA:Win32/PiriformBundler threat description - Microsoft Security Intelligence",
+    "source_date": "2020-07-27",
+    "guard_reason": [
+      "evidence is explanation/review/sorting/risk-hint only",
+      "execution gating is always blocked",
+      "relation confidence is not high",
+      "Family-name overlap is a high-false-positive review hint and requires local identity checks.",
+      "indicator matching cannot authorize execution"
+    ],
+    "evidence_use": "review_hint",
+    "match_basis": "evidence_indicator",
+    "matched_indicator_type": "installer_family",
+    "matched_indicator_value": "PiriformBundler",
+    "target_observed_value": "Example PiriformBundler Installer Artifact",
+    "match_scope": "installed_app",
+    "match_strength": "medium",
+    "why_matched": "installer_family overlap requires human review",
+    "why_not_execution_authorization": "Evidence 和 indicator match 只是复核线索，不能确认用户意图，也不能授权任何系统动作。",
+    "human_review_checklist": [
+      "核对软件是否由用户主动安装以及安装来源。",
+      "核对本地发布者、版本、签名与来源页面描述是否属于同一实体。",
+      "检查是否存在捆绑、浏览器修改、异常启动项或安全工具独立提示。"
+    ],
+    "source_trace": {
+      "record_id": "ev-real-ms-piriformbundler",
+      "source_title": "PUA:Win32/PiriformBundler threat description - Microsoft Security Intelligence",
+      "source_url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FPiriformBundler",
+      "source_date": "2020-07-27"
+    },
+    "execution_gating_eligible": false
+  }
+]

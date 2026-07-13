@@ -34,6 +34,8 @@ PR24 提供无需配置的 `.pcg-quarantine` 默认隔离路径，并把 Evidenc
 
 PR25 增加真实公开来源的人工 intake/review/build 流程和首批核验 records。构建与 PUP insight 均保持离线，所有真实 evidence 继续被阻断在执行门控之外。
 
+PR26 将 evidence indicators、保守匹配、PUP Intelligence、来源追溯、人工 checklist 和误报反馈编排为一条命令生成的本地 Review Pack。它提升可用性，但不扩大系统执行权限。
+
 ## v0.4 — Reputation adapters + PUP planner + registry backup planning
 
 在明确来源许可和人工审核下接入真实公开 Reputation adapter；构建 PUP 声明式 planner 与注册表备份规划。声誉证据仍不授权执行，registry backup planning 不提供任意写入口。

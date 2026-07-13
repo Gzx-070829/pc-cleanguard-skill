@@ -3,7 +3,8 @@
 SAFETY_NOTICE = (
     "此洞察不是删除授权、不是卸载授权、不是禁用授权；"
     "真实来源 evidence 仅用于解释、排序和人工复核，不是删除、卸载、禁用授权；"
-    "所有不确定项需要用户确认。"
+    "真实来源 evidence 和 indicator match 仅用于解释、排序和人工复核，"
+    "不是删除、卸载、禁用授权；所有不确定项需要用户确认。"
 )
 
 
@@ -12,11 +13,19 @@ def build_pup_insight(matches: list[dict]) -> dict:
         raise TypeError("matches must be a list of objects")
     if any(item.get("execution_authorized") is not False for item in matches):
         raise ValueError("reputation matches cannot authorize execution")
+    if any(item.get("execution_gating_eligible", False) is not False for item in matches):
+        raise ValueError("reputation matches cannot enter execution gating")
     categories = sorted({category for item in matches for category in item.get("behavior_categories", ())})
     uncertain = []
     for item in matches:
         mapping = item.get("mapping_type", "unknown")
-        if mapping == "analogical_behavior":
+        strength = item.get("match_strength")
+        basis = item.get("match_basis")
+        if strength in {"weak", "informational"} or basis == "behavior_context":
+            uncertain.append(
+                f"{item.get('target_id', 'unknown')}: match_basis={basis or 'unknown'}, match_strength={strength or 'unknown'}，只能人工复核。"
+            )
+        elif mapping == "analogical_behavior":
             uncertain.append(
                 f"{item.get('target_id', 'unknown')}: analogical_behavior 仅为行为类比；basis={item.get('analogy_basis') or 'missing'}"
             )
@@ -49,12 +58,22 @@ def build_pup_insight(matches: list[dict]) -> dict:
             "synthetic_match_count": sum(item.get("is_synthetic") is True for item in matches),
             **mapping_counts,
             "execution_gating_eligible_count": 0,
+            "indicator_match_count": sum(item.get("match_basis") == "evidence_indicator" for item in matches),
+            "detection_family_match_count": sum(item.get("matched_indicator_type") == "detection_family" for item in matches),
+            "publisher_hint_match_count": sum(item.get("matched_indicator_type") == "publisher_hint" for item in matches),
+            "high_uncertainty_match_count": sum(
+                item.get("match_strength") in {"weak", "informational"}
+                or item.get("false_positive_risk") == "high"
+                or item.get("match_basis") in {"behavior_context", "name_collision", "publisher_assisted"}
+                for item in matches
+            ),
+            "human_review_required_count": len(matches),
         },
         "suspicious_behaviors": categories,
         "matched_targets": [dict(item) for item in matches],
         "uncertainty_notes": uncertain or ["没有命中并不证明安全；仍需结合本地证据人工复核。"],
         "recommended_review": ["核对软件身份、发布者、安装来源与用户意图。", "在任何系统操作前重新经过 Policy Engine 和用户确认。"],
-        "blocked_actions": ["automatic_delete", "automatic_uninstall", "automatic_disable"],
+        "blocked_actions": ["automatic_delete", "automatic_uninstall", "automatic_disable", "automatic_registry_edit"],
         "safety_notice": SAFETY_NOTICE,
         "next_steps_for_user": ["查看命中证据和误报风险。", "不确定时保留软件并请求人工复核。"],
         "requires_user_confirmation": True,

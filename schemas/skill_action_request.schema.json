@@ -21,7 +21,8 @@
         "restore_quarantine_item",
         "match_reputation",
         "build_pup_insight",
-        "inspect_pup_risk"
+        "inspect_pup_risk",
+        "build_pup_review_pack"
       ]
     },
     "payload": {"type": "object"}
@@ -223,7 +224,26 @@
       "if": {"properties": {"action": {"const": "inspect_pup_risk"}}},
       "then": {"properties": {"payload": {
         "type": "object", "required": ["report", "seed_path"],
-        "properties": {"report": {"type": "object"}, "seed_path": {"type": "string", "minLength": 1}},
+        "properties": {
+          "report": {"type": "object"},
+          "seed_path": {"type": "string", "minLength": 1},
+          "evidence_pack": {"type": "boolean", "default": false},
+          "include_indicators": {"type": "boolean", "default": false}
+        },
+        "additionalProperties": false
+      }}}
+    },
+    {
+      "if": {"properties": {"action": {"const": "build_pup_review_pack"}}},
+      "then": {"properties": {"payload": {
+        "type": "object",
+        "required": ["report", "evidence_pack_path", "output_dir"],
+        "properties": {
+          "report": {"type": "object"},
+          "evidence_pack_path": {"type": "string", "minLength": 1},
+          "output_dir": {"type": "string", "minLength": 1},
+          "overwrite": {"type": "boolean", "default": false}
+        },
         "additionalProperties": false
       }}}
     }
