@@ -13,6 +13,7 @@ from .behavior_indicators import (
     validate_behavior_indicator,
     write_behavior_indicators,
 )
+from .corroboration import build_pup_corroboration, score_match_corroboration, render_corroboration_markdown
 
 __all__ = [
     "inspect_pup_risk", "build_pup_intelligence_report", "build_pup_review_pack",
@@ -20,4 +21,5 @@ __all__ = [
     "BehaviorIndicator", "build_behavior_indicators_from_report",
     "render_behavior_indicator_section", "summarize_behavior_indicators",
     "validate_behavior_indicator", "write_behavior_indicators",
+    "build_pup_corroboration", "score_match_corroboration", "render_corroboration_markdown",
 ]

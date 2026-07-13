@@ -37,11 +37,13 @@ from .pipeline import (
 )
 from .quarantine import QuarantineManager
 from .pup import (
+    build_pup_corroboration,
     build_behavior_indicators_from_report,
     build_pup_review_pack,
     inspect_pup_risk,
     summarize_behavior_indicators,
     write_behavior_indicators,
+    render_corroboration_markdown,
 )
 from .reputation import (
     ReputationMatcher,
@@ -67,7 +69,12 @@ from .reputation import (
     build_evidence_quality_summary,
     render_evidence_quality_markdown,
 )
-from .validation import write_real_report_validation_pack
+from .validation import (
+    build_no_match_report,
+    build_real_report_trial,
+    render_no_match_report_markdown,
+    write_real_report_validation_pack,
+)
 from .skill import invoke_skill_action, write_report
 from .experience import run_release_smoke_check, run_user_trial
 from . import __version__
@@ -414,6 +421,12 @@ def _parser() -> argparse.ArgumentParser:
     pup_review_pack.add_argument("--include-behavior-indicators", action="store_true")
     pup_review_pack.add_argument("--include-evidence-quality", action="store_true")
     pup_review_pack.add_argument("--include-real-report-validation-summary", action="store_true")
+    pup_review_pack.add_argument("--include-corroboration", action="store_true")
+    pup_corroborate = pup_commands.add_parser("corroborate")
+    pup_corroborate.add_argument("--matches", required=True, type=Path)
+    pup_corroborate.add_argument("--behavior-indicators", required=True, type=Path)
+    pup_corroborate.add_argument("--output", required=True, type=Path)
+    pup_corroborate.add_argument("--overwrite", action="store_true")
     pup_behavior = pup_commands.add_parser("behavior")
     pup_behavior.add_argument("--input", required=True, type=Path)
     pup_behavior.add_argument("--output", required=True, type=Path)
@@ -431,9 +444,24 @@ def _parser() -> argparse.ArgumentParser:
     trial_run.add_argument("--output", required=True, type=Path)
     trial_run.add_argument("--confirm", action="store_true")
     trial_run.add_argument("--quarantine-root", type=Path)
+    trial_report = trial_commands.add_parser("report")
+    trial_report.add_argument("--input", required=True, type=Path)
+    trial_report.add_argument("--output", required=True, type=Path)
+    trial_report.add_argument("--evidence-pack", required=True, type=Path)
+    trial_report.add_argument("--cn-win-evidence-pack", type=Path)
+    trial_report.add_argument("--cn-source-matrix", type=Path)
+    trial_report.add_argument("--include-behavior-indicators", action="store_true")
+    trial_report.add_argument("--include-evidence-quality", action="store_true")
+    trial_report.add_argument("--overwrite", action="store_true")
+    validation = subcommands.add_parser("validation", help="explain local validation results")
+    validation_commands = validation.add_subparsers(dest="validation_command", required=True)
+    validation_no_match = validation_commands.add_parser("no-match")
+    validation_no_match.add_argument("--input", required=True, type=Path)
+    validation_no_match.add_argument("--output", required=True, type=Path)
+    validation_no_match.add_argument("--overwrite", action="store_true")
     doctor = subcommands.add_parser("doctor", help="run read-only project checks")
     doctor_commands = doctor.add_subparsers(dest="doctor_command", required=True)
-    doctor_commands.add_parser("release-check", help="verify local v0.3.1 release assets")
+    doctor_commands.add_parser("release-check", help="verify local v0.3.2 release assets")
     return parser
 
 
@@ -715,6 +743,15 @@ def _run_reputation(arguments: argparse.Namespace) -> dict:
 
 
 def _run_pup(arguments: argparse.Namespace) -> dict:
+    if arguments.pup_command == "corroborate":
+        matches_payload = json.loads(arguments.matches.read_text(encoding="utf-8"))
+        behavior_payload = json.loads(arguments.behavior_indicators.read_text(encoding="utf-8"))
+        matches = matches_payload.get("matches", matches_payload) if isinstance(matches_payload, dict) else matches_payload
+        indicators = behavior_payload.get("behavior_indicators", behavior_payload) if isinstance(behavior_payload, dict) else behavior_payload
+        result = build_pup_corroboration(matches, indicators)
+        with arguments.output.open("w" if arguments.overwrite else "x", encoding="utf-8", newline="\n") as stream:
+            stream.write(render_corroboration_markdown(result))
+        return {"output": str(arguments.output), **{key: value for key, value in result.items() if key.endswith("_count")}, "execution_authorized": False}
     if arguments.pup_command == "behavior":
         indicators = build_behavior_indicators_from_report(load_scan_json_file(arguments.input))
         destination = write_behavior_indicators(
@@ -737,6 +774,7 @@ def _run_pup(arguments: argparse.Namespace) -> dict:
             include_behavior_indicators=arguments.include_behavior_indicators,
             include_evidence_quality=arguments.include_evidence_quality,
             include_real_report_validation_summary=arguments.include_real_report_validation_summary,
+            include_corroboration=arguments.include_corroboration,
             overwrite=arguments.overwrite,
         )
     source = arguments.evidence_pack or arguments.seed
@@ -831,6 +869,21 @@ def main(argv: Sequence[str] | None = None) -> int:
                 confirm=arguments.confirm,
                 quarantine_root=arguments.quarantine_root,
             )
+        elif arguments.command == "trial" and arguments.trial_command == "report":
+            summary = build_real_report_trial(
+                load_scan_json_file(arguments.input), arguments.output, arguments.evidence_pack,
+                cn_win_evidence_pack=arguments.cn_win_evidence_pack,
+                cn_source_matrix=arguments.cn_source_matrix,
+                include_behavior_indicators=arguments.include_behavior_indicators,
+                include_evidence_quality=arguments.include_evidence_quality,
+                overwrite=arguments.overwrite,
+            )
+        elif arguments.command == "validation" and arguments.validation_command == "no-match":
+            report = load_scan_json_file(arguments.input)
+            value_report = build_no_match_report(report, [], {})
+            with arguments.output.open("w" if arguments.overwrite else "x", encoding="utf-8", newline="\n") as stream:
+                stream.write(render_no_match_report_markdown(value_report))
+            summary = {"output": str(arguments.output), "execution_authorized": False, "runtime_network_access": False}
         elif arguments.command == "doctor" and arguments.doctor_command == "release-check":
             summary = run_release_smoke_check()
         else:  # pragma: no cover - argparse enforces the available commands.

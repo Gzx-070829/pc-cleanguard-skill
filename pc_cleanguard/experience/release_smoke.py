@@ -1,4 +1,4 @@
-"""Read-only release asset checks for the v0.3.1 public preview."""
+"""Read-only release asset checks for the current public preview."""
 
 from __future__ import annotations
 
@@ -12,11 +12,11 @@ def run_release_smoke_check() -> dict:
     root = Path(__file__).resolve().parents[2]
     readme_path = root / "README.md"
     readme = readme_path.read_text(encoding="utf-8") if readme_path.is_file() else ""
-    showcase = root / "examples" / "showcase" / "v0.3.1"
+    showcase = root / "examples" / "showcase" / "v0.3.2"
     showcase_files = {
         "README.md", "START_HERE.md", "user_summary.md", "machine_summary.json",
-        "pup_insight.md", "behavior_indicators.md", "cn_evidence_summary.md",
-        "cn_source_matrix.md", "cn_candidate_sources.md", "adversarial_safety_summary.md",
+        "pup_insight.md", "corroboration_summary.md", "evidence_quality.md",
+        "no_match_report.md", "matchability_summary.md", "safety_notice.md",
     }
     seeds_ok = False
     try:
@@ -25,15 +25,15 @@ def run_release_smoke_check() -> dict:
         seeds_ok = False
     templates = root / ".github" / "ISSUE_TEMPLATE"
     checks = {
-        "version_0_3_1": __version__ == "0.3.1",
+        "version_0_3_2": __version__ == "0.3.2",
         "readme_trial_command": "trial run --root .pcg-demo --output .pcg-trial" in readme,
         "readme_restore_command": "quarantine restore --root .pcg-quarantine" in readme,
         "showcase_complete": showcase.is_dir() and all((showcase / name).is_file() for name in showcase_files),
         "seed_records_load": seeds_ok,
         "user_trial_doc": (root / "docs/v0.3-user-trial-script.md").is_file(),
-        "public_preview_doc": (root / "docs/v0.3.1-public-preview.md").is_file(),
-        "release_checklist": (root / "docs/release-v0.3.1-checklist.md").is_file(),
-        "release_notes": (root / "docs/v0.3.1-release-notes.md").is_file(),
+        "public_preview_doc": (root / "docs/v0.3.2-public-preview.md").is_file(),
+        "release_checklist": (root / "docs/release-v0.3.2-checklist.md").is_file(),
+        "release_notes": (root / "docs/v0.3.2-release-notes.md").is_file(),
         "trial_feedback_template": (templates / "trial_experience_feedback.yml").is_file(),
         "pup_feedback_template": (templates / "pup_reputation_feedback.yml").is_file(),
     }

@@ -5,7 +5,7 @@ description: Conservatively assess Windows software, startup items, services, pr
 
 # PC CleanGuard
 
-Current public version: `0.3.1`. `trial run` is the primary five-minute showcase; confirmed trials remain quarantine-only and reversible.
+Current public version: `0.3.2`. `trial run` remains the five-minute showcase. PUP corroboration, evidence quality, real-report trial and no-match actions are Level 0: AI may explain and organize human review, but the PUP layer cannot authorize system changes.
 
 PR29 Level 0 actions are `build_evidence_quality_summary`, `validate_real_report_shape`, and `build_cn_win_pup_review_pack`. They only process caller-supplied local data. 中文 Windows direct evidence 与 installer artifact 只用于解释和人工复核；`execution_gating_eligible_count=0`。
 

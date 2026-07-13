@@ -18,6 +18,7 @@ from ..pipeline import run_readonly_scan_pipeline
 from ..pipeline.input_loader import _validated_explicit_local_path
 from ..quarantine import QuarantineManager
 from ..pup import (
+    build_pup_corroboration as build_pup_corroboration_data,
     build_behavior_indicators_from_report,
     build_pup_review_pack as build_pup_review_pack_offline,
     inspect_pup_risk as inspect_pup_risk_offline,
@@ -33,7 +34,11 @@ from ..reputation import (
     summarize_cn_source_matrix as summarize_cn_source_matrix_data,
     build_evidence_quality_summary as build_evidence_quality_summary_data,
 )
-from ..validation import validate_real_report_shape as validate_real_report_shape_data
+from ..validation import (
+    build_no_match_report as build_no_match_report_data,
+    build_real_report_trial as build_real_report_trial_data,
+    validate_real_report_shape as validate_real_report_shape_data,
+)
 from .cleanup_plan import READ_ONLY_EXECUTION_LEVEL, build_cleanup_plan_from_report
 
 
@@ -58,6 +63,9 @@ ACTION_NAMES = (
     "build_evidence_quality_summary",
     "validate_real_report_shape",
     "build_cn_win_pup_review_pack",
+    "build_pup_corroboration",
+    "build_real_report_trial",
+    "build_no_match_report",
 )
 REVERSIBLE_EXECUTION_LEVEL = "LEVEL_2_REVERSIBLE"
 
@@ -735,6 +743,38 @@ def build_cn_win_pup_review_pack(
         evidence=({"source": "explicit_local_cn_win_evidence", "fact": f"wrote {result['artifact_count']} offline review artifact(s)"},),
         result=result,
     )
+
+
+def build_pup_corroboration(matches, behavior_indicators, *, request_id=None):
+    result = build_pup_corroboration_data(matches, behavior_indicators)
+    return _response(
+        action="build_pup_corroboration", request_id=request_id,
+        requires_user_confirmation=False,
+        evidence=({"source": "caller_supplied_review_metadata", "fact": "correlated evidence and behavior indicators offline"},),
+        result=result,
+    )
+
+
+def build_no_match_report(report, evidence_packs, matchability_summary, *, request_id=None):
+    result = build_no_match_report_data(report, evidence_packs, matchability_summary)
+    return _response(
+        action="build_no_match_report", request_id=request_id,
+        requires_user_confirmation=False,
+        evidence=({"source": "caller_supplied_report", "fact": "explained no-match coverage and metadata gaps offline"},),
+        result=result,
+    )
+
+
+def build_real_report_trial(report, output_dir, evidence_pack, *, request_id=None, **options):
+    result = build_real_report_trial_data(report, output_dir, evidence_pack, **options)
+    return _response(
+        action="build_real_report_trial", request_id=request_id,
+        requires_user_confirmation=False,
+        evidence=({"source": "explicit_local_report_and_evidence", "fact": "wrote a Level 0 offline report trial"},),
+        result=result,
+    )
+
+
 def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionResponse:
     """Validate and dispatch one external AI action request."""
 
@@ -882,6 +922,30 @@ def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionRespon
         )
         return build_cn_win_pup_review_pack(
             payload["report"], payload["evidence_pack_path"], payload["cn_win_evidence_pack_path"], payload["output_dir"],
+            overwrite=payload.get("overwrite", False), request_id=request.request_id,
+        )
+    if request.action == "build_pup_corroboration":
+        _validated_payload(payload, {"matches", "behavior_indicators"}, set())
+        return build_pup_corroboration(
+            payload["matches"], payload["behavior_indicators"], request_id=request.request_id
+        )
+    if request.action == "build_no_match_report":
+        _validated_payload(payload, {"report", "evidence_packs", "matchability_summary"}, set())
+        return build_no_match_report(
+            payload["report"], payload["evidence_packs"], payload["matchability_summary"],
+            request_id=request.request_id,
+        )
+    if request.action == "build_real_report_trial":
+        _validated_payload(
+            payload, {"report", "output_dir", "evidence_pack"},
+            {"cn_win_evidence_pack", "cn_source_matrix", "include_behavior_indicators", "include_evidence_quality", "overwrite"},
+        )
+        return build_real_report_trial(
+            payload["report"], payload["output_dir"], payload["evidence_pack"],
+            cn_win_evidence_pack=payload.get("cn_win_evidence_pack"),
+            cn_source_matrix=payload.get("cn_source_matrix"),
+            include_behavior_indicators=payload.get("include_behavior_indicators", False),
+            include_evidence_quality=payload.get("include_evidence_quality", False),
             overwrite=payload.get("overwrite", False), request_id=request.request_id,
         )
     raise ValueError("unsupported skill action")

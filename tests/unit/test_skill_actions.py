@@ -55,7 +55,10 @@ class SkillActionsTest(unittest.TestCase):
                 "summarize_cn_source_matrix",
                 "build_evidence_quality_summary",
                 "validate_real_report_shape",
-                "build_cn_win_pup_review_pack",
+            "build_cn_win_pup_review_pack",
+            "build_pup_corroboration",
+            "build_real_report_trial",
+            "build_no_match_report",
             },
             set(ACTION_NAMES),
         )

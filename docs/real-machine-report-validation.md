@@ -1,5 +1,7 @@
 # Real Machine Report Validation
 
+分享前请将真实用户名、完整路径、设备名、邮箱和 token 替换为 `C:\Users\<USER>\...`、`<DEVICE>`、`<EMAIL>`、`<TOKEN>`。工具只读取显式输入，不自动读取额外文件、不联网、不上传。
+
 只把已经由用户显式提供、并在本地去标识化的 report 交给验证器：
 
 ```powershell

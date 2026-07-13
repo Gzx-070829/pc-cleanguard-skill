@@ -2,5 +2,8 @@
   {"candidate_id":"cn-win-ev-001","reviewer_decision":"accept_as_installer_artifact","review_status":"approved_for_explanation","risk":"high_false_positive_if_expanded","guard_reason":"限定 2023-12 安装链路和分析组件。","execution_authorized":false},
   {"candidate_id":"cn-win-ev-002","reviewer_decision":"accept_as_direct_entity_with_scope","review_status":"approved_for_explanation","risk":"same_name_or_version_mismatch","guard_reason":"本机实体身份必须独立复核。","execution_authorized":false},
   {"candidate_id":"cn-win-ev-003","reviewer_decision":"fixture_only","review_status":"needs_human_review","risk":"name_collision","guard_reason":"只用于对抗性测试，不属于真实 evidence。","execution_authorized":false},
-  {"candidate_id":"cn-win-ev-004","reviewer_decision":"defer_for_second_source","review_status":"needs_human_review","risk":"publisher_overreach","guard_reason":"不能从发布者争议外推到具体产品。","execution_authorized":false}
+  {"candidate_id":"cn-win-ev-004","reviewer_decision":"defer_for_second_source","review_status":"needs_human_review","risk":"publisher_overreach","guard_reason":"不能从发布者争议外推到具体产品。","execution_authorized":false},
+  {"candidate_id":"cn-win-ev-005","reviewer_decision":"accept_with_scope_and_second_source_warning","review_status":"approved_for_explanation","risk":"vendor_product_overreach","guard_reason":"只覆盖文章中的时间、实体和组件。","execution_authorized":false},
+  {"candidate_id":"cn-win-ev-006","reviewer_decision":"accept_as_installer_artifact","review_status":"approved_for_explanation","risk":"installer_product_confusion","guard_reason":"安装器组件不能映射为软件本体结论。","execution_authorized":false},
+  {"candidate_id":"cn-win-ev-007","reviewer_decision":"defer_for_stable_sources","review_status":"needs_human_review","risk":"name_collision_and_forum_only","guard_reason":"万能五笔/布丁系、搜狗输入法、2345/工具条等方向在可靠来源不足时不批准。","execution_authorized":false}
 ]

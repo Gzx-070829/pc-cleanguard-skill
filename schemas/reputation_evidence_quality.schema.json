@@ -8,7 +8,11 @@
     "cn_windows_direct_records":{"type":"integer","minimum":0},"installer_artifact_records":{"type":"integer","minimum":0},"related_publisher_records":{"type":"integer","minimum":0},"name_collision_records":{"type":"integer","minimum":0},
     "approved_for_explanation_count":{"type":"integer","minimum":0},"needs_human_review_count":{"type":"integer","minimum":0},"execution_gating_eligible_count":{"const":0},
     "high_false_positive_risk_count":{"type":"integer","minimum":0},"records_missing_time_scope":{"type":"integer","minimum":0},"records_requiring_second_source":{"type":"integer","minimum":0},"needs_more_review_count":{"type":"integer","minimum":0},
-    "evidence_quality_score":{"type":"number","minimum":0,"maximum":100},"record_scores":{"type":"array","items":{"type":"object"}},"execution_authorized":{"const":false}
+    "evidence_quality_score":{"type":"number","minimum":0,"maximum":100},"record_scores":{"type":"array","items":{"type":"object"}},"execution_authorized":{"const":false},
+    "cn_win_approved_count":{"type":"integer","minimum":0},"cn_win_candidate_count":{"type":"integer","minimum":0},"cn_win_review_backlog_count":{"type":"integer","minimum":0},
+    "cn_win_direct_entity_count":{"type":"integer","minimum":0},"cn_win_installer_artifact_count":{"type":"integer","minimum":0},"cn_win_behavior_coverage":{"type":"number","minimum":0,"maximum":1},
+    "records_with_corroboration_hints":{"type":"integer","minimum":0},"records_without_time_scope":{"type":"integer","minimum":0},"records_without_second_source":{"type":"integer","minimum":0},"high_false_positive_risk_records":{"type":"integer","minimum":0},
+    "quality_gate_failures":{"type":"array","items":{"type":"string"}},"quality_gate_passed":{"type":"boolean"},"corroborated_match_count":{"type":"integer","minimum":0}
   },
   "additionalProperties":false
 }
