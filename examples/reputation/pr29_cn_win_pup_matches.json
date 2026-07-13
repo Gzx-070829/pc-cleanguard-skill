@@ -1,0 +1,16 @@
+[
+  {
+    "target_id":"app:dx-fixture",
+    "matched_record_id":"ev-cn-win-2025-dxrepair-public-analysis",
+    "matched_name":"DX 强力修复",
+    "match_basis":"normalized_name",
+    "mapping_type":"direct_entity",
+    "source_url":"https://www.huorong.cn/document/tech/vir_report/1839",
+    "source_title":"流氓联盟欺软怕硬，多链路恶意推广",
+    "source_date":"2025-08-14",
+    "false_positive_risk":"high",
+    "execution_authorized":false,
+    "execution_gating_eligible":false,
+    "why_not_execution_authorization":"公开 evidence 与 synthetic fixture 的名称匹配只用于演示人工复核，不能确认真实机器实体或授权系统动作。"
+  }
+]

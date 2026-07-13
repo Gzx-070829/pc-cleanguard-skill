@@ -121,6 +121,16 @@ def build_behavior_indicators_from_report(report: dict) -> list[dict]:
         location = _first(item, "InstallLocation", "install_location", "path")
         if location and any(part in location.casefold() for part in suspicious_locations):
             result.append(_make(target_id, "installed_app", "suspicious_install_location", location, "report.installed_apps.install_location", 0.3, "A user-writable location is only a context signal and requires identity review.", len(result)))
+        explicit = item.get("behavior_metadata", ())
+        if isinstance(explicit, list):
+            for behavior in explicit:
+                if behavior in BEHAVIOR_TYPES:
+                    result.append(_make(
+                        target_id, "installed_app", behavior, str(behavior),
+                        "report.installed_apps.behavior_metadata", 0.4,
+                        "Caller-supplied behavior metadata is review-only and must be independently verified.",
+                        len(result),
+                    ))
     return result
 
 

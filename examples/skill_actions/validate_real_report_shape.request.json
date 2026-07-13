@@ -1,0 +1,6 @@
+{
+  "schema_version":"0.1",
+  "request_id":"example:pr29:report-shape",
+  "action":"validate_real_report_shape",
+  "payload":{"report":{"installed_apps":[],"startup_items":[],"services":[],"scheduled_tasks":[]}}
+}

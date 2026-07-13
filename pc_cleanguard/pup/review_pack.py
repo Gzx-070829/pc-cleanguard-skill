@@ -8,12 +8,15 @@ from pathlib import Path
 from ..pipeline.input_loader import _validated_explicit_local_path
 from ..reputation import load_evidence_pack, render_human_review_checklist, render_pup_insight_markdown
 from ..reputation import (
+    build_evidence_quality_summary,
+    render_evidence_quality_markdown,
     build_cn_source_guard_reason,
     load_cn_candidate_sources,
     load_cn_source_matrix,
     summarize_cn_candidate_sources,
     summarize_cn_source_matrix,
 )
+from ..validation import validate_real_report_shape
 from .behavior_indicators import render_behavior_indicator_section
 from .feedback_template import build_false_positive_feedback_template
 from .intelligence import build_pup_intelligence_report
@@ -57,9 +60,12 @@ def build_pup_review_pack(
     output_dir,
     *,
     cn_evidence_pack=None,
+    cn_win_evidence_pack=None,
     cn_source_matrix=None,
     cn_candidate_sources=None,
     include_behavior_indicators: bool = False,
+    include_evidence_quality: bool = False,
+    include_real_report_validation_summary: bool = False,
     overwrite: bool = False,
 ) -> dict:
     if not isinstance(overwrite, bool):
@@ -74,6 +80,11 @@ def build_pup_review_pack(
         load_evidence_pack(cn_evidence_pack)
         if isinstance(cn_evidence_pack, (str, Path))
         else (cn_evidence_pack or [])
+    )
+    cn_win_records = (
+        load_evidence_pack(cn_win_evidence_pack)
+        if isinstance(cn_win_evidence_pack, (str, Path))
+        else (cn_win_evidence_pack or [])
     )
     cn_sources = (
         load_cn_source_matrix(cn_source_matrix)
@@ -95,6 +106,7 @@ def build_pup_review_pack(
         records,
         include_indicators=True,
         cn_evidence_pack=cn_records,
+        cn_win_evidence_pack=cn_win_records,
         cn_sources=cn_sources,
         cn_candidates=cn_candidates,
         include_behavior_indicators=include_behavior_indicators,
@@ -106,6 +118,8 @@ def build_pup_review_pack(
             "detection_family_match_count", "publisher_hint_match_count",
             "high_uncertainty_match_count", "human_review_required_count",
             "cn_real_source_count", "cn_match_count", "behavior_indicator_count",
+            "cn_win_real_source_count", "cn_win_direct_entity_count",
+            "cn_win_installer_artifact_count", "cn_win_match_count",
             "adversarial_guard_status",
             "execution_gating_eligible_count",
         )
@@ -113,6 +127,14 @@ def build_pup_review_pack(
     if cn_sources:
         summary.update(source_stats)
         summary.update(candidate_stats)
+    quality = build_evidence_quality_summary([[*records, *cn_records, *cn_win_records]])
+    validation = validate_real_report_shape(report)
+    summary.update({
+        "evidence_quality_score": quality["evidence_quality_score"],
+        "matchability_score": validation["matchability_score"],
+        "high_false_positive_risk_count": quality["high_false_positive_risk_count"],
+        "execution_gating_eligible_count": 0,
+    })
     start_here = "\n".join([
         "# START HERE — PUP Intelligence Review Pack", "",
         "这是本地、离线、带来源追溯的 PUP 线索复核包。它展示命中的 evidence/indicator、匹配原因和误报风险。", "",
@@ -124,6 +146,17 @@ def build_pup_review_pack(
         "若认为误报，填写 false_positive_feedback.md；该文件不会自动上传。", "",
         "下一步只能保留、询问用户、核验厂商/安全工具或收集更多证据。明确禁止把本复核包当作系统修改授权。",
     ])
+    if cn_win_records:
+        start_here += "\n\n" + "\n".join([
+            "## 中文 Windows Evidence 状态", "",
+            f"- real sources: {summary['cn_win_real_source_count']}",
+            f"- direct entity: {summary['cn_win_direct_entity_count']}",
+            f"- installer artifact: {summary['cn_win_installer_artifact_count']}",
+            "- installer artifact 只描述特定安装器、捆绑器、推广链路或组件，不代表软件本体。",
+            "- related publisher 只能形成发布者级提醒；名称碰撞必须降级并显示不确定性。",
+            "- 所有线索仍需核对签名、版本、渠道、用户意图并提交误报反馈；可提供去标识化 report。",
+            "- 中文 Windows evidence 仍不能授权删除、卸载、禁用或注册表修改。",
+        ])
     if cn_sources:
         start_here += "\n\n" + "\n".join([
             "## 中文公开来源矩阵状态", "",
@@ -161,7 +194,7 @@ def build_pup_review_pack(
     _write_json(destination / "behavior_indicators.json", intelligence["behavior_indicators"], overwrite)
     _write_text(destination / "behavior_indicators.md", render_behavior_indicator_section(intelligence["behavior_indicators"]), overwrite)
     _write_text(destination / "human_review_checklist.md", render_human_review_checklist(intelligence["human_review_checklist"]), overwrite)
-    _write_text(destination / "source_trace.md", build_source_trace(intelligence["matches"], [*records, *cn_records], cn_sources), overwrite)
+    _write_text(destination / "source_trace.md", build_source_trace(intelligence["matches"], [*records, *cn_records, *cn_win_records], cn_sources), overwrite)
     _write_text(destination / "false_positive_feedback.md", build_false_positive_feedback_template(intelligence["matches"]), overwrite)
     _write_text(destination / "safety_notice.md", f"# Safety Notice\n\n{intelligence['safety_notice']}", overwrite)
     cn_lines = [
@@ -185,6 +218,40 @@ def build_pup_review_pack(
         "", "即使来源真实、实体直接、关系置信度高，也不能成为系统动作授权。",
     ]
     _write_text(destination / "adversarial_safety_summary.md", "\n".join(guard_lines), overwrite)
+    extra_artifacts = 0
+    if cn_win_records:
+        cn_win_lines = [
+            "# 中文 Windows Evidence 摘要", "",
+            "这些记录是少量人工核验的公开行为 evidence，不是黑名单。installer artifact 不代表软件本体。", "",
+            f"- real_source_count: `{summary['cn_win_real_source_count']}`",
+            f"- direct_entity_count: `{summary['cn_win_direct_entity_count']}`",
+            f"- installer_artifact_count: `{summary['cn_win_installer_artifact_count']}`",
+            f"- local_match_count: `{summary['cn_win_match_count']}`",
+            "- execution_gating_eligible_count: `0`", "",
+        ]
+        for record in cn_win_records:
+            cn_win_lines.extend([
+                f"## {record['software_name']}", "",
+                f"- mapping_type: `{record['mapping_type']}`",
+                f"- source: [{record['source_title']}]({record['source_url']}) / {record['source_date']}",
+                f"- scope: {record.get('version_or_time_scope')}",
+                f"- guard: {record.get('guard_reason')}", "",
+            ])
+        _write_text(destination / "cn_win_evidence_summary.md", "\n".join(cn_win_lines), overwrite)
+        extra_artifacts += 1
+    if include_evidence_quality:
+        _write_text(destination / "evidence_quality.md", render_evidence_quality_markdown(quality), overwrite)
+        extra_artifacts += 1
+    if include_real_report_validation_summary:
+        _write_text(destination / "matchability_summary.md", "\n".join([
+            "# Real Report Matchability Summary", "",
+            "该摘要仅检查显式输入 report 的结构，不联网、不上传、不读取额外文件。", "",
+            f"- matchability_score: `{validation['matchability_score']}`",
+            f"- metadata_entry_count: `{validation['metadata_entry_count']}`",
+            f"- behavior_metadata_entry_count: `{validation['behavior_metadata_entry_count']}`",
+            f"- pii_hint_count: `{validation['pii_hint_count']}`",
+        ]), overwrite)
+        extra_artifacts += 1
     if cn_sources:
         source_lines = [
             "# 中文公开来源矩阵", "",
@@ -224,5 +291,5 @@ def build_pup_review_pack(
         _write_text(destination / "cn_source_matrix.md", "\n".join(source_lines), overwrite)
         _write_text(destination / "cn_candidate_sources.md", "\n".join(candidate_lines), overwrite)
         _write_text(destination / "cn_source_policy_summary.md", "\n".join(policy_lines), overwrite)
-    artifact_count = len(ARTIFACT_NAMES) + (len(CN_SOURCE_ARTIFACT_NAMES) if cn_sources else 0)
+    artifact_count = len(ARTIFACT_NAMES) + (len(CN_SOURCE_ARTIFACT_NAMES) if cn_sources else 0) + extra_artifacts
     return {"output_dir": str(destination), "artifact_count": artifact_count, **summary, "execution_authorized": False, "runtime_network_access": False}

@@ -1,0 +1,6 @@
+{
+  "schema_version":"0.1",
+  "request_id":"example:pr29:evidence-quality",
+  "action":"build_evidence_quality_summary",
+  "payload":{"inputs":["data/reputation/evidence_pack.cn_win.zh-CN.json"]}
+}

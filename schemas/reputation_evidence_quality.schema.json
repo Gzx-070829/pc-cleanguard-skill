@@ -1,0 +1,14 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"PC CleanGuard Reputation Evidence Quality Summary",
+  "type":"object",
+  "required":["total_records","real_records","synthetic_records","cn_windows_direct_records","installer_artifact_records","related_publisher_records","name_collision_records","approved_for_explanation_count","needs_human_review_count","execution_gating_eligible_count","high_false_positive_risk_count","records_missing_time_scope","records_requiring_second_source","evidence_quality_score"],
+  "properties":{
+    "total_records":{"type":"integer","minimum":0},"real_records":{"type":"integer","minimum":0},"synthetic_records":{"type":"integer","minimum":0},
+    "cn_windows_direct_records":{"type":"integer","minimum":0},"installer_artifact_records":{"type":"integer","minimum":0},"related_publisher_records":{"type":"integer","minimum":0},"name_collision_records":{"type":"integer","minimum":0},
+    "approved_for_explanation_count":{"type":"integer","minimum":0},"needs_human_review_count":{"type":"integer","minimum":0},"execution_gating_eligible_count":{"const":0},
+    "high_false_positive_risk_count":{"type":"integer","minimum":0},"records_missing_time_scope":{"type":"integer","minimum":0},"records_requiring_second_source":{"type":"integer","minimum":0},"needs_more_review_count":{"type":"integer","minimum":0},
+    "evidence_quality_score":{"type":"number","minimum":0,"maximum":100},"record_scores":{"type":"array","items":{"type":"object"}},"execution_authorized":{"const":false}
+  },
+  "additionalProperties":false
+}

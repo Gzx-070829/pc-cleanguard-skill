@@ -6,18 +6,29 @@
   "properties": {
     "record_id":{"type":"string","minLength":1}, "software_name":{"type":"string","minLength":1}, "publisher":{"type":"string","minLength":1},
     "aliases":{"type":"array","items":{"type":"string"}},
-    "source_type":{"enum":["public_regulatory_notice","public_vendor_behavior_article","public_news_or_public_report","community_report","synthetic_example"]},
+    "source_type":{"enum":["public_regulatory_notice","public_vendor_behavior_article","public_news_or_public_report","security_vendor_public_article","reputable_media_report","vendor_public_notice","official_or_regulatory_notice","community_report","community_multi_report","synthetic_example"]},
     "source_name":{"type":"string","minLength":1}, "source_url":{"type":"string","minLength":1}, "source_title":{"type":"string","minLength":1}, "source_date":{"type":"string","minLength":1},
     "evidence_summary":{"type":"string","minLength":1}, "behavior_categories":{"type":"array","minItems":1,"items":{"type":"string"}},
     "jurisdiction":{"type":"string"}, "language":{"type":"string"}, "review_status":{"enum":["needs_human_review","approved_for_explanation"]},
     "confidence":{"type":"number","minimum":0,"maximum":1}, "false_positive_risk":{"enum":["low","medium","high"]}, "execution_authorized":{"const":false},
     "license_note":{"type":"string","minLength":1}, "evidence_scope":{"enum":["explanation","review","sorting","risk_hint"]},
-    "mapping_type":{"enum":["direct_entity","related_publisher","name_collision_candidate","analogical_behavior"]},
+    "mapping_type":{"enum":["direct_entity","installer_artifact","related_publisher","name_collision_candidate","analogical_behavior"]},
     "is_synthetic":{"type":"boolean"},
-    "entity_scope":{"enum":["windows_desktop_software","mobile_app","mobile_sdk","browser_extension","publisher_level","unknown"]},
+    "entity_scope":{"enum":["windows_desktop_software","windows_installer","mobile_app","mobile_sdk","browser_extension","publisher_level","unknown"]},
     "relation_confidence":{"enum":["low","medium","high","unknown"]},
-    "analogy_basis":{"type":["string","null"]}
+    "analogy_basis":{"type":["string","null"]},
+    "version_or_time_scope":{"type":"string","minLength":1},
+    "affected_component":{"type":"string","minLength":1},
+    "installer_or_bundle_artifact":{"type":"string","minLength":1},
+    "distribution_channel":{"type":"string","minLength":1},
+    "observed_behaviors":{"type":"array","minItems":1,"items":{"type":"string","minLength":1}},
+    "source_quote_summary":{"type":"string","minLength":1},
+    "reviewer_notes":{"type":"string","minLength":1},
+    "guard_reason":{"type":"string","minLength":1}
   },
-  "allOf":[{"if":{"properties":{"mapping_type":{"const":"analogical_behavior"}}},"then":{"required":["analogy_basis"],"properties":{"analogy_basis":{"type":"string","minLength":1}}}}],
+  "allOf":[
+    {"if":{"properties":{"mapping_type":{"const":"analogical_behavior"}}},"then":{"required":["analogy_basis"],"properties":{"analogy_basis":{"type":"string","minLength":1}}}},
+    {"if":{"properties":{"mapping_type":{"const":"installer_artifact"}}},"then":{"required":["version_or_time_scope","affected_component","installer_or_bundle_artifact","distribution_channel","observed_behaviors","source_quote_summary","reviewer_notes","guard_reason"],"properties":{"entity_scope":{"const":"windows_installer"}}}}
+  ],
   "additionalProperties":false
 }

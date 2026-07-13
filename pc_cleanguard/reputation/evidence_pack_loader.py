@@ -6,15 +6,16 @@ from pathlib import Path
 from .evidence_policy import is_execution_gating_eligible
 from .pup_taxonomy import PUPBehaviorCategory
 
-MAPPING_TYPES={"direct_entity","related_publisher","name_collision_candidate","analogical_behavior"}
-ENTITY_SCOPES={"windows_desktop_software","mobile_app","mobile_sdk","browser_extension","publisher_level","unknown"}
+MAPPING_TYPES={"direct_entity","installer_artifact","related_publisher","name_collision_candidate","analogical_behavior"}
+ENTITY_SCOPES={"windows_desktop_software","windows_installer","mobile_app","mobile_sdk","browser_extension","publisher_level","unknown"}
 RELATION_CONFIDENCE={"low","medium","high","unknown"}
 REVIEW_STATUS={"needs_human_review","approved_for_explanation"}
 REQUIRED={"record_id","software_name","publisher","aliases","source_type","source_name","source_url","source_title","source_date","evidence_summary","behavior_categories","jurisdiction","language","review_status","confidence","false_positive_risk","execution_authorized","license_note","evidence_scope","mapping_type","is_synthetic","entity_scope","relation_confidence"}
+PRECISION_FIELDS={"version_or_time_scope","affected_component","installer_or_bundle_artifact","distribution_channel","observed_behaviors","source_quote_summary","reviewer_notes","guard_reason"}
 
 
 def validate_evidence_record(record: dict) -> dict:
-    if not isinstance(record, dict) or not REQUIRED.issubset(record) or set(record)-REQUIRED-{"analogy_basis"}:
+    if not isinstance(record, dict) or not REQUIRED.issubset(record) or set(record)-REQUIRED-PRECISION_FIELDS-{"analogy_basis"}:
         raise ValueError("evidence record fields do not match PR24 schema")
     if record["execution_authorized"] is not False:
         raise ValueError("evidence cannot authorize execution")
@@ -33,6 +34,29 @@ def validate_evidence_record(record: dict) -> dict:
         raise ValueError("analogical_behavior requires analogy_basis")
     if record["entity_scope"] in {"mobile_app", "mobile_sdk"} and record["mapping_type"] == "direct_entity":
         raise ValueError("mobile evidence cannot be a direct Windows entity")
+    if record["mapping_type"] == "installer_artifact":
+        if record["entity_scope"] != "windows_installer":
+            raise ValueError("installer_artifact requires windows_installer scope")
+        if not all(str(record.get(field, "")).strip() for field in (
+            "installer_or_bundle_artifact", "version_or_time_scope", "affected_component"
+        )):
+            raise ValueError("installer_artifact requires artifact, time scope, and affected component")
+        summary = str(record.get("evidence_summary", ""))
+        if any(term in summary for term in ("永久属于流氓", "软件本体定罪", "必须处理", "必须删除", "建议卸载")):
+            raise ValueError("installer_artifact summary must not convict the whole product")
+    if record["mapping_type"] == "direct_entity" and record["entity_scope"] == "windows_desktop_software":
+        if record["relation_confidence"] not in {"medium", "high"}:
+            raise ValueError("Windows direct evidence requires medium or high relation confidence")
+    if record["mapping_type"] == "related_publisher" and record["entity_scope"] != "publisher_level":
+        raise ValueError("related_publisher evidence must remain publisher-level")
+    if record["mapping_type"] == "name_collision_candidate" and record["false_positive_risk"] != "high":
+        raise ValueError("name collision evidence requires high false-positive risk")
+    pr29_source_types = {"security_vendor_public_article", "reputable_media_report", "vendor_public_notice", "official_or_regulatory_notice"}
+    if record["source_type"] in pr29_source_types and record["language"] == "zh-CN" and record["entity_scope"] in {"windows_desktop_software", "windows_installer"} and record["is_synthetic"] is False:
+        if not PRECISION_FIELDS.issubset(record):
+            raise ValueError("CN Windows real evidence requires PR29 precision fields")
+        if not isinstance(record["observed_behaviors"], list) or not record["observed_behaviors"]:
+            raise ValueError("CN Windows real evidence requires observed behaviors")
     if record["is_synthetic"] is False:
         if record["source_type"] == "synthetic_example":
             raise ValueError("real evidence requires a public source type")

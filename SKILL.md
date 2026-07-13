@@ -7,6 +7,8 @@ description: Conservatively assess Windows software, startup items, services, pr
 
 Current public version: `0.3.1`. `trial run` is the primary five-minute showcase; confirmed trials remain quarantine-only and reversible.
 
+PR29 Level 0 actions are `build_evidence_quality_summary`, `validate_real_report_shape`, and `build_cn_win_pup_review_pack`. They only process caller-supplied local data. 中文 Windows direct evidence 与 installer artifact 只用于解释和人工复核；`execution_gating_eligible_count=0`。
+
 Act as a safety-first system-governance layer. Developer Guard independently protects code and development assets. Reputation KB records remain explanation-only evidence. PR20 makes reversible quarantine the default confirmed cleanup route; permanent deletion is an expert-only double-confirmed path.
 
 ## 中文行为宪法 / Chinese behavioral constitution

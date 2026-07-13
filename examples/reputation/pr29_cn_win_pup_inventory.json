@@ -1,0 +1,11 @@
+{
+  "fixture_notice":"Synthetic-but-realistic PR29 inventory; not a real machine report or software accusation.",
+  "installed_apps":[
+    {"target_id":"app:cn-bundle","display_name":"Example CN Bundle Helper","publisher":"Example Fixture Publisher","behavior_metadata":["bundled_installer_trace"]},
+    {"target_id":"app:cn-search","display_name":"Example CN Search Assistant","publisher":"Example Fixture Publisher","behavior_metadata":["browser_search_change","browser_homepage_change"]},
+    {"target_id":"app:dx-fixture","display_name":"ＤＸ 强力修复","publisher":"Example Unverified Publisher","behavior_metadata":["ad_popup_signal"]}
+  ],
+  "startup_items":[{"target_id":"startup:cn-promo","name":"ExampleCNPromoStartup"}],
+  "services":[{"target_id":"service:cn-promo","display_name":"ExampleCNPromoService"}],
+  "scheduled_tasks":[{"target_id":"task:cn-bundle","task_name":"ExampleCNBundleUpdateTask"}]
+}
