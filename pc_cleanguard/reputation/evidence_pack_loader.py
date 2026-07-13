@@ -31,6 +31,15 @@ def validate_evidence_record(record: dict) -> dict:
         raise ValueError("invalid behavior categories")
     if record["mapping_type"] == "analogical_behavior" and not str(record.get("analogy_basis", "")).strip():
         raise ValueError("analogical_behavior requires analogy_basis")
+    if record["entity_scope"] in {"mobile_app", "mobile_sdk"} and record["mapping_type"] == "direct_entity":
+        raise ValueError("mobile evidence cannot be a direct Windows entity")
+    if record["is_synthetic"] is False:
+        if record["source_type"] == "synthetic_example":
+            raise ValueError("real evidence requires a public source type")
+        if not all(str(record[field]).strip() for field in ("source_url", "source_title", "evidence_summary")):
+            raise ValueError("real evidence requires source URL, title, and summary")
+        if not record["source_url"].startswith(("https://", "http://")):
+            raise ValueError("real evidence requires a public source URL")
     is_miit = "miit" in record["source_name"].casefold() or "工信" in record["source_name"]
     if is_miit:
         if record["entity_scope"] not in {"mobile_app","mobile_sdk"} or record["mapping_type"] not in {"analogical_behavior","related_publisher"} or record["is_synthetic"] is not False or not str(record.get("analogy_basis", "")).strip():

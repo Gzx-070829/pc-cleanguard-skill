@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PC CleanGuard Reputation Evidence Review Queue",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["candidate_id", "review_status", "reviewer_decision", "reviewer_notes", "accepted_record_id", "rejection_reason", "requires_more_evidence", "risk_of_misclassification"],
+    "properties": {
+      "candidate_id": {"type": "string", "minLength": 1},
+      "review_status": {"enum": ["needs_human_review", "approved_for_explanation"]},
+      "reviewer_decision": {"enum": ["accept_as_evidence", "reject", "needs_more_evidence", "downgrade_to_synthetic", "split_record", "merge_duplicate"]},
+      "reviewer_notes": {"type": "string", "minLength": 1},
+      "accepted_record_id": {"type": ["string", "null"]},
+      "rejection_reason": {"type": ["string", "null"]},
+      "requires_more_evidence": {"type": "boolean"},
+      "risk_of_misclassification": {"enum": ["low", "medium", "high"]}
+    },
+    "allOf": [
+      {"if": {"properties": {"reviewer_decision": {"const": "accept_as_evidence"}}}, "then": {"properties": {"accepted_record_id": {"type": "string", "minLength": 1}}}}
+    ],
+    "additionalProperties": false
+  }
+}

@@ -32,6 +32,8 @@ PR22 将 cleanup preview、默认隔离、审计、报告、PUP insight 和恢�
 
 PR24 提供无需配置的 `.pcg-quarantine` 默认隔离路径，并把 Evidence Pack 的实体关系、synthetic 状态、类比依据和执行阻断规则代码化。
 
+PR25 增加真实公开来源的人工 intake/review/build 流程和首批核验 records。构建与 PUP insight 均保持离线，所有真实 evidence 继续被阻断在执行门控之外。
+
 ## v0.4 — Reputation adapters + PUP planner + registry backup planning
 
 在明确来源许可和人工审核下接入真实公开 Reputation adapter；构建 PUP 声明式 planner 与注册表备份规划。声誉证据仍不授权执行，registry backup planning 不提供任意写入口。

@@ -24,6 +24,15 @@ from .insight import build_pup_insight
 from .reporting import render_pup_insight_markdown, write_pup_insight_markdown
 from .evidence_pack_loader import load_evidence_pack, validate_evidence_record, evidence_pack_stats
 from .evidence_policy import EvidenceUse, classify_evidence_use, is_execution_gating_eligible, build_evidence_guard_reason
+from .evidence_intake import (
+    EvidenceCandidate,
+    build_evidence_pack,
+    build_evidence_record_from_candidate,
+    load_evidence_candidates,
+    validate_evidence_candidate,
+    write_evidence_pack,
+)
+from .evidence_review import ReviewQueueItem, load_evidence_review_queue, validate_review_queue_item
 
 __all__ = [
     "EvidenceType",
@@ -50,4 +59,7 @@ __all__ = [
     "write_pup_insight_markdown",
     "load_evidence_pack", "validate_evidence_record", "evidence_pack_stats",
     "EvidenceUse", "classify_evidence_use", "is_execution_gating_eligible", "build_evidence_guard_reason",
+    "EvidenceCandidate", "ReviewQueueItem", "load_evidence_candidates", "validate_evidence_candidate",
+    "load_evidence_review_queue", "validate_review_queue_item", "build_evidence_record_from_candidate",
+    "build_evidence_pack", "write_evidence_pack",
 ]

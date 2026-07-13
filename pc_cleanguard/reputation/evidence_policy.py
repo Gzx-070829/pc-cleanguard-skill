@@ -27,7 +27,7 @@ def is_execution_gating_eligible(record: dict) -> bool:
 
 
 def build_evidence_guard_reason(record: dict) -> list[str]:
-    reasons = ["PR24 evidence is explanation/review/sorting/risk-hint only", "execution gating is always blocked"]
+    reasons = ["evidence is explanation/review/sorting/risk-hint only", "execution gating is always blocked"]
     if record.get("is_synthetic"):
         reasons.append("synthetic evidence cannot identify a real entity")
     if record.get("mapping_type") != "direct_entity":

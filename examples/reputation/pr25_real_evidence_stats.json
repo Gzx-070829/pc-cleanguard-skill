@@ -1,0 +1,12 @@
+{
+  "valid": true,
+  "record_count": 5,
+  "direct_entity_count": 5,
+  "analogical_behavior_count": 0,
+  "related_publisher_count": 0,
+  "name_collision_candidate_count": 0,
+  "synthetic_count": 0,
+  "real_source_count": 5,
+  "execution_gating_eligible_count": 0,
+  "execution_authorized": false
+}

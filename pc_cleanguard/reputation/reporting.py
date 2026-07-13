@@ -21,6 +21,9 @@ def render_pup_insight_markdown(insight: dict) -> str:
         insight.get("safety_notice", SAFETY_NOTICE),
         "",
         f"命中目标：{insight.get('summary', {}).get('matched_targets', 0)}",
+        f"真实来源命中：{insight.get('summary', {}).get('real_source_match_count', 0)}",
+        f"Synthetic 命中：{insight.get('summary', {}).get('synthetic_match_count', 0)}",
+        f"执行门控合格：{insight.get('summary', {}).get('execution_gating_eligible_count', 0)}",
         "",
         "## 可疑行为类别",
         "",
@@ -36,9 +39,9 @@ def render_pup_insight_markdown(insight: dict) -> str:
         "",
         "## Evidence Guard details",
         "",
-        *[f"- `{item.get('mapping_type')}` / `{item.get('entity_scope')}` / synthetic={item.get('is_synthetic')} / relation={item.get('relation_confidence')} / analogy={item.get('analogy_basis')} / source={item.get('source_title')} ({item.get('source_date')}) {item.get('source_url')} / guard={'; '.join(item.get('guard_reason', []))}" for item in matches],
+        *[f"- mapping_type=`{item.get('mapping_type')}` / entity_scope=`{item.get('entity_scope')}` / is_synthetic={item.get('is_synthetic')} / relation_confidence={item.get('relation_confidence')} / analogy_basis={item.get('analogy_basis')} / source_title={item.get('source_title')} / source_date={item.get('source_date')} / source_url={item.get('source_url')} / guard_reason={'; '.join(item.get('guard_reason', []))}" for item in matches],
         "",
-        "Evidence Pack 仅用于解释、排序和人工复核，不是删除、卸载、禁用授权。",
+        "真实来源 evidence 仅用于解释、排序和人工复核，不是删除、卸载、禁用授权。",
         "",
     ])
 

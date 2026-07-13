@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PC CleanGuard Reputation Evidence Candidate List",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "candidate_id", "candidate_source_url", "candidate_source_title",
+      "candidate_source_date", "candidate_source_name", "source_type",
+      "claimed_software_name", "claimed_publisher", "claimed_aliases",
+      "raw_claim_summary", "proposed_behavior_categories",
+      "proposed_mapping_type", "proposed_entity_scope",
+      "proposed_relation_confidence", "proposed_analogy_basis",
+      "proposed_confidence", "proposed_false_positive_risk",
+      "proposed_evidence_scope", "jurisdiction", "language", "license_note",
+      "submitted_by", "review_notes", "created_at"
+    ],
+    "properties": {
+      "candidate_id": {"type": "string", "minLength": 1},
+      "candidate_source_url": {"type": "string", "pattern": "^https?://"},
+      "candidate_source_title": {"type": "string", "minLength": 1},
+      "candidate_source_date": {"type": "string", "minLength": 1},
+      "candidate_source_name": {"type": "string", "minLength": 1},
+      "source_type": {"enum": ["public_regulatory_notice", "public_vendor_behavior_article", "public_news_or_public_report", "community_report"]},
+      "claimed_software_name": {"type": "string", "minLength": 1},
+      "claimed_publisher": {"type": "string", "minLength": 1},
+      "claimed_aliases": {"type": "array", "items": {"type": "string"}},
+      "raw_claim_summary": {"type": "string", "minLength": 1},
+      "proposed_behavior_categories": {"type": "array", "minItems": 1, "items": {"enum": ["forced_installation", "difficult_uninstall", "browser_hijacking", "ad_popup", "malicious_collection", "malicious_uninstall", "malicious_bundling", "other_user_rights_violation"]}},
+      "proposed_mapping_type": {"enum": ["direct_entity", "related_publisher", "name_collision_candidate", "analogical_behavior"]},
+      "proposed_entity_scope": {"enum": ["windows_desktop_software", "mobile_app", "mobile_sdk", "browser_extension", "publisher_level", "unknown"]},
+      "proposed_relation_confidence": {"enum": ["low", "medium", "high", "unknown"]},
+      "proposed_analogy_basis": {"type": ["string", "null"]},
+      "proposed_confidence": {"type": "number", "minimum": 0, "maximum": 1},
+      "proposed_false_positive_risk": {"enum": ["low", "medium", "high"]},
+      "proposed_evidence_scope": {"enum": ["explanation", "review", "sorting", "risk_hint"]},
+      "jurisdiction": {"type": "string", "minLength": 1},
+      "language": {"type": "string", "minLength": 1},
+      "license_note": {"type": "string", "minLength": 1},
+      "submitted_by": {"type": "string", "minLength": 1},
+      "review_notes": {"type": "string", "minLength": 1},
+      "created_at": {"type": "string", "minLength": 1}
+    },
+    "allOf": [
+      {"if": {"properties": {"proposed_mapping_type": {"const": "analogical_behavior"}}}, "then": {"properties": {"proposed_analogy_basis": {"type": "string", "minLength": 1}}}},
+      {"if": {"properties": {"proposed_entity_scope": {"enum": ["mobile_app", "mobile_sdk"]}}}, "then": {"properties": {"proposed_mapping_type": {"not": {"const": "direct_entity"}}}}}
+    ],
+    "additionalProperties": false
+  }
+}
