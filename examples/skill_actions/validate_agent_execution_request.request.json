@@ -1,0 +1,1 @@
+{"schema_version":"0.1","request_id":"v040-agent-guard","action":"validate_agent_execution_request","payload":{"request":{"action":"analyze persistence chain"}}}

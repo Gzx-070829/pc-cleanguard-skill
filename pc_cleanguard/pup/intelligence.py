@@ -32,6 +32,7 @@ def build_safety_notice() -> str:
         "不是删除、卸载、禁用或注册表修改授权。Review Pack 在本地离线生成，"
         "不联网、不上传，也不替代 Microsoft Defender、火绒、360、腾讯电脑管家或其他安全工具。"
         "公开文章只取行为描述，不采集任何厂商专有检测逻辑。"
+        "持久化链路仅用于 L0 复核与治理计划，不会把线索提升为执行许可。"
     )
 
 
@@ -140,6 +141,7 @@ def build_pup_intelligence_report(
         **source_stats,
         **candidate_stats,
         "execution_gating_eligible_count": 0,
+        "persistence_governance_boundary": "L0_REVIEW_ONLY",
         "matches": matches,
         "evidence_indicators": indicators,
         "behavior_indicators": behavior_indicators,

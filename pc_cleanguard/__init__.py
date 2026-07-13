@@ -196,4 +196,4 @@ __all__ = [
     "write_cleanup_execution_report",
 ]
 
-__version__ = "0.3.3"
+__version__ = "0.4.0"

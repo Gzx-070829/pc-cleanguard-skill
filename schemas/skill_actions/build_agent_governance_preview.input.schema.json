@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Build Agent Governance Preview Input","type":"object","required":["report"],"properties":{"report":{"type":"object"},"evidence_matches":{"type":"array"},"behavior_indicators":{"type":"array"}},"additionalProperties":false}

@@ -10,5 +10,8 @@
   {"candidate_id":"cn-win-ev-009","reviewer_decision":"accept_as_installer_artifact","review_status":"approved_for_explanation","risk":"component_product_confusion","guard_reason":"弹窗组件不能映射为输入法全部版本结论。","execution_authorized":false},
   {"candidate_id":"cn-win-ev-010","reviewer_decision":"accept_as_installer_artifact","review_status":"approved_for_explanation","risk":"distribution_target_confusion","guard_reason":"第三方激活工具链不能映射为 2345 浏览器本体结论。","execution_authorized":false},
   {"candidate_id":"cn-win-ev-011","reviewer_decision":"accept_as_installer_artifact","review_status":"approved_for_explanation","risk":"distribution_target_confusion","guard_reason":"仅限 2022-10 激活工具样本链路，需复核本机 artifact。","execution_authorized":false},
-  {"candidate_id":"cn-win-ev-012","reviewer_decision":"accept_with_name_collision_downgrade","review_status":"approved_for_explanation","risk":"high_name_collision","guard_reason":"名称单独命中只能是弱线索；正常 Realtek 组件必须保护。","execution_authorized":false}
+  {"candidate_id":"cn-win-ev-012","reviewer_decision":"accept_with_name_collision_downgrade","review_status":"approved_for_explanation","risk":"high_name_collision","guard_reason":"名称单独命中只能是弱线索；正常 Realtek 组件必须保护。","execution_authorized":false},
+  {"candidate_id":"cn-win-ev-013","reviewer_decision":"defer_for_stable_public_source","review_status":"needs_human_review","risk":"forum_or_name_only","guard_reason":"布丁系/万能五笔方向未取得可核验来源，不新增 approved。","execution_authorized":false},
+  {"candidate_id":"cn-win-ev-014","reviewer_decision":"defer_for_scoped_browser_evidence","review_status":"needs_human_review","risk":"behavior_clue_overreach","guard_reason":"浏览器变化需结合用户意图、签名和实体身份。","execution_authorized":false},
+  {"candidate_id":"cn-win-ev-015","reviewer_decision":"defer_for_component_and_channel_evidence","review_status":"needs_human_review","risk":"component_identity_unclear","guard_reason":"更新器、推广组件和残留必须区分具体组件与软件本体。","execution_authorized":false}
 ]

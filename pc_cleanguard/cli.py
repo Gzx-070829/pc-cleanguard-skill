@@ -36,6 +36,14 @@ from .pipeline import (
     write_pipeline_report,
 )
 from .quarantine import QuarantineManager
+from .persistence import (
+    build_agent_governance_preview,
+    build_persistence_chain_graph,
+    build_persistence_governance_plan,
+    render_persistence_chain_markdown,
+    render_persistence_governance_plan_markdown,
+    validate_agent_execution_request,
+)
 from .pup import (
     build_pup_corroboration,
     build_behavior_indicators_from_report,
@@ -435,6 +443,7 @@ def _parser() -> argparse.ArgumentParser:
     pup_review_pack.add_argument("--include-coverage", action="store_true")
     pup_review_pack.add_argument("--include-user-friendly-report", action="store_true")
     pup_review_pack.add_argument("--include-false-positive-template", action="store_true")
+    pup_review_pack.add_argument("--include-persistence-chain", action="store_true")
     pup_corroborate = pup_commands.add_parser("corroborate")
     pup_corroborate.add_argument("--matches", required=True, type=Path)
     pup_corroborate.add_argument("--behavior-indicators", required=True, type=Path)
@@ -467,6 +476,7 @@ def _parser() -> argparse.ArgumentParser:
     trial_report.add_argument("--include-evidence-quality", action="store_true")
     trial_report.add_argument("--include-coverage", action="store_true")
     trial_report.add_argument("--include-user-friendly-report", action="store_true")
+    trial_report.add_argument("--include-persistence-chain", action="store_true")
     trial_report.add_argument("--overwrite", action="store_true")
     validation = subcommands.add_parser("validation", help="explain local validation results")
     validation_commands = validation.add_subparsers(dest="validation_command", required=True)
@@ -486,9 +496,31 @@ def _parser() -> argparse.ArgumentParser:
     feedback_fp.add_argument("--match", required=True, type=Path)
     feedback_fp.add_argument("--output", required=True, type=Path)
     feedback_fp.add_argument("--overwrite", action="store_true")
+    persistence = subcommands.add_parser("persistence", help="build offline persistence-chain review artifacts")
+    persistence_commands = persistence.add_subparsers(dest="persistence_command", required=True)
+    persistence_graph = persistence_commands.add_parser("graph")
+    persistence_graph.add_argument("--input", required=True, type=Path)
+    persistence_graph.add_argument("--output", required=True, type=Path)
+    persistence_graph.add_argument("--json-output", required=True, type=Path)
+    persistence_graph.add_argument("--overwrite", action="store_true")
+    persistence_plan = persistence_commands.add_parser("plan")
+    persistence_plan.add_argument("--graph", required=True, type=Path)
+    persistence_plan.add_argument("--output", required=True, type=Path)
+    persistence_plan.add_argument("--json-output", required=True, type=Path)
+    persistence_plan.add_argument("--overwrite", action="store_true")
+    agent = subcommands.add_parser("agent", help="build and validate L0 Agent governance requests")
+    agent_commands = agent.add_subparsers(dest="agent_command", required=True)
+    agent_preview = agent_commands.add_parser("governance-preview")
+    agent_preview.add_argument("--input", required=True, type=Path)
+    agent_preview.add_argument("--output", required=True, type=Path)
+    agent_preview.add_argument("--overwrite", action="store_true")
+    agent_validate = agent_commands.add_parser("validate-request")
+    agent_validate.add_argument("--input", required=True, type=Path)
+    agent_validate.add_argument("--output", required=True, type=Path)
+    agent_validate.add_argument("--overwrite", action="store_true")
     doctor = subcommands.add_parser("doctor", help="run read-only project checks")
     doctor_commands = doctor.add_subparsers(dest="doctor_command", required=True)
-    doctor_commands.add_parser("release-check", help="verify local v0.3.3 release assets")
+    doctor_commands.add_parser("release-check", help="verify local v0.4.0 release assets")
     return parser
 
 
@@ -814,6 +846,7 @@ def _run_pup(arguments: argparse.Namespace) -> dict:
             include_coverage=arguments.include_coverage,
             include_user_friendly_report=arguments.include_user_friendly_report,
             include_false_positive_template=arguments.include_false_positive_template,
+            include_persistence_chain=arguments.include_persistence_chain,
             overwrite=arguments.overwrite,
         )
     source = arguments.evidence_pack or arguments.seed
@@ -829,6 +862,32 @@ def _run_pup(arguments: argparse.Namespace) -> dict:
             render_human_review_checklist(build_human_review_checklist(result["matches"])),
         )
     return {"output": str(arguments.output), "match_count": result["match_count"], "execution_authorized": False}
+
+
+def _write_markdown(path: Path, value: str, overwrite: bool) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w" if overwrite else "x", encoding="utf-8", newline="\n") as stream:
+        stream.write(value.rstrip() + "\n")
+
+
+def _run_persistence(arguments: argparse.Namespace) -> dict:
+    if arguments.persistence_command == "graph":
+        graph = build_persistence_chain_graph(load_scan_json_file(arguments.input))
+        _write_markdown(arguments.output, render_persistence_chain_markdown(graph), arguments.overwrite)
+        write_report(arguments.json_output, graph, explicit_overwrite=arguments.overwrite)
+        return {"output": str(arguments.output), "json_output": str(arguments.json_output), **graph["risk_summary"], "execution_authorized": False}
+    graph = load_scan_json_file(arguments.graph)
+    plan = build_persistence_governance_plan(graph)
+    _write_markdown(arguments.output, render_persistence_governance_plan_markdown(plan), arguments.overwrite)
+    write_report(arguments.json_output, plan, explicit_overwrite=arguments.overwrite)
+    return {"output": str(arguments.output), "json_output": str(arguments.json_output), "blocked_auto_execution_count": plan["blocked_auto_execution_count"], "execution_authorized": False}
+
+
+def _run_agent(arguments: argparse.Namespace) -> dict:
+    payload = load_scan_json_file(arguments.input)
+    result = build_agent_governance_preview(payload) if arguments.agent_command == "governance-preview" else validate_agent_execution_request(payload)
+    write_report(arguments.output, result, explicit_overwrite=arguments.overwrite)
+    return {"output": str(arguments.output), **result}
 
 
 def _run_cleanup_report(arguments: argparse.Namespace) -> dict:
@@ -897,6 +956,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             summary = _run_reputation(arguments)
         elif arguments.command == "pup":
             summary = _run_pup(arguments)
+        elif arguments.command == "persistence":
+            summary = _run_persistence(arguments)
+        elif arguments.command == "agent":
+            summary = _run_agent(arguments)
         elif arguments.command == "validate" and arguments.validate_command == "report":
             summary = write_real_report_validation_pack(
                 load_scan_json_file(arguments.input), arguments.output, overwrite=arguments.overwrite
@@ -917,6 +980,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 include_evidence_quality=arguments.include_evidence_quality,
                 include_coverage=arguments.include_coverage,
                 include_user_friendly_report=arguments.include_user_friendly_report,
+                include_persistence_chain=arguments.include_persistence_chain,
                 overwrite=arguments.overwrite,
             )
         elif arguments.command == "validation" and arguments.validation_command == "no-match":

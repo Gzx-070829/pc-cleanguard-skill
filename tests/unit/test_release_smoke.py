@@ -13,14 +13,14 @@ ROOT = Path(__file__).resolve().parents[2]
 
 class ReleaseSmokeTest(unittest.TestCase):
     def test_version_is_v032(self) -> None:
-        self.assertEqual("0.3.3", pc_cleanguard.__version__)
+        self.assertEqual("0.4.0", pc_cleanguard.__version__)
 
     def test_cli_version(self) -> None:
         output = io.StringIO()
         with redirect_stdout(output), self.assertRaises(SystemExit) as context:
             main(["--version"])
         self.assertEqual(0, context.exception.code)
-        self.assertEqual("PC CleanGuard Skill 0.3.3", output.getvalue().strip())
+        self.assertEqual("PC CleanGuard Skill 0.4.0", output.getvalue().strip())
 
     def test_release_smoke_assets_and_commands(self) -> None:
         result = run_release_smoke_check()

@@ -1,5 +1,9 @@
 # Roadmap
 
+v0.4.0：正式引入持久化链路图谱、L0-L5 治理 proposal、Agent fail-closed 接口、Review Pack 链路资产和 synthetic 真实感样本。当前不执行断链；优先只读检测、用户确认、可逆设计、恢复与审计。
+
+中文 Windows approved evidence 保持 10 条：本 Sprint 未取得额外可稳定核验的公开来源，因此宁少勿脏；未充分核验方向继续留在 candidate/backlog。
+
 v0.3.3：中文 evidence 扩至 10 条，增加三类报告 fixture、Coverage Dashboard、用户报告、误报反馈、Agent examples 与产品化 Review Pack。
 
 v0.4：优先更完整只读检测、可逆操作、用户确认和恢复；不进入自动杀软路线，PUP evidence 不能单独触发执行。详见 [v0.4 roadmap](docs/v0.4-roadmap.md)。

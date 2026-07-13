@@ -16,6 +16,13 @@ from ..ai import (
 from ..external_tools import ExternalToolCatalog, ToolRecommender, ToolTrustPolicy
 from ..pipeline import run_readonly_scan_pipeline
 from ..pipeline.input_loader import _validated_explicit_local_path
+from ..persistence import (
+    build_agent_governance_preview as build_agent_governance_preview_data,
+    build_persistence_chain_graph as build_persistence_chain_graph_data,
+    build_persistence_governance_plan as build_persistence_governance_plan_data,
+    render_persistence_chain_markdown,
+    validate_agent_execution_request as validate_agent_execution_request_data,
+)
 from ..quarantine import QuarantineManager
 from ..pup import (
     build_pup_corroboration as build_pup_corroboration_data,
@@ -72,6 +79,11 @@ ACTION_NAMES = (
     "build_evidence_coverage_summary",
     "build_user_friendly_pup_report",
     "build_false_positive_feedback_template",
+    "build_persistence_chain_graph",
+    "build_persistence_governance_plan",
+    "explain_persistence_chain",
+    "build_agent_governance_preview",
+    "validate_agent_execution_request",
 )
 REVERSIBLE_EXECUTION_LEVEL = "LEVEL_2_REVERSIBLE"
 
@@ -803,6 +815,36 @@ def build_false_positive_feedback_template(match, report_metadata, *, request_id
         evidence=({"source":"caller_supplied_redacted_metadata","fact":"built a local review-queue feedback template"},), result=result)
 
 
+def build_persistence_chain_graph(report, evidence_matches=None, behavior_indicators=None, *, request_id=None):
+    result = build_persistence_chain_graph_data(report, evidence_matches, behavior_indicators)
+    return _response(action="build_persistence_chain_graph", request_id=request_id, requires_user_confirmation=False,
+        evidence=({"source":"caller_supplied_report","fact":"built an offline L0 persistence graph without reading the system"},), result=result)
+
+
+def build_persistence_governance_plan(graph, *, request_id=None):
+    result = build_persistence_governance_plan_data(graph)
+    return _response(action="build_persistence_governance_plan", request_id=request_id, requires_user_confirmation=False,
+        evidence=({"source":"caller_supplied_graph","fact":"built an L0 proposal-only governance view"},), result=result)
+
+
+def explain_persistence_chain(graph, *, request_id=None):
+    result = {"markdown": render_persistence_chain_markdown(graph), "risk_summary": graph.get("risk_summary", {}), "execution_gating_eligible_count": 0, "execution_authorized": False}
+    return _response(action="explain_persistence_chain", request_id=request_id, requires_user_confirmation=False,
+        evidence=({"source":"caller_supplied_graph","fact":"rendered a non-authorizing explanation"},), result=result)
+
+
+def build_agent_governance_preview(report, evidence_matches=None, behavior_indicators=None, *, request_id=None):
+    result = build_agent_governance_preview_data(report, evidence_matches, behavior_indicators)
+    return _response(action="build_agent_governance_preview", request_id=request_id, requires_user_confirmation=False,
+        evidence=({"source":"caller_supplied_report","fact":"built an L0 Agent governance preview"},), result=result)
+
+
+def validate_agent_execution_request(request, *, request_id=None):
+    result = validate_agent_execution_request_data(request)
+    return _response(action="validate_agent_execution_request", request_id=request_id, requires_user_confirmation=False,
+        evidence=({"source":"caller_supplied_agent_request","fact":"applied a fail-closed mutation guard"},), result=result)
+
+
 def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionResponse:
     """Validate and dispatch one external AI action request."""
 
@@ -966,7 +1008,7 @@ def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionRespon
     if request.action == "build_real_report_trial":
         _validated_payload(
             payload, {"report", "output_dir", "evidence_pack"},
-            {"cn_win_evidence_pack", "cn_source_matrix", "include_behavior_indicators", "include_evidence_quality", "include_coverage", "include_user_friendly_report", "overwrite"},
+            {"cn_win_evidence_pack", "cn_source_matrix", "include_behavior_indicators", "include_evidence_quality", "include_coverage", "include_user_friendly_report", "include_persistence_chain", "overwrite"},
         )
         return build_real_report_trial(
             payload["report"], payload["output_dir"], payload["evidence_pack"],
@@ -976,6 +1018,7 @@ def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionRespon
             include_evidence_quality=payload.get("include_evidence_quality", False),
             include_coverage=payload.get("include_coverage", False),
             include_user_friendly_report=payload.get("include_user_friendly_report", False),
+            include_persistence_chain=payload.get("include_persistence_chain", False),
             overwrite=payload.get("overwrite", False), request_id=request.request_id,
         )
     if request.action == "build_evidence_coverage_summary":
@@ -987,4 +1030,19 @@ def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionRespon
     if request.action == "build_false_positive_feedback_template":
         _validated_payload(payload, {"match", "report_metadata"}, set())
         return build_false_positive_feedback_template(payload["match"], payload["report_metadata"], request_id=request.request_id)
+    if request.action == "build_persistence_chain_graph":
+        _validated_payload(payload, {"report"}, {"evidence_matches", "behavior_indicators"})
+        return build_persistence_chain_graph(payload["report"], payload.get("evidence_matches"), payload.get("behavior_indicators"), request_id=request.request_id)
+    if request.action == "build_persistence_governance_plan":
+        _validated_payload(payload, {"graph"}, set())
+        return build_persistence_governance_plan(payload["graph"], request_id=request.request_id)
+    if request.action == "explain_persistence_chain":
+        _validated_payload(payload, {"graph"}, set())
+        return explain_persistence_chain(payload["graph"], request_id=request.request_id)
+    if request.action == "build_agent_governance_preview":
+        _validated_payload(payload, {"report"}, {"evidence_matches", "behavior_indicators"})
+        return build_agent_governance_preview(payload["report"], payload.get("evidence_matches"), payload.get("behavior_indicators"), request_id=request.request_id)
+    if request.action == "validate_agent_execution_request":
+        _validated_payload(payload, {"request"}, set())
+        return validate_agent_execution_request(payload["request"], request_id=request.request_id)
     raise ValueError("unsupported skill action")

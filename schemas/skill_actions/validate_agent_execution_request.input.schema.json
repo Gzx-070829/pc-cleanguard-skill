@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Validate Agent Execution Request Input","type":"object","required":["request"],"properties":{"request":{"type":"object"}},"additionalProperties":false}

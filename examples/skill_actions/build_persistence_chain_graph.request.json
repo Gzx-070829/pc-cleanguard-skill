@@ -1,0 +1,1 @@
+{"schema_version":"0.1","request_id":"v040-graph","action":"build_persistence_chain_graph","payload":{"report":{"report_id":"example","installed_apps":[{"target_id":"app:a","display_name":"Example Alpha"}]}}}

@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Build Persistence Chain Graph Output","allOf":[{"$ref":"../persistence_chain_graph.schema.json"}]}

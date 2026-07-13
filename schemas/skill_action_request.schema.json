@@ -35,7 +35,12 @@
         "build_no_match_report",
         "build_evidence_coverage_summary",
         "build_user_friendly_pup_report",
-        "build_false_positive_feedback_template"
+        "build_false_positive_feedback_template",
+        "build_persistence_chain_graph",
+        "build_persistence_governance_plan",
+        "explain_persistence_chain",
+        "build_agent_governance_preview",
+        "validate_agent_execution_request"
       ]
     },
     "payload": {"type": "object"}
@@ -315,7 +320,7 @@
           "report": {"type": "object"}, "output_dir": {"type": "string", "minLength": 1}, "evidence_pack": {"type": "string", "minLength": 1},
           "cn_win_evidence_pack": {"type": "string", "minLength": 1}, "cn_source_matrix": {"type": "string", "minLength": 1},
           "include_behavior_indicators": {"type": "boolean"}, "include_evidence_quality": {"type": "boolean"},
-          "include_coverage": {"type": "boolean"}, "include_user_friendly_report": {"type": "boolean"}, "overwrite": {"type": "boolean"}
+          "include_coverage": {"type": "boolean"}, "include_user_friendly_report": {"type": "boolean"}, "include_persistence_chain": {"type": "boolean"}, "overwrite": {"type": "boolean"}
         },
         "additionalProperties": false
       }}}
@@ -344,6 +349,18 @@
         "type": "object", "required": ["match", "report_metadata"],
         "properties": {"match": {"type": "object"}, "report_metadata": {"type": "object"}}, "additionalProperties": false
       }}}
+    },
+    {
+      "if": {"properties": {"action": {"enum": ["build_persistence_chain_graph", "build_agent_governance_preview"]}}},
+      "then": {"properties": {"payload": {"type":"object","required":["report"],"properties":{"report":{"type":"object"},"evidence_matches":{"type":"array"},"behavior_indicators":{"type":"array"}},"additionalProperties":false}}}
+    },
+    {
+      "if": {"properties": {"action": {"enum": ["build_persistence_governance_plan", "explain_persistence_chain"]}}},
+      "then": {"properties": {"payload": {"type":"object","required":["graph"],"properties":{"graph":{"type":"object"}},"additionalProperties":false}}}
+    },
+    {
+      "if": {"properties": {"action": {"const": "validate_agent_execution_request"}}},
+      "then": {"properties": {"payload": {"type":"object","required":["request"],"properties":{"request":{"type":"object"}},"additionalProperties":false}}}
     }
   ],
   "additionalProperties": false
