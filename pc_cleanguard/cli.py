@@ -28,7 +28,12 @@ from .cleanup import (
     write_cleanup_execution_report,
     write_cleanup_report_markdown,
 )
-from .demo import init_cleanup_demo, quickstart_cleanup_demo, run_cleanup_demo
+from .demo import (
+    init_cleanup_demo,
+    quickstart_cleanup_demo,
+    run_cleanup_demo,
+    run_demo_acceptance,
+)
 from .pipeline import (
     load_scan_json_file,
     run_readonly_scan_pipeline,
@@ -89,6 +94,14 @@ from .validation import (
 )
 from .skill import invoke_skill_action, write_report
 from .experience import run_release_smoke_check, run_user_trial
+from .evaluation import run_windows_local_evaluation
+from .windows import (
+    build_windows_canonical_report,
+    load_collector_directory,
+    redact_windows_report,
+    validate_windows_canonical_report,
+    windows_report_stats,
+)
 from . import __version__
 
 
@@ -103,6 +116,48 @@ def _parser() -> argparse.ArgumentParser:
         version=f"PC CleanGuard Skill {__version__}",
     )
     subcommands = parser.add_subparsers(dest="command", required=True)
+    windows = subcommands.add_parser(
+        "windows", help="ingest explicit read-only Windows collector artifacts"
+    )
+    windows_commands = windows.add_subparsers(dest="windows_command", required=True)
+    windows_report = windows_commands.add_parser(
+        "report", help="build, validate, or summarize a canonical Windows report"
+    )
+    windows_report_commands = windows_report.add_subparsers(
+        dest="windows_report_command", required=True
+    )
+    windows_build = windows_report_commands.add_parser("build")
+    windows_build.add_argument("--collector-dir", required=True, type=Path)
+    windows_build.add_argument("--output", required=True, type=Path)
+    windows_build.add_argument("--raw-output", type=Path)
+    windows_build.add_argument(
+        "--i-understand-local-sensitive-data", action="store_true"
+    )
+    windows_build.add_argument("--validation-output", type=Path)
+    windows_build.add_argument("--overwrite", action="store_true")
+    windows_validate = windows_report_commands.add_parser("validate")
+    windows_validate.add_argument("--input", required=True, type=Path)
+    windows_validate.add_argument("--output", required=True, type=Path)
+    windows_validate.add_argument("--overwrite", action="store_true")
+    windows_stats = windows_report_commands.add_parser("stats")
+    windows_stats.add_argument("--input", required=True, type=Path)
+    windows_stats.add_argument("--output", required=True, type=Path)
+    windows_stats.add_argument("--overwrite", action="store_true")
+    evaluation = subcommands.add_parser(
+        "evaluation", help="evaluate an explicit redacted report entirely offline"
+    )
+    evaluation_commands = evaluation.add_subparsers(
+        dest="evaluation_command", required=True
+    )
+    evaluation_windows = evaluation_commands.add_parser("windows")
+    evaluation_windows.add_argument("--report", required=True, type=Path)
+    evaluation_windows.add_argument("--output", required=True, type=Path)
+    evaluation_windows.add_argument("--evidence-pack", required=True, type=Path)
+    evaluation_windows.add_argument("--cn-win-evidence-pack", type=Path)
+    evaluation_windows.add_argument("--include-persistence-chain", action="store_true")
+    evaluation_windows.add_argument("--include-pup-review", action="store_true")
+    evaluation_windows.add_argument("--include-evidence-quality", action="store_true")
+    evaluation_windows.add_argument("--include-user-friendly-report", action="store_true")
     scan = subcommands.add_parser(
         "scan",
         help="process one explicit JSON input without executing collectors",
@@ -343,6 +398,12 @@ def _parser() -> argparse.ArgumentParser:
         type=Path,
         help="new explicit directory for dry-run artifacts",
     )
+    demo_acceptance = demo_commands.add_parser(
+        "acceptance",
+        help="verify quarantine and restore in a dedicated synthetic temp workspace",
+    )
+    demo_acceptance.add_argument("--output", required=True, type=Path)
+    demo_acceptance.add_argument("--confirm-synthetic", action="store_true")
     quarantine = subcommands.add_parser(
         "quarantine",
         help="add, list, or restore explicit regular-file quarantine items",
@@ -546,6 +607,90 @@ def _run_scan(arguments: argparse.Namespace) -> dict:
         "audit": str(arguments.audit),
         "execution_performed": False,
     }
+
+
+def _preflight_windows_outputs(paths: list[Path], *, overwrite: bool) -> None:
+    resolved = [path.resolve(strict=False) for path in paths]
+    if len({str(path).casefold() for path in resolved}) != len(resolved):
+        raise ValueError("Windows report output paths must be different")
+    if not overwrite:
+        for path in paths:
+            if path.exists():
+                raise FileExistsError(f"output already exists: {path}")
+
+
+def _run_windows_report(arguments: argparse.Namespace) -> dict:
+    if arguments.windows_report_command == "build":
+        if arguments.raw_output is not None and not arguments.i_understand_local_sensitive_data:
+            raise ValueError(
+                "raw output may contain sensitive local metadata; pass --i-understand-local-sensitive-data"
+            )
+        destinations = [arguments.output]
+        if arguments.raw_output is not None:
+            destinations.append(arguments.raw_output)
+        if arguments.validation_output is not None:
+            destinations.append(arguments.validation_output)
+        _preflight_windows_outputs(destinations, overwrite=arguments.overwrite)
+        loaded = load_collector_directory(arguments.collector_dir)
+        raw_report = build_windows_canonical_report(loaded)
+        redacted_report, _ = redact_windows_report(raw_report)
+        errors = validate_windows_canonical_report(redacted_report)
+        if errors:
+            raise ValueError("canonical report validation failed: " + "; ".join(errors))
+        stats = windows_report_stats(redacted_report)
+        write_report(arguments.output, redacted_report, explicit_overwrite=arguments.overwrite)
+        if arguments.raw_output is not None:
+            write_report(arguments.raw_output, raw_report, explicit_overwrite=arguments.overwrite)
+        if arguments.validation_output is not None:
+            write_report(
+                arguments.validation_output,
+                {"valid": True, "errors": [], "stats": stats},
+                explicit_overwrite=arguments.overwrite,
+            )
+        return {
+            "output": str(arguments.output),
+            "raw_output_written": arguments.raw_output is not None,
+            "validation_output": str(arguments.validation_output) if arguments.validation_output else None,
+            **{key: stats[key] for key in (
+                "software_count", "startup_count", "service_count",
+                "scheduled_task_count", "redacted_value_count", "matchability_score",
+                "persistence_input_ready",
+            )},
+            "system_modification_performed": False,
+            "runtime_network_access": False,
+        }
+    report = load_scan_json_file(arguments.input)
+    _preflight_windows_outputs([arguments.output], overwrite=arguments.overwrite)
+    if arguments.windows_report_command == "validate":
+        errors = validate_windows_canonical_report(report)
+        payload = {
+            "valid": not errors,
+            "errors": errors,
+            "stats": windows_report_stats(report),
+            "execution_authorized": False,
+        }
+        write_report(arguments.output, payload, explicit_overwrite=arguments.overwrite)
+        return {"output": str(arguments.output), "valid": not errors, "error_count": len(errors)}
+    if arguments.windows_report_command == "stats":
+        payload = windows_report_stats(report)
+        write_report(arguments.output, payload, explicit_overwrite=arguments.overwrite)
+        return {"output": str(arguments.output), **payload}
+    raise ValueError("unsupported Windows report command")
+
+
+def _run_windows_evaluation(arguments: argparse.Namespace) -> dict:
+    report = load_scan_json_file(arguments.report)
+    result = run_windows_local_evaluation(
+        report,
+        arguments.output,
+        arguments.evidence_pack,
+        cn_win_evidence_pack=arguments.cn_win_evidence_pack,
+        include_persistence_chain=arguments.include_persistence_chain,
+        include_pup_review=arguments.include_pup_review,
+        include_evidence_quality=arguments.include_evidence_quality,
+        include_user_friendly_report=arguments.include_user_friendly_report,
+    )
+    return result.to_dict()
 
 
 def _run_explain(arguments: argparse.Namespace) -> dict:
@@ -926,7 +1071,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = _parser()
     arguments = parser.parse_args(argv)
     try:
-        if arguments.command == "scan":
+        if arguments.command == "windows" and arguments.windows_command == "report":
+            summary = _run_windows_report(arguments)
+        elif arguments.command == "evaluation" and arguments.evaluation_command == "windows":
+            summary = _run_windows_evaluation(arguments)
+        elif arguments.command == "scan":
             summary = _run_scan(arguments)
         elif arguments.command == "explain":
             summary = _run_explain(arguments)
@@ -950,6 +1099,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
         elif arguments.command == "demo" and arguments.demo_command == "quickstart":
             summary = quickstart_cleanup_demo(arguments.root, arguments.output)
+        elif arguments.command == "demo" and arguments.demo_command == "acceptance":
+            summary = run_demo_acceptance(
+                arguments.output,
+                confirm_synthetic=arguments.confirm_synthetic,
+            )
         elif arguments.command == "quarantine":
             summary = _run_quarantine(arguments)
         elif arguments.command == "reputation":

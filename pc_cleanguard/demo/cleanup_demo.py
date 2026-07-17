@@ -65,7 +65,10 @@ def _explicit_demo_root(path: str | Path) -> Path:
     if resolved == Path(resolved.anchor) or resolved == Path.home().resolve():
         raise ValueError("demo root is too broad")
     if {part.casefold() for part in resolved.parts}.intersection(_PROTECTED_PARTS):
-        raise ValueError("demo root is inside a protected directory")
+        raise ValueError(
+            "demo root is inside a protected directory; use demo acceptance "
+            "to keep synthetic files in the dedicated system temp workspace"
+        )
     current = resolved
     while current != Path(current.anchor):
         if current.exists() and current.is_symlink():

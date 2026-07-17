@@ -28,6 +28,11 @@ from .startup_items import (
     startup_item_to_governance_target,
     startup_item_to_scan_target_record,
 )
+from .collector_ingest import load_collector_directory
+from .collector_manifest import COLLECTOR_NAMES, validate_collector_manifest
+from .report_builder import build_windows_canonical_report
+from .report_redaction import redact_windows_report
+from .report_validation import validate_windows_canonical_report, windows_report_stats
 
 __all__ = [
     "InstalledApp",
@@ -50,4 +55,11 @@ __all__ = [
     "normalize_startup_items",
     "startup_item_to_governance_target",
     "startup_item_to_scan_target_record",
+    "COLLECTOR_NAMES",
+    "load_collector_directory",
+    "validate_collector_manifest",
+    "build_windows_canonical_report",
+    "redact_windows_report",
+    "validate_windows_canonical_report",
+    "windows_report_stats",
 ]

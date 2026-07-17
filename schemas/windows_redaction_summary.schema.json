@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/windows_redaction_summary.schema.json",
+  "title": "PC CleanGuard Windows Redaction Summary",
+  "type": "object",
+  "required": ["redacted_value_count", "redaction_counts", "reversible_mapping_created"],
+  "properties": {
+    "redacted_value_count": {"type": "integer", "minimum": 0},
+    "redacted_field_count": {"type": "integer", "minimum": 0},
+    "redaction_counts": {
+      "type": "object",
+      "additionalProperties": {"type": "integer", "minimum": 0}
+    },
+    "reversible_mapping_created": {"const": false},
+    "original_values_recorded": {"const": false}
+  },
+  "additionalProperties": false
+}

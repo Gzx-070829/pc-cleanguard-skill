@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/windows_canonical_report.schema.json",
+  "title": "PC CleanGuard Windows Canonical Report",
+  "type": "object",
+  "required": [
+    "schema_version", "scan_id", "timestamp", "platform", "privacy_mode",
+    "collector_status", "installed_apps", "startup_items", "services",
+    "scheduled_tasks", "collection_errors", "unsupported_collectors",
+    "redaction_summary", "source_kind", "execution_authorized"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.4.1"},
+    "report_id": {"type": "string", "minLength": 1},
+    "scan_id": {"type": "string", "minLength": 1},
+    "timestamp": {"type": "string", "minLength": 1},
+    "platform": {"const": "Windows"},
+    "privacy_mode": {"const": "offline"},
+    "source_kind": {"enum": ["windows_collector_raw", "windows_collector_redacted"]},
+    "collection_state": {"enum": ["complete", "partial", "failed"]},
+    "collector_status": {"type": "object"},
+    "installed_apps": {"type": "array", "items": {"$ref": "#/$defs/target"}},
+    "startup_items": {"type": "array", "items": {"$ref": "#/$defs/target"}},
+    "services": {"type": "array", "items": {"$ref": "#/$defs/target"}},
+    "scheduled_tasks": {"type": "array", "items": {"$ref": "#/$defs/target"}},
+    "processes": {"type": "array"},
+    "collection_errors": {"type": "array", "items": {"type": "object"}},
+    "unsupported_collectors": {"type": "array", "items": {"type": "string"}},
+    "unsupported_fields": {"type": "array", "items": {"type": "object"}},
+    "unsupported_records": {"type": "array", "items": {"type": "object"}},
+    "redaction_summary": {"$ref": "windows_redaction_summary.schema.json"},
+    "execution_gating_eligible_count": {"const": 0},
+    "execution_authorized": {"const": false},
+    "runtime_network_access": {"const": false},
+    "system_modification_performed": {"const": false}
+  },
+  "$defs": {
+    "target": {
+      "type": "object",
+      "required": ["target_id", "name", "source"],
+      "properties": {
+        "target_id": {"type": "string", "minLength": 1},
+        "name": {"type": "string", "minLength": 1},
+        "source": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
