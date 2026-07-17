@@ -1,5 +1,7 @@
 # Roadmap
 
+v0.4.1：补齐 Windows PowerShell 5.1 / PowerShell 7 只读采集编排、collector manifest、canonical redacted report、正式本地 evaluation、link diagnostics，以及不放宽 Desktop 保护的 synthetic 隔离恢复验收。Python 不自动启动 PowerShell；PUP 与持久化结果仍不授权执行。
+
 v0.4.0：正式引入持久化链路图谱、L0-L5 治理 proposal、Agent fail-closed 接口、Review Pack 链路资产和 synthetic 真实感样本。当前不执行断链；优先只读检测、用户确认、可逆设计、恢复与审计。
 
 中文 Windows approved evidence 保持 10 条：本 Sprint 未取得额外可稳定核验的公开来源，因此宁少勿脏；未充分核验方向继续留在 candidate/backlog。

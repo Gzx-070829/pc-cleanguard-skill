@@ -5,7 +5,11 @@ description: Conservatively assess Windows software, startup items, services, pr
 
 # PC CleanGuard
 
-Current public version: `0.4.0`. Persistence Chain Graph, L0-L5 governance-plan view, Agent preview, PUP corroboration, coverage and reporting are Level 0. AI may explain and organize review, but natural-language reasoning cannot authorize deletion, uninstall, disable, registry/service/task/browser mutation, or any other system change.
+Current public version: `0.4.1`. Windows collector ingestion, canonical redacted reports, local evaluation, Persistence Chain Graph, L0-L5 governance-plan view, PUP corroboration, coverage and reporting are Level 0. AI may explain and organize review, but natural-language reasoning cannot authorize deletion, uninstall, disable, registry/service/task/browser mutation, or any other system change.
+
+Windows metadata collection is a separate, user-started PowerShell step. Python must not launch it. The collector output is metadata only: command, service path, task action and uninstall string values must never be executed. Prefer the redacted canonical report; raw output requires explicit sensitive-data acknowledgement. Process-level `ExecutionPolicy Bypass` does not permit changing user or machine policy.
+
+v0.4.1 synthetic acceptance may quarantine and restore only manifest-registered files under the dedicated PC CleanGuard temp namespace. It must never weaken Desktop, Documents, repository, Developer Guard or protected-path rules.
 
 PC CleanGuard is an offline Persistence Chain Governance layer for AI Agents. Agent requests cannot raise an execution level: unknown or mutating requests fail closed, while graph and plan actions remain `LEVEL_0_READ_ONLY` with `execution_gating_eligible_count=0`.
 

@@ -2,3 +2,5 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .coverage
+.pcg-local-evaluation/
+.pcg-local-evaluation-v041/

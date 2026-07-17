@@ -1,12 +1,31 @@
 # PC CleanGuard Skill
 
-> 当前 Public Preview：v0.4.0。正式引入 Persistence Chain Governance / 持久化链路治理；图谱和治理计划只支持解释、复核与 proposal，不是执行授权。
+> 当前 Public Preview：v0.4.1 Windows Integration Preview。真实 Windows metadata 可以汇流为默认脱敏的 canonical report，再进入离线 PUP、持久化链路与治理计划评估；报告和建议都不是执行授权。
 
 PC CleanGuard 不是“更狠的清理器”，而是一个开源、离线、可审计的 AI PC 治理 Skill。它专注于持久化链路治理：发现软件如何通过启动项、服务、计划任务、浏览器改动、注册表线索、更新器、推广组件和残留文件持续存在，并生成可复核、可回滚、可审计的治理计划。
 
 PC CleanGuard is an open-source, offline, auditable AI PC governance Skill. It focuses on Persistence Chain Governance: discovering how unwanted software persists through startup items, services, scheduled tasks, browser changes, registry-like clues, updaters, promo components, and leftovers, then producing review-only, reversible, and auditable governance plans.
 
-**v0.4.0 Public Preview · Persistence Chain Governance · Agent L0 governed plans · Offline by default**
+**v0.4.1 Windows Integration Preview · Canonical redacted reports · Persistence diagnostics · Offline by default**
+
+## Windows 真机两步试用 / Real Windows in two steps
+
+第一步由用户显式启动只读 PowerShell 采集；Python 不自动启动 PowerShell：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\windows\collect-windows-metadata.ps1 -OutputDirectory .pcg-collectors
+```
+
+`ExecutionPolicy Bypass` 只作用于这个新建的 PowerShell 进程，不修改用户或机器策略，也不写注册表。collector 只读取 installed apps、startup items、services 和 scheduled tasks metadata。
+
+第二步用 Python 生成默认 redacted report，并进行离线评估：
+
+```powershell
+python -m pc_cleanguard.cli windows report build --collector-dir .pcg-collectors --output windows-report.redacted.json --validation-output windows-report-validation.json
+python -m pc_cleanguard.cli evaluation windows --report windows-report.redacted.json --output .pcg-evaluation --evidence-pack data/reputation/evidence_pack.real.zh-CN.json --cn-win-evidence-pack data/reputation/evidence_pack.cn_win.zh-CN.json --include-persistence-chain --include-pup-review --include-evidence-quality --include-user-friendly-report
+```
+
+raw report 可能包含用户名、设备名、命令路径等敏感 metadata；推荐只分析和分享 redacted report。写 raw report 必须显式提供 `--raw-output` 与 `--i-understand-local-sensitive-data`。0 PUP match 不代表系统绝对安全；persistence 0 edge 也可能是合法的保守结果，应查看 `link_diagnostics.json`。Synthetic acceptance 使用系统临时目录，不会给 Desktop、Documents 或代码仓库放行。
 
 用户看到“删不干净”，技术原因往往是持久化链路没有被整体治理。PC CleanGuard 不和 360、火绒比较“删得狠”；差异化是开源透明、本地离线、用户确认、可回滚、可审计和 Agent 受控。它不是杀毒软件，不做云查杀，也不采集专有签名库。
 

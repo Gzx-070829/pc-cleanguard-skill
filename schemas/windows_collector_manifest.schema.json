@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.example/schemas/windows_collector_manifest.schema.json",
+  "title": "PC CleanGuard Windows Collector Manifest",
+  "type": "object",
+  "required": ["schema_version", "source_kind", "generated_at", "collectors"],
+  "properties": {
+    "schema_version": {"const": "0.4.1"},
+    "source_kind": {"const": "windows_powershell_collector"},
+    "generated_at": {"type": "string", "minLength": 1},
+    "powershell": {"type": "object"},
+    "collectors": {
+      "type": "object",
+      "required": ["installed_apps", "startup_items", "services", "scheduled_tasks"],
+      "properties": {
+        "installed_apps": {"$ref": "#/$defs/status"},
+        "startup_items": {"$ref": "#/$defs/status"},
+        "services": {"$ref": "#/$defs/status"},
+        "scheduled_tasks": {"$ref": "#/$defs/status"}
+      },
+      "additionalProperties": false
+    },
+    "system_modified": {"const": false},
+    "runtime_network_access": {"const": false}
+  },
+  "$defs": {
+    "status": {
+      "type": "object",
+      "required": ["status", "file", "record_count"],
+      "properties": {
+        "status": {"enum": ["success", "failed", "unsupported"]},
+        "file": {"type": "string", "pattern": "^[a-z_]+\\.json$"},
+        "record_count": {"type": "integer", "minimum": 0},
+        "error_code": {"type": "string"},
+        "message": {"type": "string"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

@@ -8,5 +8,6 @@ from .linker import link_persistence_nodes
 from .models import EDGE_TYPES, NODE_TYPES, validate_edge, validate_node
 from .render import render_persistence_chain_markdown, render_persistence_chain_mermaid
 from .risk import score_persistence_chain
+from .diagnostics import build_persistence_link_diagnostics
 
-__all__ = ["NODE_TYPES", "EDGE_TYPES", "validate_node", "validate_edge", "link_persistence_nodes", "build_persistence_chain_graph", "score_persistence_chain", "render_persistence_chain_markdown", "render_persistence_chain_mermaid", "GOVERNANCE_LEVELS", "classify_governance_level", "build_persistence_governance_plan", "render_persistence_governance_plan_markdown", "build_agent_governance_preview", "validate_agent_execution_request"]
+__all__ = ["NODE_TYPES", "EDGE_TYPES", "validate_node", "validate_edge", "link_persistence_nodes", "build_persistence_chain_graph", "build_persistence_link_diagnostics", "score_persistence_chain", "render_persistence_chain_markdown", "render_persistence_chain_mermaid", "GOVERNANCE_LEVELS", "classify_governance_level", "build_persistence_governance_plan", "render_persistence_governance_plan_markdown", "build_agent_governance_preview", "validate_agent_execution_request"]
