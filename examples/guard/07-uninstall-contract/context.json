@@ -1,0 +1,25 @@
+{
+  "developer_status": {},
+  "platform": "windows",
+  "preconditions": {
+    "BACKUP_PRESENT": true,
+    "ROLLBACK_READY": true
+  },
+  "protected_status": {},
+  "risk_signals": [],
+  "scope": {
+    "allowed_paths": [
+      "C:\\Program Files\\Synthetic Example App"
+    ]
+  },
+  "system_status": {},
+  "target_facts": {
+    "07-uninstall-contract:target": {
+      "exists": true,
+      "is_reparse_point": false,
+      "path": "C:\\Program Files\\Synthetic Example App",
+      "target_type": "application"
+    }
+  },
+  "user_policy": {}
+}

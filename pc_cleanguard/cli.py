@@ -102,13 +102,33 @@ from .windows import (
     validate_windows_canonical_report,
     windows_report_stats,
 )
+from .guard import (
+    ActionBundle,
+    Disposition,
+    Guard,
+    GuardContext,
+    GuardInputError,
+    PolicyBlockedError,
+    RequirementPendingError,
+    evaluate_bundle,
+    load_policy_pack,
+)
+from .guard.normalize import require_local_path
 from . import __version__
+
+
+LEGACY_COMPATIBILITY_WARNING = (
+    "warning: Legacy compatibility interface. Not part of the v0.5 Guard Core."
+)
 
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="python -m pc_cleanguard.cli",
-        description="PC CleanGuard offline governance CLI with controlled L1 cleanup",
+        description=(
+            "PC CleanGuard deterministic Windows Agent governance CLI. "
+            "Legacy / Compatibility commands remain available below."
+        ),
     )
     parser.add_argument(
         "--version",
@@ -116,8 +136,75 @@ def _parser() -> argparse.ArgumentParser:
         version=f"PC CleanGuard Skill {__version__}",
     )
     subcommands = parser.add_subparsers(dest="command", required=True)
+    guard = subcommands.add_parser(
+        "guard",
+        help="PRIMARY: deterministic policy, consent, precondition, audit, and rollback contracts",
+    )
+    guard_commands = guard.add_subparsers(dest="guard_command", required=True)
+
+    guard_evaluate = guard_commands.add_parser(
+        "evaluate", help="evaluate one structured ActionRequest deterministically"
+    )
+    evaluate_input = guard_evaluate.add_mutually_exclusive_group(required=True)
+    evaluate_input.add_argument("--request", type=Path)
+    evaluate_input.add_argument("--stdin", action="store_true")
+    guard_evaluate.add_argument("--context", type=Path)
+    guard_evaluate.add_argument("--output", type=Path)
+    guard_evaluate.add_argument("--overwrite", action="store_true")
+    guard_evaluate.add_argument("--json", action="store_true")
+
+    guard_prepare = guard_commands.add_parser(
+        "prepare", help="issue an ExecutionContract after every required gate"
+    )
+    prepare_input = guard_prepare.add_mutually_exclusive_group(required=True)
+    prepare_input.add_argument("--decision", type=Path)
+    prepare_input.add_argument("--stdin", action="store_true")
+    guard_prepare.add_argument("--context", type=Path)
+    guard_prepare.add_argument("--consent", type=Path)
+    guard_prepare.add_argument("--rollback", type=Path)
+    guard_prepare.add_argument("--output", type=Path)
+    guard_prepare.add_argument("--overwrite", action="store_true")
+    guard_prepare.add_argument("--json", action="store_true")
+
+    guard_audit = guard_commands.add_parser(
+        "audit", help="verify local tamper-evident audit receipts"
+    )
+    guard_audit_commands = guard_audit.add_subparsers(
+        dest="guard_audit_command", required=True
+    )
+    guard_audit_verify = guard_audit_commands.add_parser("verify")
+    guard_audit_verify.add_argument("--input", required=True, type=Path)
+    guard_audit_verify.add_argument("--json", action="store_true")
+
+    guard_batch = guard_commands.add_parser(
+        "batch", help="evaluate a multi-action bundle with maximum restriction"
+    )
+    guard_batch_commands = guard_batch.add_subparsers(
+        dest="guard_batch_command", required=True
+    )
+    guard_batch_evaluate = guard_batch_commands.add_parser("evaluate")
+    batch_input = guard_batch_evaluate.add_mutually_exclusive_group(required=True)
+    batch_input.add_argument("--input", type=Path)
+    batch_input.add_argument("--stdin", action="store_true")
+    guard_batch_evaluate.add_argument("--context", type=Path)
+    guard_batch_evaluate.add_argument("--output", type=Path)
+    guard_batch_evaluate.add_argument("--overwrite", action="store_true")
+    guard_batch_evaluate.add_argument("--json", action="store_true")
+
+    guard_doctor = guard_commands.add_parser(
+        "doctor", help="run offline Guard Core dependency and policy checks"
+    )
+    guard_doctor.add_argument("--json", action="store_true")
+
+    guard_benchmark = guard_commands.add_parser(
+        "benchmark", help="run the fixed governance acceptance suite"
+    )
+    guard_benchmark.add_argument("--suite", required=True, type=Path)
+    guard_benchmark.add_argument("--output", required=True, type=Path)
+    guard_benchmark.add_argument("--json", action="store_true")
+
     windows = subcommands.add_parser(
-        "windows", help="ingest explicit read-only Windows collector artifacts"
+        "windows", help="Legacy / Compatibility: ingest read-only Windows artifacts"
     )
     windows_commands = windows.add_subparsers(dest="windows_command", required=True)
     windows_report = windows_commands.add_parser(
@@ -225,7 +312,7 @@ def _parser() -> argparse.ArgumentParser:
     )
     clean = subcommands.add_parser(
         "clean",
-        help="build dry-run cleanup previews from explicit local paths",
+        help="Legacy / Compatibility: bounded cleanup preview and execution",
     )
     clean_commands = clean.add_subparsers(dest="clean_command", required=True)
     preview = clean_commands.add_parser(
@@ -420,7 +507,9 @@ def _parser() -> argparse.ArgumentParser:
     quarantine_restore = quarantine_commands.add_parser("restore")
     quarantine_restore.add_argument("--root", required=True, type=Path)
     quarantine_restore.add_argument("--item-id", required=True)
-    reputation = subcommands.add_parser("reputation", help="offline reputation evidence matching")
+    reputation = subcommands.add_parser(
+        "reputation", help="Legacy / Compatibility: offline reputation evidence matching"
+    )
     reputation_commands = reputation.add_subparsers(dest="reputation_command", required=True)
     reputation_match = reputation_commands.add_parser("match")
     reputation_match.add_argument("--input", required=True, type=Path)
@@ -475,7 +564,9 @@ def _parser() -> argparse.ArgumentParser:
     cn_source_candidates.add_argument("--input", required=True, type=Path)
     cn_source_candidates.add_argument("--output", required=True, type=Path)
     cn_source_candidates.add_argument("--overwrite", action="store_true")
-    pup = subcommands.add_parser("pup", help="inspect PUP evidence without execution")
+    pup = subcommands.add_parser(
+        "pup", help="Legacy / Compatibility: inspect PUP evidence without execution"
+    )
     pup_commands = pup.add_subparsers(dest="pup_command", required=True)
     pup_inspect = pup_commands.add_parser("inspect")
     pup_inspect.add_argument("--input", required=True, type=Path)
@@ -520,7 +611,9 @@ def _parser() -> argparse.ArgumentParser:
     validate_report.add_argument("--input", required=True, type=Path)
     validate_report.add_argument("--output", required=True, type=Path)
     validate_report.add_argument("--overwrite", action="store_true")
-    trial = subcommands.add_parser("trial", help="run the bounded five-minute product trial")
+    trial = subcommands.add_parser(
+        "trial", help="Legacy / Compatibility: run the bounded five-minute product trial"
+    )
     trial_commands = trial.add_subparsers(dest="trial_command", required=True)
     trial_run = trial_commands.add_parser("run")
     trial_run.add_argument("--root", required=True, type=Path)
@@ -557,7 +650,10 @@ def _parser() -> argparse.ArgumentParser:
     feedback_fp.add_argument("--match", required=True, type=Path)
     feedback_fp.add_argument("--output", required=True, type=Path)
     feedback_fp.add_argument("--overwrite", action="store_true")
-    persistence = subcommands.add_parser("persistence", help="build offline persistence-chain review artifacts")
+    persistence = subcommands.add_parser(
+        "persistence",
+        help="Legacy / Compatibility: build offline persistence-chain review artifacts",
+    )
     persistence_commands = persistence.add_subparsers(dest="persistence_command", required=True)
     persistence_graph = persistence_commands.add_parser("graph")
     persistence_graph.add_argument("--input", required=True, type=Path)
@@ -1065,11 +1161,189 @@ def _run_cleanup_report(arguments: argparse.Namespace) -> dict:
     }
 
 
+def _guard_json_file(path: Path, *, name: str) -> dict:
+    if not isinstance(path, Path):
+        raise GuardInputError(f"{name} path is required")
+    require_local_path(path, name=f"{name} path")
+    if path.suffix.casefold() != ".json" or not path.is_file():
+        raise GuardInputError(f"{name} must be an explicit existing .json file")
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise GuardInputError(f"unable to read {name}: {error}") from error
+    if not isinstance(value, dict):
+        raise GuardInputError(f"{name} must contain a JSON object")
+    return value
+
+
+def _guard_stdin_envelope() -> dict:
+    try:
+        value = json.load(sys.stdin)
+    except (UnicodeError, json.JSONDecodeError) as error:
+        raise GuardInputError(f"stdin must contain one JSON object: {error}") from error
+    if not isinstance(value, dict):
+        raise GuardInputError("stdin must contain one JSON object")
+    return value
+
+
+def _write_guard_json(path: Path | None, value: dict, *, overwrite: bool) -> None:
+    if path is None:
+        return
+    require_local_path(path, name="Guard output path")
+    if path.suffix.casefold() != ".json":
+        raise GuardInputError("Guard output path must end in .json")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w" if overwrite else "x", encoding="utf-8", newline="\n") as stream:
+        json.dump(value, stream, ensure_ascii=False, sort_keys=True, indent=2)
+        stream.write("\n")
+
+
+def _guard_doctor_result() -> dict:
+    guard_root = Path(__file__).resolve().parent / "guard"
+    forbidden = (
+        "subprocess", "requests", "httpx", "socket", "urllib", "openai",
+        "anthropic", "powershell", "os.system",
+    )
+    legacy_imports = (
+        "from ..pup", "from ..reputation", "from ..persistence", "from ..cleanup",
+        "from ..windows",
+    )
+    dangerous_hits = []
+    legacy_dependency_hits = []
+    modules = sorted(guard_root.glob("*.py"))
+    for path in modules:
+        source = path.read_text(encoding="utf-8").casefold()
+        for token in forbidden:
+            if token in source:
+                dangerous_hits.append({"file": path.name, "token": token})
+        for token in legacy_imports:
+            if token in source:
+                legacy_dependency_hits.append({"file": path.name, "token": token})
+    policy = load_policy_pack()
+    schema_root = Path(__file__).resolve().parents[1] / "schemas" / "guard"
+    schema_count = len(list(schema_root.glob("*.schema.json")))
+    healthy = not dangerous_hits and not legacy_dependency_hits and schema_count == 8
+    return {
+        "healthy": healthy,
+        "version": __version__,
+        "platform": "windows",
+        "guard_module_count": len(modules),
+        "core_schema_count": schema_count,
+        "policy_id": policy["policy_id"],
+        "policy_version": policy["version"],
+        "policy_rule_count": len(policy["rules"]),
+        "dangerous_import_hits": dangerous_hits,
+        "legacy_dependency_hits": legacy_dependency_hits,
+        "network_dependency": False,
+        "llm_dependency": False,
+        "executor_dependency": False,
+    }
+
+
+def _run_guard(arguments: argparse.Namespace) -> tuple[dict, int]:
+    if arguments.guard_command == "evaluate":
+        if arguments.stdin:
+            envelope = _guard_stdin_envelope()
+            if set(envelope) != {"request", "context"}:
+                raise GuardInputError("stdin evaluate envelope requires request and context")
+            request_data = envelope["request"]
+            context_data = envelope["context"]
+        else:
+            request_data = _guard_json_file(arguments.request, name="request")
+            context_data = _guard_json_file(arguments.context, name="context")
+        decision = Guard().evaluate(request_data, context_data)
+        payload = decision.to_dict()
+        _write_guard_json(arguments.output, payload, overwrite=arguments.overwrite)
+        code = 3 if decision.disposition is Disposition.BLOCK else 4 if decision.disposition is Disposition.REQUIRE else 0
+        return payload, code
+
+    if arguments.guard_command == "prepare":
+        if arguments.stdin:
+            envelope = _guard_stdin_envelope()
+            required = {"decision", "context"}
+            allowed = required | {"consent", "rollback", "now"}
+            if not required.issubset(envelope) or set(envelope) - allowed:
+                raise GuardInputError("stdin prepare envelope requires decision/context and only optional consent/rollback/now")
+            decision_data = envelope["decision"]
+            context_data = envelope["context"]
+            consent_data = envelope.get("consent")
+            rollback_data = envelope.get("rollback")
+            now = envelope.get("now")
+        else:
+            decision_data = _guard_json_file(arguments.decision, name="decision")
+            context_data = _guard_json_file(arguments.context, name="context")
+            consent_data = _guard_json_file(arguments.consent, name="consent") if arguments.consent is not None else None
+            rollback_data = _guard_json_file(arguments.rollback, name="rollback") if arguments.rollback is not None else None
+            now = None
+        contract = Guard().prepare_execution(
+            decision=decision_data,
+            consent=consent_data,
+            rollback=rollback_data,
+            current_context=context_data,
+            now=now,
+        )
+        payload = contract.to_dict()
+        _write_guard_json(arguments.output, payload, overwrite=arguments.overwrite)
+        return payload, 0
+
+    if arguments.guard_command == "audit" and arguments.guard_audit_command == "verify":
+        verification = Guard().verify_audit(arguments.input)
+        return verification.to_dict(), 0 if verification.valid else 5
+
+    if arguments.guard_command == "batch" and arguments.guard_batch_command == "evaluate":
+        if arguments.stdin:
+            envelope = _guard_stdin_envelope()
+            if set(envelope) != {"bundle", "context"}:
+                raise GuardInputError("stdin batch envelope requires bundle and context")
+            bundle_data = envelope["bundle"]
+            context_data = envelope["context"]
+        else:
+            bundle_data = _guard_json_file(arguments.input, name="bundle")
+            context_data = _guard_json_file(arguments.context, name="context")
+        result = evaluate_bundle(
+            ActionBundle.from_dict(bundle_data), GuardContext.from_dict(context_data)
+        )
+        payload = result.to_dict()
+        _write_guard_json(arguments.output, payload, overwrite=arguments.overwrite)
+        code = 3 if result.disposition is Disposition.BLOCK else 4 if result.disposition is Disposition.REQUIRE else 0
+        return payload, code
+
+    if arguments.guard_command == "doctor":
+        payload = _guard_doctor_result()
+        return payload, 0 if payload["healthy"] else 5
+
+    if arguments.guard_command == "benchmark":
+        from .guard.benchmark import run_benchmark
+
+        payload = run_benchmark(arguments.suite, arguments.output)
+        return payload, 0 if payload["failed"] == 0 else 5
+
+    raise GuardInputError("unsupported Guard command")
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the CLI and return a process exit code."""
 
     parser = _parser()
     arguments = parser.parse_args(argv)
+    if arguments.command == "guard":
+        try:
+            payload, exit_code = _run_guard(arguments)
+        except PolicyBlockedError as error:
+            print(f"error: {error}", file=sys.stderr)
+            return 3
+        except RequirementPendingError as error:
+            print(f"error: {error}", file=sys.stderr)
+            return 4
+        except (FileExistsError, FileNotFoundError, GuardInputError, KeyError, OSError, TypeError, ValueError) as error:
+            print(f"error: {error}", file=sys.stderr)
+            return 2
+        except Exception as error:  # pragma: no cover - final fail-closed boundary.
+            print(f"internal validation error: {error}", file=sys.stderr)
+            return 5
+        print(json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
+        return exit_code
+    print(LEGACY_COMPATIBILITY_WARNING, file=sys.stderr)
     try:
         if arguments.command == "windows" and arguments.windows_command == "report":
             summary = _run_windows_report(arguments)

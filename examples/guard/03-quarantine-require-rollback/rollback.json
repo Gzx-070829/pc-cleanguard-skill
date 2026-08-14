@@ -1,0 +1,15 @@
+{
+  "action_fingerprint": "6e06b06e43a13894033e63c6677c13b37ef6fabb2d791a4b03f27acb41842807",
+  "backup_reference": null,
+  "backup_required": false,
+  "decision_id": "decision:fd226977a9be2fdd006e6bbb",
+  "expires_at": "2026-01-02T00:00:00Z",
+  "reversible": true,
+  "rollback_id": "example:rollback",
+  "rollback_steps": [
+    "restore the synthetic target"
+  ],
+  "verification_steps": [
+    "verify the synthetic target state"
+  ]
+}

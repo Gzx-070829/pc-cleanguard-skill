@@ -1,0 +1,55 @@
+{
+  "action_fingerprint": "dd9b41fe28460a6b50fb1ec6f46ee4dd5f32812781f7376db8d72fc106e43ec2",
+  "blocked_reasons": [],
+  "decision_fingerprint": "1cf28d3cb897a4adf9f99f928187c4f8191f4077535e4eab4bf9f501b992f1b3",
+  "decision_id": "decision:1cf28d3cb897a4adf9f99f92",
+  "disposition": "REQUIRE",
+  "execution_authorized": false,
+  "explanation": "Service mutation is high-risk and remains external to the Guard executor boundary.",
+  "generated_at": "2026-01-01T00:00:00Z",
+  "matched_rules": [
+    "windows.l4-service"
+  ],
+  "policy_version": "windows-default/0.5",
+  "preconditions_snapshot": {
+    "context_preconditions": {
+      "BACKUP_PRESENT": true,
+      "ROLLBACK_READY": true
+    },
+    "scope": {
+      "allowed_paths": [
+        "service:ExampleGuardService"
+      ]
+    },
+    "targets": {
+      "06-service-disable-high-risk:target": {
+        "facts": {
+          "exists": true,
+          "is_reparse_point": false,
+          "target_type": "service"
+        },
+        "target_fingerprint": "d45dade7bd4bc2c1b331d1491973a591491846ffb28f37ca266cdcf434541418"
+      }
+    }
+  },
+  "request_id": "06-service-disable-high-risk:request",
+  "requested_effect": "disable one synthetic Windows service",
+  "requirements": [
+    "ADMIN_ACKNOWLEDGEMENT",
+    "AUDIT",
+    "BACKUP",
+    "EXPLICIT_HIGH_RISK_CONFIRMATION",
+    "POSTCONDITION_VERIFY",
+    "ROLLBACK_CONTRACT",
+    "TARGET_REVALIDATION"
+  ],
+  "risk_level": "L4",
+  "scope_snapshot": {
+    "allowed_paths": [
+      "service:ExampleGuardService"
+    ]
+  },
+  "target_fingerprints": [
+    "d45dade7bd4bc2c1b331d1491973a591491846ffb28f37ca266cdcf434541418"
+  ]
+}

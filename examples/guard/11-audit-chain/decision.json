@@ -1,0 +1,48 @@
+{
+  "action_fingerprint": "c1158209f6ccbe2025598efa040a899a11fab9305412b6940aeeb2d458a0df18",
+  "blocked_reasons": [],
+  "decision_fingerprint": "d890a97a16416524ddb47adbcc613c6565010830efbe3118dc752535fee4848d",
+  "decision_id": "decision:d890a97a16416524ddb47adb",
+  "disposition": "ALLOW",
+  "execution_authorized": false,
+  "explanation": "Read-only Windows observation does not authorize a system mutation.",
+  "generated_at": "2026-01-01T00:00:00Z",
+  "matched_rules": [
+    "windows.read-only"
+  ],
+  "policy_version": "windows-default/0.5",
+  "preconditions_snapshot": {
+    "context_preconditions": {
+      "BACKUP_PRESENT": true,
+      "ROLLBACK_READY": true
+    },
+    "scope": {
+      "allowed_paths": [
+        "C:\\Temp"
+      ]
+    },
+    "targets": {
+      "11-audit-chain:target": {
+        "facts": {
+          "exists": true,
+          "is_reparse_point": false,
+          "path": "C:\\Temp",
+          "target_type": "directory"
+        },
+        "target_fingerprint": "35bb7c8ec09ca0bb2bcad97508864893fa393c6c27de3c3f6a8849d77ec3f0a0"
+      }
+    }
+  },
+  "request_id": "11-audit-chain:request",
+  "requested_effect": "read synthetic metadata",
+  "requirements": [],
+  "risk_level": "L0",
+  "scope_snapshot": {
+    "allowed_paths": [
+      "C:\\Temp"
+    ]
+  },
+  "target_fingerprints": [
+    "35bb7c8ec09ca0bb2bcad97508864893fa393c6c27de3c3f6a8849d77ec3f0a0"
+  ]
+}

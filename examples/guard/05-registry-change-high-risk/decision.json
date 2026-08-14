@@ -1,0 +1,56 @@
+{
+  "action_fingerprint": "d5e2a81d0ce2129551bc3645c3345bef92e4ce7ef90bab76fa1ba4a64ed92ec2",
+  "blocked_reasons": [],
+  "decision_fingerprint": "2c84f1d4a737886a78159e59b00f1025a852b59f38891b7c44ae404517896248",
+  "decision_id": "decision:2c84f1d4a737886a78159e59",
+  "disposition": "REQUIRE",
+  "execution_authorized": false,
+  "explanation": "Registry mutation is high-risk and requires explicit high-risk consent, backup, rollback, revalidation, audit, and verification.",
+  "generated_at": "2026-01-01T00:00:00Z",
+  "matched_rules": [
+    "windows.l4-registry"
+  ],
+  "policy_version": "windows-default/0.5",
+  "preconditions_snapshot": {
+    "context_preconditions": {
+      "BACKUP_PRESENT": true,
+      "ROLLBACK_READY": true
+    },
+    "scope": {
+      "allowed_paths": [
+        "HKCU:\\Software"
+      ]
+    },
+    "targets": {
+      "05-registry-change-high-risk:target": {
+        "facts": {
+          "exists": true,
+          "is_reparse_point": false,
+          "path": "HKCU:\\Software\\ExampleGuardKey",
+          "target_type": "registry_key"
+        },
+        "target_fingerprint": "dbfc9a2d7e0e409066216288c670d3e2fb4b280ae4a67215ccffc6f9d8cef9e3"
+      }
+    }
+  },
+  "request_id": "05-registry-change-high-risk:request",
+  "requested_effect": "change one synthetic registry value",
+  "requirements": [
+    "ADMIN_ACKNOWLEDGEMENT",
+    "AUDIT",
+    "BACKUP",
+    "EXPLICIT_HIGH_RISK_CONFIRMATION",
+    "POSTCONDITION_VERIFY",
+    "ROLLBACK_CONTRACT",
+    "TARGET_REVALIDATION"
+  ],
+  "risk_level": "L4",
+  "scope_snapshot": {
+    "allowed_paths": [
+      "HKCU:\\Software"
+    ]
+  },
+  "target_fingerprints": [
+    "dbfc9a2d7e0e409066216288c670d3e2fb4b280ae4a67215ccffc6f9d8cef9e3"
+  ]
+}

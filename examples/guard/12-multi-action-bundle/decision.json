@@ -1,0 +1,197 @@
+{
+  "blocked_action_ids": [
+    "12-bundle-block:request"
+  ],
+  "bundle_id": "12-multi-action-bundle",
+  "child_decisions": [
+    {
+      "action_fingerprint": "4fd02e210ef695459be4679662b2f68db556886109992bb235b70938bc0e35ed",
+      "blocked_reasons": [],
+      "decision_fingerprint": "faafd5411b28938edcb66b75c13615551aa6750cb21e4fbea2a90ae862e88dc2",
+      "decision_id": "decision:faafd5411b28938edcb66b75",
+      "disposition": "ALLOW",
+      "execution_authorized": false,
+      "explanation": "Read-only Windows observation does not authorize a system mutation.",
+      "generated_at": "2026-01-01T00:00:00Z",
+      "matched_rules": [
+        "windows.read-only"
+      ],
+      "policy_version": "windows-default/0.5",
+      "preconditions_snapshot": {
+        "context_preconditions": {
+          "BACKUP_PRESENT": true,
+          "ROLLBACK_READY": true
+        },
+        "scope": {
+          "allowed_paths": [
+            "C:\\Temp",
+            "C:\\Apps",
+            "C:\\Windows"
+          ]
+        },
+        "targets": {
+          "12-bundle-read:target": {
+            "facts": {
+              "exists": true,
+              "is_reparse_point": false,
+              "path": "C:\\Temp",
+              "target_type": "directory"
+            },
+            "target_fingerprint": "d4d23c7ee46439e50ccb68ba417e1443a9910f799653ef8805a9e38f7457cc93"
+          }
+        }
+      },
+      "request_id": "12-bundle-read:request",
+      "requested_effect": "read metadata",
+      "requirements": [],
+      "risk_level": "L0",
+      "scope_snapshot": {
+        "allowed_paths": [
+          "C:\\Temp",
+          "C:\\Apps",
+          "C:\\Windows"
+        ]
+      },
+      "target_fingerprints": [
+        "d4d23c7ee46439e50ccb68ba417e1443a9910f799653ef8805a9e38f7457cc93"
+      ]
+    },
+    {
+      "action_fingerprint": "67de4de9e551f695325f645bcf1b59226a5784048ba1718d2c2a6d97c23ed22b",
+      "blocked_reasons": [],
+      "decision_fingerprint": "7deaa601c867f38125ae1530a5db90dc238b3352c414233fc04f7c1fe660ab43",
+      "decision_id": "decision:7deaa601c867f38125ae1530",
+      "disposition": "REQUIRE",
+      "execution_authorized": false,
+      "explanation": "Official uninstall may receive a contract only after confirmation, rollback planning, revalidation, audit, and verification.",
+      "generated_at": "2026-01-01T00:00:00Z",
+      "matched_rules": [
+        "windows.l3-official-uninstall"
+      ],
+      "policy_version": "windows-default/0.5",
+      "preconditions_snapshot": {
+        "context_preconditions": {
+          "BACKUP_PRESENT": true,
+          "ROLLBACK_READY": true
+        },
+        "scope": {
+          "allowed_paths": [
+            "C:\\Temp",
+            "C:\\Apps",
+            "C:\\Windows"
+          ]
+        },
+        "targets": {
+          "12-bundle-uninstall:target": {
+            "facts": {
+              "exists": true,
+              "is_reparse_point": false,
+              "path": "C:\\Apps\\Synthetic Example",
+              "target_type": "application"
+            },
+            "target_fingerprint": "4acbb81a351e71347b07e3c2c53092c84bd42f7ef52ce672f805ad9a807c1fa3"
+          }
+        }
+      },
+      "request_id": "12-bundle-uninstall:request",
+      "requested_effect": "uninstall Synthetic Example App",
+      "requirements": [
+        "AUDIT",
+        "POSTCONDITION_VERIFY",
+        "ROLLBACK_PLAN",
+        "TARGET_REVALIDATION",
+        "USER_CONFIRMATION"
+      ],
+      "risk_level": "L3",
+      "scope_snapshot": {
+        "allowed_paths": [
+          "C:\\Temp",
+          "C:\\Apps",
+          "C:\\Windows"
+        ]
+      },
+      "target_fingerprints": [
+        "4acbb81a351e71347b07e3c2c53092c84bd42f7ef52ce672f805ad9a807c1fa3"
+      ]
+    },
+    {
+      "action_fingerprint": "fddd02ed94060fe333a8e92855761156d804c568eb58cba5a9ad7114aefe6885",
+      "blocked_reasons": [
+        "action type is forbidden by the L5 policy boundary",
+        "unbounded wildcard mutation is forbidden",
+        "12-bundle-block:target: wildcard or unbounded target paths are forbidden"
+      ],
+      "decision_fingerprint": "365683e643c772d131e031449466e95aa5e127f309417a187cff1cc9c01f7785",
+      "decision_id": "decision:365683e643c772d131e03144",
+      "disposition": "BLOCK",
+      "execution_authorized": false,
+      "explanation": "L5 policy blocked a forbidden or protected Windows action.",
+      "generated_at": "2026-01-01T00:00:00Z",
+      "matched_rules": [
+        "windows.hard-block"
+      ],
+      "policy_version": "windows-default/0.5",
+      "preconditions_snapshot": {
+        "context_preconditions": {
+          "BACKUP_PRESENT": true,
+          "ROLLBACK_READY": true
+        },
+        "scope": {
+          "allowed_paths": [
+            "C:\\Temp",
+            "C:\\Apps",
+            "C:\\Windows"
+          ]
+        },
+        "targets": {
+          "12-bundle-block:target": {
+            "facts": {
+              "exists": true,
+              "is_reparse_point": false,
+              "mtime_ns": 100,
+              "path": "C:\\Windows\\*",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size_bytes": 128,
+              "target_type": "file"
+            },
+            "target_fingerprint": "f6a0ddb38c8f39b62d8f0c899c1bc04de40bd9eac7ee510185ca6994ea18a4c9"
+          }
+        }
+      },
+      "request_id": "12-bundle-block:request",
+      "requested_effect": "delete a wildcard target",
+      "requirements": [],
+      "risk_level": "L5",
+      "scope_snapshot": {
+        "allowed_paths": [
+          "C:\\Temp",
+          "C:\\Apps",
+          "C:\\Windows"
+        ]
+      },
+      "target_fingerprints": [
+        "f6a0ddb38c8f39b62d8f0c899c1bc04de40bd9eac7ee510185ca6994ea18a4c9"
+      ]
+    }
+  ],
+  "dependency_order": [
+    "12-bundle-read:request",
+    "12-bundle-uninstall:request",
+    "12-bundle-block:request"
+  ],
+  "disposition": "BLOCK",
+  "execution_authorized": false,
+  "requirements": [
+    "AUDIT",
+    "POSTCONDITION_VERIFY",
+    "ROLLBACK_PLAN",
+    "TARGET_REVALIDATION",
+    "USER_CONFIRMATION"
+  ],
+  "risk_level": "L5",
+  "rollback_order": [
+    "12-bundle-block:request",
+    "12-bundle-uninstall:request",
+    "12-bundle-read:request"
+  ]
+}

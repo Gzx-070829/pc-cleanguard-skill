@@ -1,0 +1,54 @@
+{
+  "action_fingerprint": "5a965e19fc36e0b7ac87088099baeff13f9a04d2d4140fd8394035921e4781e1",
+  "blocked_reasons": [],
+  "decision_fingerprint": "131c06640f32b480ce7d690e9d0072ab742e3793905557ab9e7f52fd7e700bda",
+  "decision_id": "decision:131c06640f32b480ce7d690e",
+  "disposition": "REQUIRE",
+  "execution_authorized": false,
+  "explanation": "Official uninstall may receive a contract only after confirmation, rollback planning, revalidation, audit, and verification.",
+  "generated_at": "2026-01-01T00:00:00Z",
+  "matched_rules": [
+    "windows.l3-official-uninstall"
+  ],
+  "policy_version": "windows-default/0.5",
+  "preconditions_snapshot": {
+    "context_preconditions": {
+      "BACKUP_PRESENT": true,
+      "ROLLBACK_READY": true
+    },
+    "scope": {
+      "allowed_paths": [
+        "C:\\Program Files\\Synthetic Example App"
+      ]
+    },
+    "targets": {
+      "07-uninstall-contract:target": {
+        "facts": {
+          "exists": true,
+          "is_reparse_point": false,
+          "path": "C:\\Program Files\\Synthetic Example App",
+          "target_type": "application"
+        },
+        "target_fingerprint": "6466b4620b301b340231c1d71a6dcd2bd7610e8fce739a7f539c5a488a7243ba"
+      }
+    }
+  },
+  "request_id": "07-uninstall-contract:request",
+  "requested_effect": "uninstall Synthetic Example App",
+  "requirements": [
+    "AUDIT",
+    "POSTCONDITION_VERIFY",
+    "ROLLBACK_PLAN",
+    "TARGET_REVALIDATION",
+    "USER_CONFIRMATION"
+  ],
+  "risk_level": "L3",
+  "scope_snapshot": {
+    "allowed_paths": [
+      "C:\\Program Files\\Synthetic Example App"
+    ]
+  },
+  "target_fingerprints": [
+    "6466b4620b301b340231c1d71a6dcd2bd7610e8fce739a7f539c5a488a7243ba"
+  ]
+}

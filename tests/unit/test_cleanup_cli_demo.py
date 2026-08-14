@@ -42,9 +42,9 @@ class CleanupCliDemoTest(unittest.TestCase):
         )
 
         self.assertEqual(0, init_code)
-        self.assertEqual("", init_stderr)
+        self.assertIn("Legacy compatibility interface", init_stderr)
         self.assertEqual(0, run_code)
-        self.assertEqual("", run_stderr)
+        self.assertIn("Legacy compatibility interface", run_stderr)
         self.assertFalse(json.loads(stdout)["confirmed"])
         self.assertTrue((self.output / "cleanup_report.md").is_file())
         self.assertTrue((self.root / "temp" / "example.tmp").exists())
@@ -59,7 +59,7 @@ class CleanupCliDemoTest(unittest.TestCase):
         self.assertEqual(2, second_code)
         self.assertIn("exists", second_stderr.casefold())
         self.assertEqual(0, force_code)
-        self.assertEqual("", force_stderr)
+        self.assertIn("Legacy compatibility interface", force_stderr)
 
     def test_demo_run_confirm_remains_bounded_to_demo_l1(self) -> None:
         self.assertEqual(
@@ -80,7 +80,7 @@ class CleanupCliDemoTest(unittest.TestCase):
         )
 
         self.assertEqual(0, code)
-        self.assertEqual("", stderr)
+        self.assertIn("Legacy compatibility interface", stderr)
         self.assertTrue(json.loads(stdout)["confirmed"])
         self.assertFalse((self.root / "temp" / "example.tmp").exists())
         self.assertTrue((self.root / "dumps" / "example.dmp").exists())
@@ -99,7 +99,7 @@ class CleanupCliDemoTest(unittest.TestCase):
         )
 
         self.assertEqual(0, code)
-        self.assertEqual("", stderr)
+        self.assertIn("Legacy compatibility interface", stderr)
         summary = json.loads(stdout)
         self.assertTrue(summary["quickstart"])
         self.assertFalse(summary["confirmed"])

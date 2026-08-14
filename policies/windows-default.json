@@ -1,0 +1,115 @@
+{
+  "policy_id": "windows-default",
+  "version": "0.5",
+  "platform": "windows",
+  "rules": [
+    {
+      "rule_id": "windows.read-only",
+      "action_types": ["read_metadata", "scan_metadata", "report", "preview", "explain", "inspect", "audit_verify"],
+      "conditions": {"mutation": false},
+      "risk_level": "L0",
+      "disposition": "ALLOW",
+      "requirements": [],
+      "reason": "Read-only Windows observation does not authorize a system mutation."
+    },
+    {
+      "rule_id": "windows.l1-low-risk-file",
+      "action_types": ["delete_file", "delete_temp_file", "delete_cache_file", "delete_log_file", "clean_temp", "low_risk_file_cleanup"],
+      "conditions": {"narrow_target": true, "low_risk_category": true},
+      "risk_level": "L1",
+      "disposition": "REQUIRE",
+      "requirements": ["USER_CONFIRMATION", "TARGET_REVALIDATION", "AUDIT"],
+      "reason": "A narrow low-risk file mutation requires user confirmation, revalidation, and audit."
+    },
+    {
+      "rule_id": "windows.l2-reversible-filesystem",
+      "action_types": ["quarantine_file", "move_file", "reversible_replace", "restore_file"],
+      "conditions": {"reversible_filesystem_mutation": true},
+      "risk_level": "L2",
+      "disposition": "REQUIRE",
+      "requirements": ["USER_CONFIRMATION", "ROLLBACK_CONTRACT", "TARGET_REVALIDATION", "AUDIT", "POSTCONDITION_VERIFY"],
+      "reason": "A reversible filesystem mutation requires a bound rollback contract and postcondition verification."
+    },
+    {
+      "rule_id": "windows.l3-official-uninstall",
+      "action_types": ["official_uninstall", "uninstall_application", "uninstall_software"],
+      "conditions": {"official_uninstaller_contract": true},
+      "risk_level": "L3",
+      "disposition": "REQUIRE",
+      "requirements": ["USER_CONFIRMATION", "ROLLBACK_PLAN", "TARGET_REVALIDATION", "AUDIT", "POSTCONDITION_VERIFY"],
+      "reason": "Official uninstall may receive a contract only after confirmation, rollback planning, revalidation, audit, and verification."
+    },
+    {
+      "rule_id": "windows.l4-registry",
+      "action_types": ["registry_mutation", "registry_set", "registry_delete"],
+      "conditions": {"high_risk_system_mutation": true},
+      "risk_level": "L4",
+      "disposition": "REQUIRE",
+      "requirements": ["EXPLICIT_HIGH_RISK_CONFIRMATION", "ADMIN_ACKNOWLEDGEMENT", "BACKUP", "ROLLBACK_CONTRACT", "TARGET_REVALIDATION", "AUDIT", "POSTCONDITION_VERIFY"],
+      "reason": "Registry mutation is high-risk and requires explicit high-risk consent, backup, rollback, revalidation, audit, and verification."
+    },
+    {
+      "rule_id": "windows.l4-service",
+      "action_types": ["service_mutation", "disable_service", "stop_service"],
+      "conditions": {"high_risk_system_mutation": true},
+      "risk_level": "L4",
+      "disposition": "REQUIRE",
+      "requirements": ["EXPLICIT_HIGH_RISK_CONFIRMATION", "ADMIN_ACKNOWLEDGEMENT", "BACKUP", "ROLLBACK_CONTRACT", "TARGET_REVALIDATION", "AUDIT", "POSTCONDITION_VERIFY"],
+      "reason": "Service mutation is high-risk and remains external to the Guard executor boundary."
+    },
+    {
+      "rule_id": "windows.l4-startup",
+      "action_types": ["startup_mutation", "disable_startup"],
+      "conditions": {"high_risk_system_mutation": true},
+      "risk_level": "L4",
+      "disposition": "REQUIRE",
+      "requirements": ["EXPLICIT_HIGH_RISK_CONFIRMATION", "ADMIN_ACKNOWLEDGEMENT", "BACKUP", "ROLLBACK_CONTRACT", "TARGET_REVALIDATION", "AUDIT", "POSTCONDITION_VERIFY"],
+      "reason": "Startup mutation is high-risk and requires explicit independent gates."
+    },
+    {
+      "rule_id": "windows.l4-scheduled-task",
+      "action_types": ["scheduled_task_mutation", "disable_scheduled_task", "delete_scheduled_task"],
+      "conditions": {"high_risk_system_mutation": true},
+      "risk_level": "L4",
+      "disposition": "REQUIRE",
+      "requirements": ["EXPLICIT_HIGH_RISK_CONFIRMATION", "ADMIN_ACKNOWLEDGEMENT", "BACKUP", "ROLLBACK_CONTRACT", "TARGET_REVALIDATION", "AUDIT", "POSTCONDITION_VERIFY"],
+      "reason": "Scheduled-task mutation is high-risk and requires explicit independent gates."
+    },
+    {
+      "rule_id": "windows.l4-browser-config",
+      "action_types": ["browser_config_mutation", "browser_system_configuration"],
+      "conditions": {"high_risk_system_mutation": true},
+      "risk_level": "L4",
+      "disposition": "REQUIRE",
+      "requirements": ["EXPLICIT_HIGH_RISK_CONFIRMATION", "ADMIN_ACKNOWLEDGEMENT", "BACKUP", "ROLLBACK_CONTRACT", "TARGET_REVALIDATION", "AUDIT", "POSTCONDITION_VERIFY"],
+      "reason": "Browser system configuration is high-risk; user profile secrets remain protected."
+    },
+    {
+      "rule_id": "windows.l5-protected-system",
+      "action_types": ["delete_protected_system", "boot_mutation", "recovery_mutation"],
+      "conditions": {"protected_system_path": true},
+      "risk_level": "L5",
+      "disposition": "BLOCK",
+      "requirements": [],
+      "reason": "Protected system, boot, or recovery mutation is forbidden."
+    },
+    {
+      "rule_id": "windows.l5-credential-security",
+      "action_types": ["delete_credential", "delete_security_software"],
+      "conditions": {"credential_or_security_core": true},
+      "risk_level": "L5",
+      "disposition": "BLOCK",
+      "requirements": [],
+      "reason": "Credential stores and security software cores are forbidden targets."
+    },
+    {
+      "rule_id": "windows.l5-unbounded-mutation",
+      "action_types": ["wildcard_delete", "bulk_delete_unbounded", "policy_bypass"],
+      "conditions": {"scope_bounded": false},
+      "risk_level": "L5",
+      "disposition": "BLOCK",
+      "requirements": [],
+      "reason": "Unbounded mutation and policy bypass are forbidden."
+    }
+  ]
+}

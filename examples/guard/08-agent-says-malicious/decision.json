@@ -1,0 +1,55 @@
+{
+  "action_fingerprint": "275eb0d99072aac19ae55d834b9ae89ccfc4938412297a3ba254004db81f65d1",
+  "blocked_reasons": [],
+  "decision_fingerprint": "3a2fff03832a56cfee5db3d0ce7838db88a00dfce56b5eb7d98370ce08d925b2",
+  "decision_id": "decision:3a2fff03832a56cfee5db3d0",
+  "disposition": "REQUIRE",
+  "execution_authorized": false,
+  "explanation": "A narrow low-risk file mutation requires user confirmation, revalidation, and audit.",
+  "generated_at": "2026-01-01T00:00:00Z",
+  "matched_rules": [
+    "windows.l1-low-risk-file"
+  ],
+  "policy_version": "windows-default/0.5",
+  "preconditions_snapshot": {
+    "context_preconditions": {
+      "BACKUP_PRESENT": true,
+      "ROLLBACK_READY": true
+    },
+    "scope": {
+      "allowed_paths": [
+        "C:\\Temp"
+      ]
+    },
+    "targets": {
+      "08-agent-says-malicious:target": {
+        "facts": {
+          "exists": true,
+          "is_reparse_point": false,
+          "mtime_ns": 100,
+          "path": "C:\\Temp\\claimed-malicious.tmp",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size_bytes": 128,
+          "target_type": "file"
+        },
+        "target_fingerprint": "f53b1f4356d2dfa0d9d6877e4b6bb466fe3f9ce890a0913f5c6c69898a699101"
+      }
+    }
+  },
+  "request_id": "08-agent-says-malicious:request",
+  "requested_effect": "remove one synthetic temp file",
+  "requirements": [
+    "AUDIT",
+    "TARGET_REVALIDATION",
+    "USER_CONFIRMATION"
+  ],
+  "risk_level": "L1",
+  "scope_snapshot": {
+    "allowed_paths": [
+      "C:\\Temp"
+    ]
+  },
+  "target_fingerprints": [
+    "f53b1f4356d2dfa0d9d6877e4b6bb466fe3f9ce890a0913f5c6c69898a699101"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "action_fingerprint": "6e06b06e43a13894033e63c6677c13b37ef6fabb2d791a4b03f27acb41842807",
+  "authorized_effect": "quarantine one synthetic file",
+  "authorized_targets": [
+    "526859b7e88a89882269ab82fa02e9c7bd592d417c99b335dd64c4783fec61d2"
+  ],
+  "contract_id": "contract:5274d6f4c14baa5f0e62c88e",
+  "decision_id": "decision:fd226977a9be2fdd006e6bbb",
+  "execution_authorized": true,
+  "expires_at": "2026-01-01T00:05:00Z",
+  "preconditions_snapshot": {
+    "scope": {
+      "allowed_paths": [
+        "C:\\Temp"
+      ]
+    },
+    "targets": {
+      "03-quarantine-require-rollback:target": {
+        "exists": true,
+        "is_reparse_point": false,
+        "mtime_ns": 100,
+        "path": "C:\\Temp\\example.tmp",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size_bytes": 128,
+        "target_type": "file"
+      }
+    }
+  },
+  "requirements_satisfied": [
+    "AUDIT",
+    "POSTCONDITION_VERIFY",
+    "ROLLBACK_CONTRACT",
+    "TARGET_REVALIDATION",
+    "USER_CONFIRMATION"
+  ],
+  "rollback_id": "example:rollback"
+}

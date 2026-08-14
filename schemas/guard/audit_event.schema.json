@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.local/schemas/guard/audit_event.schema.json",
+  "title": "PC CleanGuard v0.5 AuditEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["event_id", "timestamp", "request_id", "decision_id", "event_type", "payload", "previous_event_hash", "event_hash"],
+  "properties": {
+    "event_id": {"type": "string", "minLength": 1},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "request_id": {"type": "string", "minLength": 1},
+    "decision_id": {"type": ["string", "null"]},
+    "event_type": {"enum": ["REQUEST_RECEIVED", "DECISION_ISSUED", "CONSENT_RECORDED", "PRECONDITION_CHECKED", "EXECUTION_CONTRACT_ISSUED", "EXECUTION_REPORTED", "POSTCONDITION_VERIFIED", "ROLLBACK_REQUESTED", "ROLLBACK_REPORTED"]},
+    "payload": {"type": "object"},
+    "previous_event_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "event_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

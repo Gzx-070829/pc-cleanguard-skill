@@ -1,0 +1,24 @@
+{
+  "developer_status": {},
+  "platform": "windows",
+  "preconditions": {
+    "BACKUP_PRESENT": true,
+    "ROLLBACK_READY": true
+  },
+  "protected_status": {},
+  "risk_signals": [],
+  "scope": {
+    "allowed_paths": [
+      "service:ExampleGuardService"
+    ]
+  },
+  "system_status": {},
+  "target_facts": {
+    "06-service-disable-high-risk:target": {
+      "exists": true,
+      "is_reparse_point": false,
+      "target_type": "service"
+    }
+  },
+  "user_policy": {}
+}

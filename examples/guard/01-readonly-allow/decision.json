@@ -1,0 +1,48 @@
+{
+  "action_fingerprint": "0a58ab6cfe88ad807c10e51729168df6ef86bd0af6f0d1507cc5a6aa8a5bc0d0",
+  "blocked_reasons": [],
+  "decision_fingerprint": "4bc58a7c4d16748bb36a563f1f259f2a62d9f1046d1eb41e8b5871d160d20680",
+  "decision_id": "decision:4bc58a7c4d16748bb36a563f",
+  "disposition": "ALLOW",
+  "execution_authorized": false,
+  "explanation": "Read-only Windows observation does not authorize a system mutation.",
+  "generated_at": "2026-01-01T00:00:00Z",
+  "matched_rules": [
+    "windows.read-only"
+  ],
+  "policy_version": "windows-default/0.5",
+  "preconditions_snapshot": {
+    "context_preconditions": {
+      "BACKUP_PRESENT": true,
+      "ROLLBACK_READY": true
+    },
+    "scope": {
+      "allowed_paths": [
+        "C:\\Temp"
+      ]
+    },
+    "targets": {
+      "01-readonly-allow:target": {
+        "facts": {
+          "exists": true,
+          "is_reparse_point": false,
+          "path": "C:\\Temp",
+          "target_type": "directory"
+        },
+        "target_fingerprint": "26cc94b978045b2f4947a63264801d7483d5490cee47d4aea0d34045020c03cc"
+      }
+    }
+  },
+  "request_id": "01-readonly-allow:request",
+  "requested_effect": "read TEMP usage metadata",
+  "requirements": [],
+  "risk_level": "L0",
+  "scope_snapshot": {
+    "allowed_paths": [
+      "C:\\Temp"
+    ]
+  },
+  "target_fingerprints": [
+    "26cc94b978045b2f4947a63264801d7483d5490cee47d4aea0d34045020c03cc"
+  ]
+}

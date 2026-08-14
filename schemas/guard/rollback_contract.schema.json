@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.local/schemas/guard/rollback_contract.schema.json",
+  "title": "PC CleanGuard v0.5 RollbackContract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["rollback_id", "decision_id", "action_fingerprint", "reversible", "backup_required", "backup_reference", "rollback_steps", "verification_steps", "expires_at"],
+  "properties": {
+    "rollback_id": {"type": "string", "minLength": 1},
+    "decision_id": {"type": "string", "minLength": 1},
+    "action_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "reversible": {"type": "boolean"},
+    "backup_required": {"type": "boolean"},
+    "backup_reference": {"type": ["string", "null"]},
+    "rollback_steps": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "verification_steps": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "expires_at": {"type": "string", "format": "date-time"}
+  }
+}

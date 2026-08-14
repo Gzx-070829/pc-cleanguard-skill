@@ -1,0 +1,28 @@
+{
+  "developer_status": {},
+  "platform": "windows",
+  "preconditions": {
+    "BACKUP_PRESENT": true,
+    "ROLLBACK_READY": true
+  },
+  "protected_status": {},
+  "risk_signals": [],
+  "scope": {
+    "allowed_paths": [
+      "C:\\Temp"
+    ]
+  },
+  "system_status": {},
+  "target_facts": {
+    "03-quarantine-require-rollback:target": {
+      "exists": true,
+      "is_reparse_point": false,
+      "mtime_ns": 100,
+      "path": "C:\\Temp\\example.tmp",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size_bytes": 128,
+      "target_type": "file"
+    }
+  },
+  "user_policy": {}
+}

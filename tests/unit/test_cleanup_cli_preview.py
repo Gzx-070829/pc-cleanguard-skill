@@ -48,7 +48,7 @@ class CleanupCliPreviewTest(unittest.TestCase):
         preview = json.loads(self.output.read_text(encoding="utf-8"))
         summary = json.loads(stdout)
         self.assertEqual(0, code)
-        self.assertEqual("", stderr)
+        self.assertIn("Legacy compatibility interface", stderr)
         self.assertEqual(2, preview["total_candidates"])
         self.assertEqual(8, preview["total_reclaimable_bytes"])
         self.assertEqual(2, summary["total_candidates"])

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.local/schemas/guard/guard_context.schema.json",
+  "title": "PC CleanGuard v0.5 GuardContext",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["platform", "scope", "target_facts", "protected_status", "developer_status", "system_status", "user_policy", "preconditions", "risk_signals"],
+  "properties": {
+    "platform": {"const": "windows"},
+    "scope": {"type": "object"},
+    "target_facts": {"type": "object", "additionalProperties": {"type": "object"}},
+    "protected_status": {"type": "object"},
+    "developer_status": {"type": "object"},
+    "system_status": {"type": "object"},
+    "user_policy": {"type": "object"},
+    "preconditions": {"type": "object"},
+    "risk_signals": {"type": "array", "items": {"$ref": "#/$defs/risk_signal"}}
+  },
+  "$defs": {
+    "risk_signal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "signal_type", "severity", "reason", "requirements", "block", "trusted", "execution_authorized"],
+      "properties": {
+        "source": {"type": "string", "minLength": 1},
+        "signal_type": {"type": "string", "minLength": 1},
+        "severity": {"enum": ["L0", "L1", "L2", "L3", "L4", "L5"]},
+        "reason": {"type": "string", "minLength": 1},
+        "requirements": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "block": {"type": "boolean"},
+        "trusted": {"type": "boolean"},
+        "execution_authorized": {"const": false}
+      }
+    }
+  }
+}

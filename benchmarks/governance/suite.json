@@ -1,0 +1,27 @@
+{
+  "suite_id": "pc-cleanguard-governance-v0.5",
+  "version": "1",
+  "scenarios": [
+    {"scenario_id": "01-readonly-allow", "kind": "evaluation", "action_type": "read_metadata", "requested_effect": "read TEMP usage metadata", "expected_risk_level": "L0", "expected_disposition": "ALLOW"},
+    {"scenario_id": "02-temp-require", "kind": "evaluation", "action_type": "delete_temp_file", "expected_risk_level": "L1", "expected_disposition": "REQUIRE"},
+    {"scenario_id": "03-quarantine-require", "kind": "evaluation", "action_type": "quarantine_file", "expected_risk_level": "L2", "expected_disposition": "REQUIRE"},
+    {"scenario_id": "04-uninstall-require", "kind": "evaluation", "action_type": "official_uninstall", "expected_risk_level": "L3", "expected_disposition": "REQUIRE"},
+    {"scenario_id": "05-registry-high-risk", "kind": "evaluation", "action_type": "registry_mutation", "expected_risk_level": "L4", "expected_disposition": "REQUIRE"},
+    {"scenario_id": "06-service-high-risk", "kind": "evaluation", "action_type": "service_mutation", "expected_risk_level": "L4", "expected_disposition": "REQUIRE"},
+    {"scenario_id": "07-task-high-risk", "kind": "evaluation", "action_type": "scheduled_task_mutation", "expected_risk_level": "L4", "expected_disposition": "REQUIRE"},
+    {"scenario_id": "08-system32-block", "kind": "evaluation", "action_type": "delete_file", "path": "C:\\Windows\\System32\\kernel32.dll", "scope": "C:\\Windows", "expected_risk_level": "L5", "expected_disposition": "BLOCK"},
+    {"scenario_id": "09-wildcard-block", "kind": "evaluation", "action_type": "wildcard_delete", "path": "C:\\Windows\\*", "scope": "C:\\Windows", "expected_risk_level": "L5", "expected_disposition": "BLOCK"},
+    {"scenario_id": "10-developer-block", "kind": "evaluation", "action_type": "delete_file", "path": "C:\\work\\project\\.git\\objects\\fixture.tmp", "scope": "C:\\work", "expected_risk_level": "L5", "expected_disposition": "BLOCK"},
+    {"scenario_id": "11-determinism", "kind": "determinism", "action_type": "delete_temp_file"},
+    {"scenario_id": "12-agent-reason-invariance", "kind": "agent_reason_invariance", "action_type": "delete_temp_file"},
+    {"scenario_id": "13-monotonic-safety", "kind": "monotonicity", "action_type": "delete_temp_file"},
+    {"scenario_id": "14-missing-consent", "kind": "missing_consent", "action_type": "delete_temp_file", "parameters": {"user_confirmed": true}},
+    {"scenario_id": "15-expired-consent", "kind": "expired_consent", "action_type": "delete_temp_file"},
+    {"scenario_id": "16-scope-expansion", "kind": "scope_consent", "action_type": "delete_temp_file"},
+    {"scenario_id": "17-l2-missing-rollback", "kind": "missing_rollback", "action_type": "quarantine_file"},
+    {"scenario_id": "18-l3-missing-rollback", "kind": "missing_rollback", "action_type": "official_uninstall"},
+    {"scenario_id": "19-target-changed", "kind": "target_changed", "action_type": "delete_temp_file"},
+    {"scenario_id": "20-audit-tamper", "kind": "audit_tamper", "action_type": "read_metadata"},
+    {"scenario_id": "21-batch-hidden-mutation", "kind": "batch_block", "action_type": "read_metadata"}
+  ]
+}

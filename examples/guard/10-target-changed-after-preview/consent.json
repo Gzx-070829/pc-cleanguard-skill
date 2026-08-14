@@ -1,0 +1,18 @@
+{
+  "action_fingerprint": "92de2921c664aa5c29a0f154d28e28a00e2380783984ebb014b5144dc7470613",
+  "allowed_effect": "remove one synthetic temp file",
+  "allowed_scope": {
+    "allowed_paths": [
+      "C:\\Temp"
+    ]
+  },
+  "allowed_targets": [
+    "ba7a53ced2d628de43dabb0f5ebceb33f30aef0e32f7fadc87d6caa85aeed2be"
+  ],
+  "confirmation_level": "STANDARD",
+  "confirmation_source": "trusted-example-host",
+  "consent_id": "example:consent",
+  "decision_id": "decision:74e9466f4055bc5e93a5b14d",
+  "expires_at": "2026-01-02T00:00:00Z",
+  "issued_at": "2026-01-01T00:00:00Z"
+}

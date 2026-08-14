@@ -1,5 +1,7 @@
 """PC CleanGuard's non-executing safety policy foundation."""
 
+from .guard import ActionRequest, Guard, GuardContext
+
 from .core.models import (
     ClassificationLabel,
     EvidenceChain,
@@ -104,6 +106,9 @@ from .cleanup import (
 )
 
 __all__ = [
+    "ActionRequest",
+    "Guard",
+    "GuardContext",
     "ClassificationLabel",
     "EvidenceChain",
     "GovernanceTarget",
@@ -196,4 +201,4 @@ __all__ = [
     "write_cleanup_execution_report",
 ]
 
-__version__ = "0.4.2"
+__version__ = "0.5.0"

@@ -1,0 +1,42 @@
+{
+  "developer_status": {},
+  "platform": "windows",
+  "preconditions": {
+    "BACKUP_PRESENT": true,
+    "ROLLBACK_READY": true
+  },
+  "protected_status": {},
+  "risk_signals": [],
+  "scope": {
+    "allowed_paths": [
+      "C:\\Temp",
+      "C:\\Apps",
+      "C:\\Windows"
+    ]
+  },
+  "system_status": {},
+  "target_facts": {
+    "12-bundle-block:target": {
+      "exists": true,
+      "is_reparse_point": false,
+      "mtime_ns": 100,
+      "path": "C:\\Windows\\*",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size_bytes": 128,
+      "target_type": "file"
+    },
+    "12-bundle-read:target": {
+      "exists": true,
+      "is_reparse_point": false,
+      "path": "C:\\Temp",
+      "target_type": "directory"
+    },
+    "12-bundle-uninstall:target": {
+      "exists": true,
+      "is_reparse_point": false,
+      "path": "C:\\Apps\\Synthetic Example",
+      "target_type": "application"
+    }
+  },
+  "user_policy": {}
+}

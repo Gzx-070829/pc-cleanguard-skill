@@ -50,7 +50,7 @@ class CleanupCliExecuteTest(unittest.TestCase):
         code, stdout, stderr = self._run()
         report = json.loads(self.result.read_text(encoding="utf-8"))
         self.assertEqual(0, code)
-        self.assertEqual("", stderr)
+        self.assertIn("Legacy compatibility interface", stderr)
         self.assertEqual("would_clean", report["results"][0]["status"])
         self.assertTrue(self.candidate.exists())
         self.assertTrue(self.audit.is_file())
@@ -65,7 +65,7 @@ class CleanupCliExecuteTest(unittest.TestCase):
             json.loads(line) for line in self.audit.read_text(encoding="utf-8").splitlines()
         ]
         self.assertEqual(0, code)
-        self.assertEqual("", stderr)
+        self.assertIn("Legacy compatibility interface", stderr)
         self.assertFalse(self.candidate.exists())
         self.assertEqual("cleaned", report["results"][0]["status"])
         self.assertEqual(4, report["results"][0]["bytes_reclaimed"])

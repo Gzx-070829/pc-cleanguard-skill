@@ -1,0 +1,34 @@
+{
+  "action_fingerprint": "5a965e19fc36e0b7ac87088099baeff13f9a04d2d4140fd8394035921e4781e1",
+  "authorized_effect": "uninstall Synthetic Example App",
+  "authorized_targets": [
+    "6466b4620b301b340231c1d71a6dcd2bd7610e8fce739a7f539c5a488a7243ba"
+  ],
+  "contract_id": "contract:d70d46a32d621fdab7f926be",
+  "decision_id": "decision:131c06640f32b480ce7d690e",
+  "execution_authorized": true,
+  "expires_at": "2026-01-01T00:05:00Z",
+  "preconditions_snapshot": {
+    "scope": {
+      "allowed_paths": [
+        "C:\\Program Files\\Synthetic Example App"
+      ]
+    },
+    "targets": {
+      "07-uninstall-contract:target": {
+        "exists": true,
+        "is_reparse_point": false,
+        "path": "C:\\Program Files\\Synthetic Example App",
+        "target_type": "application"
+      }
+    }
+  },
+  "requirements_satisfied": [
+    "AUDIT",
+    "POSTCONDITION_VERIFY",
+    "ROLLBACK_PLAN",
+    "TARGET_REVALIDATION",
+    "USER_CONFIRMATION"
+  ],
+  "rollback_id": "example:rollback"
+}

@@ -37,7 +37,12 @@ class QuarantineCliTest(unittest.TestCase):
             ])
 
             self.assertEqual((0, 0, 0), (add_code, list_code, restore_code))
-            self.assertEqual("", add_stderr + list_stderr + restore_stderr)
+            self.assertEqual(
+                3,
+                (add_stderr + list_stderr + restore_stderr).count(
+                    "Legacy compatibility interface"
+                ),
+            )
             self.assertEqual(1, len(json.loads(list_stdout)["items"]))
             self.assertEqual("restored", json.loads(restore_stdout)["status"])
             self.assertEqual(b"restore me", source.read_bytes())

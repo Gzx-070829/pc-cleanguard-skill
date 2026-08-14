@@ -1,0 +1,29 @@
+{
+  "action_type": "quarantine_file",
+  "agent_id": "example-agent",
+  "agent_reason": "request reversible isolation",
+  "dry_run": false,
+  "evidence_refs": [],
+  "parameters": {},
+  "request_id": "03-quarantine-require-rollback:request",
+  "requested_at": "2026-01-01T00:00:00Z",
+  "requested_effect": "quarantine one synthetic file",
+  "targets": [
+    {
+      "identifier": "03-quarantine-require-rollback:target",
+      "metadata": {
+        "synthetic": true
+      },
+      "observed_state": {
+        "exists": true,
+        "is_reparse_point": false,
+        "mtime_ns": 100,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size_bytes": 128,
+        "target_type": "file"
+      },
+      "path": "C:\\Temp\\example.tmp",
+      "target_type": "file"
+    }
+  ]
+}

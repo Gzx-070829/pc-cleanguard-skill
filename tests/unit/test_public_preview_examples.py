@@ -15,8 +15,8 @@ class PublicPreviewExamplesTest(unittest.TestCase):
     def _request(self, name: str) -> dict:
         return json.loads((EXAMPLES / name).read_text(encoding="utf-8"))
 
-    def test_final_evaluation_version_is_v042(self) -> None:
-        self.assertEqual("0.4.2", pc_cleanguard.__version__)
+    def test_current_version_is_v050_while_final_evaluation_assets_remain(self) -> None:
+        self.assertEqual("0.5.0", pc_cleanguard.__version__)
 
     def test_examples_cover_every_public_action(self) -> None:
         request_paths = list(EXAMPLES.glob("*.request.json")) + list(
