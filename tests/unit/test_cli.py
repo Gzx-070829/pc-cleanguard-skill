@@ -89,7 +89,7 @@ class MinimalReadOnlyCliTest(unittest.TestCase):
         code, stdout, stderr = self._run("--scan-id", "scan:summary")
         summary = json.loads(stdout)
         self.assertEqual(0, code)
-        self.assertEqual("", stderr)
+        self.assertIn("Legacy compatibility interface", stderr)
         self.assertEqual("scan:summary", summary["scan_id"])
         self.assertEqual(2, summary["decisions"])
         self.assertFalse(summary["execution_performed"])

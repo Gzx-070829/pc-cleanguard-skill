@@ -1,0 +1,18 @@
+{
+  "action_fingerprint": "5a965e19fc36e0b7ac87088099baeff13f9a04d2d4140fd8394035921e4781e1",
+  "allowed_effect": "uninstall Synthetic Example App",
+  "allowed_scope": {
+    "allowed_paths": [
+      "C:\\Program Files\\Synthetic Example App"
+    ]
+  },
+  "allowed_targets": [
+    "6466b4620b301b340231c1d71a6dcd2bd7610e8fce739a7f539c5a488a7243ba"
+  ],
+  "confirmation_level": "STANDARD",
+  "confirmation_source": "trusted-example-host",
+  "consent_id": "example:consent",
+  "decision_id": "decision:131c06640f32b480ce7d690e",
+  "expires_at": "2026-01-02T00:00:00Z",
+  "issued_at": "2026-01-01T00:00:00Z"
+}

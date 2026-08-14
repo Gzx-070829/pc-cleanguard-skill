@@ -38,3 +38,30 @@ AI 判断不能直接触发删除。
 维护者应确认收件、复现和分级，在修复可用前限制细节传播；完成修复、回归测试和规则签核后协调发布。若漏洞已被利用，应优先发布紧急警告规则以阻断风险，但该规则仍不得执行删除。报告人和维护者共同商定公开时间与致谢方式。
 
 PR1 尚未声明长期支持版本；安全修复以当前默认分支和受影响的已发布标签为准。
+
+## Governance bypass threat model
+
+v0.5 treats the Agent and all natural-language/evidence intelligence as untrusted
+with respect to authorization.
+
+- **Agent bypasses Guard / Agent 绕过 Guard**：如果集成允许 Agent 直接调用
+  Windows API、PowerShell 或其他 executor，Guard 无法拦截。Host 必须强制相关动作
+  经过 Guard。
+- **Fabricated consent / 伪造确认**：Agent payload 中的 `user_confirmed` 不可信。
+  Consent 必须由 trusted host/UI 认证，并绑定 decision、fingerprint、targets、effect、
+  scope、confirmation level 与 expiry。
+- **TOCTOU target change / 目标变化**：preview 与执行之间的 path/type/hash/size/
+  mtime/reparse/protection 变化必须使旧授权失效并触发重新评估。
+- **Audit tampering / 审计篡改**：canonical SHA-256 前向哈希链检测历史 payload
+  或链接修改；它不提供签名、加密或访问控制。
+- **Scope expansion / 范围扩大**：Consent 或 executor 试图从单目标扩大到 wildcard、
+  新目录或新 effect 时必须拒绝。
+- **Rollback mismatch / 回滚错配**：L2/L3/L4 rollback contract/plan 必须绑定同一
+  decision 与 action fingerprint，未过期且满足 backup/reversibility/verification 要求。
+- **Untrusted evidence escalation / 不可信证据越权**：PUP、Reputation、Behavior、
+  Evidence、community input 和 Agent confidence 只能增加限制，不能产生授权或降低
+  requirements。
+
+PC CleanGuard is not kernel enforcement, a sandbox, EDR, antivirus, or an OS
+identity boundary. Its protection is only effective when the integrating host
+routes actions through it and protects the trusted consent/audit surfaces.

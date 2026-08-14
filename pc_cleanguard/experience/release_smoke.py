@@ -26,7 +26,7 @@ def run_release_smoke_check() -> dict:
         seeds_ok = False
     templates = root / ".github" / "ISSUE_TEMPLATE"
     checks = {
-        "version_0_4_2": __version__ == "0.4.2",
+        "version_0_5_0": __version__ == "0.5.0",
         "readme_trial_command": "trial run --root .pcg-demo --output .pcg-trial" in readme,
         "readme_restore_command": "quarantine restore --root .pcg-quarantine" in readme,
         "showcase_complete": showcase.is_dir() and all((showcase / name).is_file() for name in showcase_files),

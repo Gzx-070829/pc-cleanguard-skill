@@ -1,0 +1,25 @@
+{
+  "developer_status": {},
+  "platform": "windows",
+  "preconditions": {
+    "BACKUP_PRESENT": true,
+    "ROLLBACK_READY": true
+  },
+  "protected_status": {},
+  "risk_signals": [],
+  "scope": {
+    "allowed_paths": [
+      "C:\\Temp"
+    ]
+  },
+  "system_status": {},
+  "target_facts": {
+    "11-audit-chain:target": {
+      "exists": true,
+      "is_reparse_point": false,
+      "path": "C:\\Temp",
+      "target_type": "directory"
+    }
+  },
+  "user_policy": {}
+}

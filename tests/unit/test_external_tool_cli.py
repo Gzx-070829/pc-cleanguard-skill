@@ -58,7 +58,7 @@ class ExternalToolCliTest(unittest.TestCase):
     def test_tools_recommend_writes_json(self) -> None:
         code, stdout, stderr = self._run()
         self.assertEqual(0, code)
-        self.assertEqual("", stderr)
+        self.assertIn("Legacy compatibility interface", stderr)
         output = json.loads(self.output_path.read_text(encoding="utf-8"))
         self.assertEqual(1, len(output["recommendations"]))
         self.assertTrue(output["recommendations"][0]["plan_only"])

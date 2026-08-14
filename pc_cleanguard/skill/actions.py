@@ -846,7 +846,18 @@ def validate_agent_execution_request(request, *, request_id=None):
 
 
 def invoke_skill_action(request: SkillActionRequest | dict) -> SkillActionResponse:
-    """Validate and dispatch one external AI action request."""
+    """Dispatch a primary Guard action or a legacy compatibility action."""
+
+    if isinstance(request, dict) and request.get("action") in {
+        "evaluate_action",
+        "prepare_execution",
+        "evaluate_action_bundle",
+        "record_execution_result",
+        "verify_audit",
+    }:
+        from .guard_actions import invoke_guard_action
+
+        return invoke_guard_action(request)
 
     if isinstance(request, dict):
         request = SkillActionRequest.from_dict(request)

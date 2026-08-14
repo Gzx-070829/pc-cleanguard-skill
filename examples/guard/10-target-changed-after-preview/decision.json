@@ -1,0 +1,55 @@
+{
+  "action_fingerprint": "92de2921c664aa5c29a0f154d28e28a00e2380783984ebb014b5144dc7470613",
+  "blocked_reasons": [],
+  "decision_fingerprint": "74e9466f4055bc5e93a5b14d697eecc9e29ceb589a116709f7878d410263e6b5",
+  "decision_id": "decision:74e9466f4055bc5e93a5b14d",
+  "disposition": "REQUIRE",
+  "execution_authorized": false,
+  "explanation": "A narrow low-risk file mutation requires user confirmation, revalidation, and audit.",
+  "generated_at": "2026-01-01T00:00:00Z",
+  "matched_rules": [
+    "windows.l1-low-risk-file"
+  ],
+  "policy_version": "windows-default/0.5",
+  "preconditions_snapshot": {
+    "context_preconditions": {
+      "BACKUP_PRESENT": true,
+      "ROLLBACK_READY": true
+    },
+    "scope": {
+      "allowed_paths": [
+        "C:\\Temp"
+      ]
+    },
+    "targets": {
+      "10-target-changed-after-preview:target": {
+        "facts": {
+          "exists": true,
+          "is_reparse_point": false,
+          "mtime_ns": 100,
+          "path": "C:\\Temp\\changed.tmp",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size_bytes": 128,
+          "target_type": "file"
+        },
+        "target_fingerprint": "ba7a53ced2d628de43dabb0f5ebceb33f30aef0e32f7fadc87d6caa85aeed2be"
+      }
+    }
+  },
+  "request_id": "10-target-changed-after-preview:request",
+  "requested_effect": "remove one synthetic temp file",
+  "requirements": [
+    "AUDIT",
+    "TARGET_REVALIDATION",
+    "USER_CONFIRMATION"
+  ],
+  "risk_level": "L1",
+  "scope_snapshot": {
+    "allowed_paths": [
+      "C:\\Temp"
+    ]
+  },
+  "target_fingerprints": [
+    "ba7a53ced2d628de43dabb0f5ebceb33f30aef0e32f7fadc87d6caa85aeed2be"
+  ]
+}

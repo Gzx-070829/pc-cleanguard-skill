@@ -1,0 +1,18 @@
+{
+  "action_fingerprint": "6e06b06e43a13894033e63c6677c13b37ef6fabb2d791a4b03f27acb41842807",
+  "allowed_effect": "quarantine one synthetic file",
+  "allowed_scope": {
+    "allowed_paths": [
+      "C:\\Temp"
+    ]
+  },
+  "allowed_targets": [
+    "526859b7e88a89882269ab82fa02e9c7bd592d417c99b335dd64c4783fec61d2"
+  ],
+  "confirmation_level": "STANDARD",
+  "confirmation_source": "trusted-example-host",
+  "consent_id": "example:consent",
+  "decision_id": "decision:fd226977a9be2fdd006e6bbb",
+  "expires_at": "2026-01-02T00:00:00Z",
+  "issued_at": "2026-01-01T00:00:00Z"
+}

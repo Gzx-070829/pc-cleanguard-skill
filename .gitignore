@@ -5,3 +5,5 @@ __pycache__/
 .pcg-local-evaluation/
 .pcg-local-evaluation-v041/
 .pcg-final-ab/
+.pcg-v050-real-agent/
+.pcg-v050-benchmark/

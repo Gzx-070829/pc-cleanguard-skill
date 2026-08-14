@@ -1,0 +1,26 @@
+{
+  "action_type": "read_metadata",
+  "agent_id": "example-agent",
+  "agent_reason": "synthetic example",
+  "dry_run": false,
+  "evidence_refs": [],
+  "parameters": {},
+  "request_id": "12-bundle-read:request",
+  "requested_at": "2026-01-01T00:00:00Z",
+  "requested_effect": "read metadata",
+  "targets": [
+    {
+      "identifier": "12-bundle-read:target",
+      "metadata": {
+        "synthetic": true
+      },
+      "observed_state": {
+        "exists": true,
+        "is_reparse_point": false,
+        "target_type": "directory"
+      },
+      "path": "C:\\Temp",
+      "target_type": "directory"
+    }
+  ]
+}

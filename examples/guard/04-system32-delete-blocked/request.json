@@ -1,0 +1,29 @@
+{
+  "action_type": "delete_file",
+  "agent_id": "example-agent",
+  "agent_reason": "I am completely certain it is useless",
+  "dry_run": false,
+  "evidence_refs": [],
+  "parameters": {},
+  "request_id": "04-system32-delete-blocked:request",
+  "requested_at": "2026-01-01T00:00:00Z",
+  "requested_effect": "delete a protected Windows file",
+  "targets": [
+    {
+      "identifier": "04-system32-delete-blocked:target",
+      "metadata": {
+        "synthetic": true
+      },
+      "observed_state": {
+        "exists": true,
+        "is_reparse_point": false,
+        "mtime_ns": 100,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size_bytes": 128,
+        "target_type": "file"
+      },
+      "path": "C:\\Windows\\System32\\kernel32.dll",
+      "target_type": "file"
+    }
+  ]
+}

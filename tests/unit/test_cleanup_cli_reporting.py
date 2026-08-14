@@ -57,7 +57,7 @@ class CleanupCliReportingTest(unittest.TestCase):
         code, stdout, stderr = self._run()
 
         self.assertEqual(0, code)
-        self.assertEqual("", stderr)
+        self.assertIn("Legacy compatibility interface", stderr)
         self.assertIn("Cleanup Report", self.output.read_text(encoding="utf-8"))
         summary = json.loads(stdout)
         self.assertEqual(1, summary["total_candidates"])

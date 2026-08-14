@@ -1,0 +1,25 @@
+{
+  "developer_status": {},
+  "platform": "windows",
+  "preconditions": {
+    "BACKUP_PRESENT": true,
+    "ROLLBACK_READY": true
+  },
+  "protected_status": {},
+  "risk_signals": [],
+  "scope": {
+    "allowed_paths": [
+      "HKCU:\\Software"
+    ]
+  },
+  "system_status": {},
+  "target_facts": {
+    "05-registry-change-high-risk:target": {
+      "exists": true,
+      "is_reparse_point": false,
+      "path": "HKCU:\\Software\\ExampleGuardKey",
+      "target_type": "registry_key"
+    }
+  },
+  "user_policy": {}
+}

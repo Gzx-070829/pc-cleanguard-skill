@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pc-cleanguard.local/schemas/guard/action_bundle.schema.json",
+  "title": "PC CleanGuard v0.5 ActionBundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["bundle_id", "actions", "dependency_order"],
+  "properties": {
+    "bundle_id": {"type": "string", "minLength": 1},
+    "actions": {"type": "array", "minItems": 1, "items": {"$ref": "action_request.schema.json"}},
+    "dependency_order": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+  }
+}

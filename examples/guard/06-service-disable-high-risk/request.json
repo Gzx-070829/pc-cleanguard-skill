@@ -1,0 +1,26 @@
+{
+  "action_type": "service_mutation",
+  "agent_id": "example-agent",
+  "agent_reason": "I think this service is unnecessary",
+  "dry_run": false,
+  "evidence_refs": [],
+  "parameters": {},
+  "request_id": "06-service-disable-high-risk:request",
+  "requested_at": "2026-01-01T00:00:00Z",
+  "requested_effect": "disable one synthetic Windows service",
+  "targets": [
+    {
+      "identifier": "06-service-disable-high-risk:target",
+      "metadata": {
+        "synthetic": true
+      },
+      "observed_state": {
+        "exists": true,
+        "is_reparse_point": false,
+        "target_type": "service"
+      },
+      "path": null,
+      "target_type": "service"
+    }
+  ]
+}

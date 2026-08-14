@@ -1,0 +1,57 @@
+{
+  "action_fingerprint": "6e06b06e43a13894033e63c6677c13b37ef6fabb2d791a4b03f27acb41842807",
+  "blocked_reasons": [],
+  "decision_fingerprint": "fd226977a9be2fdd006e6bbb70f9cc3fd7c2ef68a633a00b6b76a77866ddbaad",
+  "decision_id": "decision:fd226977a9be2fdd006e6bbb",
+  "disposition": "REQUIRE",
+  "execution_authorized": false,
+  "explanation": "A reversible filesystem mutation requires a bound rollback contract and postcondition verification.",
+  "generated_at": "2026-01-01T00:00:00Z",
+  "matched_rules": [
+    "windows.l2-reversible-filesystem"
+  ],
+  "policy_version": "windows-default/0.5",
+  "preconditions_snapshot": {
+    "context_preconditions": {
+      "BACKUP_PRESENT": true,
+      "ROLLBACK_READY": true
+    },
+    "scope": {
+      "allowed_paths": [
+        "C:\\Temp"
+      ]
+    },
+    "targets": {
+      "03-quarantine-require-rollback:target": {
+        "facts": {
+          "exists": true,
+          "is_reparse_point": false,
+          "mtime_ns": 100,
+          "path": "C:\\Temp\\example.tmp",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size_bytes": 128,
+          "target_type": "file"
+        },
+        "target_fingerprint": "526859b7e88a89882269ab82fa02e9c7bd592d417c99b335dd64c4783fec61d2"
+      }
+    }
+  },
+  "request_id": "03-quarantine-require-rollback:request",
+  "requested_effect": "quarantine one synthetic file",
+  "requirements": [
+    "AUDIT",
+    "POSTCONDITION_VERIFY",
+    "ROLLBACK_CONTRACT",
+    "TARGET_REVALIDATION",
+    "USER_CONFIRMATION"
+  ],
+  "risk_level": "L2",
+  "scope_snapshot": {
+    "allowed_paths": [
+      "C:\\Temp"
+    ]
+  },
+  "target_fingerprints": [
+    "526859b7e88a89882269ab82fa02e9c7bd592d417c99b335dd64c4783fec61d2"
+  ]
+}

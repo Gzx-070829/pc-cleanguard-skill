@@ -1,0 +1,26 @@
+{
+  "action_type": "official_uninstall",
+  "agent_id": "example-agent",
+  "agent_reason": "request an official uninstall contract",
+  "dry_run": false,
+  "evidence_refs": [],
+  "parameters": {},
+  "request_id": "07-uninstall-contract:request",
+  "requested_at": "2026-01-01T00:00:00Z",
+  "requested_effect": "uninstall Synthetic Example App",
+  "targets": [
+    {
+      "identifier": "07-uninstall-contract:target",
+      "metadata": {
+        "synthetic": true
+      },
+      "observed_state": {
+        "exists": true,
+        "is_reparse_point": false,
+        "target_type": "application"
+      },
+      "path": "C:\\Program Files\\Synthetic Example App",
+      "target_type": "application"
+    }
+  ]
+}

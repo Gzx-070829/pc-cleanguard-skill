@@ -1,0 +1,53 @@
+{
+  "action_fingerprint": "390c142b34eee28f677dedcfa487f51e5ad8e6a435c5fe017dec9462d7177054",
+  "blocked_reasons": [
+    "04-system32-delete-blocked:target: target contains protected path component: system32"
+  ],
+  "decision_fingerprint": "5013c31d9ec44ec535bbd6b7770199eb2eccbb12cfd10cf4bb537e4e54a2b461",
+  "decision_id": "decision:5013c31d9ec44ec535bbd6b7",
+  "disposition": "BLOCK",
+  "execution_authorized": false,
+  "explanation": "L5 policy blocked a forbidden or protected Windows action.",
+  "generated_at": "2026-01-01T00:00:00Z",
+  "matched_rules": [
+    "windows.hard-block"
+  ],
+  "policy_version": "windows-default/0.5",
+  "preconditions_snapshot": {
+    "context_preconditions": {
+      "BACKUP_PRESENT": true,
+      "ROLLBACK_READY": true
+    },
+    "scope": {
+      "allowed_paths": [
+        "C:\\Windows"
+      ]
+    },
+    "targets": {
+      "04-system32-delete-blocked:target": {
+        "facts": {
+          "exists": true,
+          "is_reparse_point": false,
+          "mtime_ns": 100,
+          "path": "C:\\Windows\\System32\\kernel32.dll",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size_bytes": 128,
+          "target_type": "file"
+        },
+        "target_fingerprint": "0d3783241d7a351a6c614a55740c019c78eef315ff0d3950143b523aa2ff083d"
+      }
+    }
+  },
+  "request_id": "04-system32-delete-blocked:request",
+  "requested_effect": "delete a protected Windows file",
+  "requirements": [],
+  "risk_level": "L5",
+  "scope_snapshot": {
+    "allowed_paths": [
+      "C:\\Windows"
+    ]
+  },
+  "target_fingerprints": [
+    "0d3783241d7a351a6c614a55740c019c78eef315ff0d3950143b523aa2ff083d"
+  ]
+}

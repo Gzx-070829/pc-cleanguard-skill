@@ -1,77 +1,59 @@
 # Roadmap
 
-## 项目终态 — v0.4.2 Final Evaluation
+## Historical boundary
 
-PC CleanGuard 的 v0.4.x 产品路线已进入 **Feature Frozen / Maintenance Mode**。最终真实 Windows 与 Agent A/B 验收中，PC CleanGuard 在结构化、审计、恢复规划和 Agent 输出稳定性上有明确优势，但总分只领先 Bare Codex 2.2 分，Governance 只领先 1.9 分，并且只赢得 7/12 项任务；未达到 v1.0 的全部硬门槛。
+The v0.1-v0.4 Cleaner/PUP/Reputation/Persistence route remains
+`FEATURE_FROZEN`. Its final controlled comparison was Bare Codex `87.3` versus
+Codex + PC CleanGuard `89.5`, delta `+2.2`; that did not prove enough independent
+value for continued expansion. Historical reports, examples, real-machine
+validation, and compatibility commands remain reproducible and must not be
+rewritten as a successful old hypothesis.
 
-不再推进旧 Cleaner/PUP/Persistence 路线中的 v1.0 功能扩张。后续仅接受严重安全修复、必要兼容性修复、数据损坏或错误授权类关键缺陷，以及事实性文档修正。历史路线保留如下，仅用于说明项目演进，不代表未来承诺。详见 [最终 A/B 报告](docs/PC-CleanGuard-Final-AB-Evaluation.md) 与 [Decision Record](docs/PC-CleanGuard-Final-Decision-Record.md)。
+## v0.5.0 — Governance Re-foundation
 
-v0.4.1：补齐 Windows PowerShell 5.1 / PowerShell 7 只读采集编排、collector manifest、canonical redacted report、正式本地 evaluation、link diagnostics，以及不放宽 Desktop 保护的 synthetic 隔离恢复验收。Python 不自动启动 PowerShell；PUP 与持久化结果仍不授权执行。
+PC CleanGuard becomes a thin deterministic Windows governance guard:
 
-v0.4.0：正式引入持久化链路图谱、L0-L5 治理 proposal、Agent fail-closed 接口、Review Pack 链路资产和 synthetic 真实感样本。当前不执行断链；优先只读检测、用户确认、可逆设计、恢复与审计。
+- structured Action Contract;
+- deterministic L0-L5 Policy;
+- monotonic restriction-only risk signals;
+- trusted-host Consent boundary;
+- execution-time target revalidation;
+- Rollback Contract validation;
+- external Executor boundary;
+- hash-chained Audit receipts;
+- maximum-restriction ActionBundle aggregation;
+- five Agent-facing Skill actions and a Guard-first CLI;
+- fixed governance benchmark and synthetic lifecycle validation.
 
-中文 Windows approved evidence 保持 10 条：本 Sprint 未取得额外可稳定核验的公开来源，因此宁少勿脏；未充分核验方向继续留在 candidate/backlog。
+Success is measured by zero policy bypass, zero self-authorized action, zero
+consent escalation, zero stale-target contract, zero audit-integrity failure, and
+100% deterministic known-scenario results—not PUP hit counts, graph edges, or
+cleaned bytes.
 
-v0.3.3：中文 evidence 扩至 10 条，增加三类报告 fixture、Coverage Dashboard、用户报告、误报反馈、Agent examples 与产品化 Review Pack。
+## Allowed future directions (evidence required)
 
-v0.4：优先更完整只读检测、可逆操作、用户确认和恢复；不进入自动杀软路线，PUP evidence 不能单独触发执行。详见 [v0.4 roadmap](docs/v0.4-roadmap.md)。
+Future work is limited to:
 
-v0.3.2：中文 Windows PUP evidence 扩充、行为佐证闭环、真实报告试跑、no-match 价值报告与质量门。
+- policy correctness and formally stated invariants;
+- integrating-host and Agent routing contracts;
+- stronger Consent authenticity adapters without pretending to be OS identity;
+- audit reliability and receipt interoperability;
+- rollback contract correctness;
+- narrow Windows adapters that consume contracts without entering Guard Core;
+- compatibility and migration;
+- real-world governance evaluation.
 
-PC CleanGuard 以用户可见闭环为 Sprint PR 单位快速推进，同时保持“不静默删除、不绕过确认、不联网泄露、不把 AI/声誉建议当授权”的安全底线。
+Future features require experimental evidence. Without evidence that a feature
+improves governance outcomes, it is not developed.
 
-PR29 在 v0.3.1 基础上补齐少量中文 Windows direct/installer-artifact evidence、Evidence Quality Dashboard 与真实 report 本地验证；不进入 PR30，不扩大系统执行权限。
+## Explicit non-roadmap
 
-## v0.1.0 — Read-only governance loop / 只读治理闭环
+No Cleaner-first expansion, PUP dataset race, reputation-driven authorization,
+persistence graph as product center, Agent-intelligence competition, GUI/Web UI,
+cloud platform, crawler, online reputation, LLM provider, Linux/macOS framework,
+generic shell executor, real L3/L4 executor, or new cleanup categories are planned
+for v0.5.
 
-已发布：Policy Engine、声明式 plan、dry-run audit、只读 Windows metadata pipeline、离线 AI explainer 与 AI-callable Skill action。
-
-## v0.2.0 — Controlled L1 cleanup + public demo / L1 受控清理与公开 Demo
-
-已发布：junk preview、受控 L1 temp/cache/log 文件清理、allow-root/protected-path/runtime revalidation、JSONL audit、Markdown report、synthetic demo quickstart 与 plan-only external-tool recommender。
-
-## v0.3.0 — User trial + quarantine-first + PUP insight + Developer Guard
-
-Public Preview：
-
-- 中文优先的 8 类 PUP behavior taxonomy；
-- evidence-only Reputation Record schema、review status 与 synthetic examples；
-- Developer Guard 纯路径分类器；
-- scanner 提前阻断 + executor 删除前复核；
-- `.git`、虚拟环境、依赖树、IDE metadata、开发缓存和显式 user code roots 保护。
-
-v0.3 Reputation KB 只能解释、排序与风险提示，不能自动触发删除、卸载或禁用。
-
-PR19 将原计划的可逆隔离基础提前接入 v0.3：普通文件 quarantine、manifest、restore、CLI、Skill actions 与 L1 cleanup integration。仍不提供 purge 或目录隔离。
-
-PR20 把隔离设为确认清理的默认路径，增加 `clean safe` 普通用户闭环；永久删除改为显式专家模式和二次确认。首批 Reputation Seed Pack 为离线 synthetic/placeholder 证据，固定不授权执行，不采集专有检测规则。
-
-PR21 增加 Reputation Matcher、PUP Insight、CLI/Skill 用户入口和 AI explain 的受限洞察摘要。它让声誉证据可见，但仍不提供删除、卸载或禁用授权。
-
-PR22 将 cleanup preview、默认隔离、审计、报告、PUP insight 和恢复说明编排为 5 分钟用户试用入口，优先验证真实用户能否理解产品价值与安全边界。
-
-PR24 提供无需配置的 `.pcg-quarantine` 默认隔离路径，并把 Evidence Pack 的实体关系、synthetic 状态、类比依据和执行阻断规则代码化。
-
-PR25 增加真实公开来源的人工 intake/review/build 流程和首批核验 records。构建与 PUP insight 均保持离线，所有真实 evidence 继续被阻断在执行门控之外。
-
-PR26 将 evidence indicators、保守匹配、PUP Intelligence、来源追溯、人工 checklist 和误报反馈编排为一条命令生成的本地 Review Pack。它提升可用性，但不扩大系统执行权限。
-
-PR27 用对抗测试焊死 Evidence Guard，加入批次级中文官方来源、report-metadata Behavior Indicators，并准备 v0.3.1 showcase/checklist。版本号、tag 和 Release 留给独立发布任务。
-
-## v0.3.1 — Chinese source matrix + guarded candidate intake
-
-已发布准备：PR28 把历史公开材料、安全厂商公开文章、官方/监管来源、可信媒体、社区多源反馈和网友屏蔽名单分层。只有满足契约的本地公开来源才可进入 candidate/review；历史榜、网友名单和移动端通报不得成为现代 Windows 删除名单。PUP 层执行门控仍为 0。
-
-## v0.4 — Reputation adapters + PUP planner + registry backup planning
-
-在明确来源许可和人工审核下接入真实公开 Reputation adapter；构建 PUP 声明式 planner 与注册表备份规划。声誉证据仍不授权执行，registry backup planning 不提供任意写入口。
-
-## v0.5 — Controlled uninstall + stronger external-tool governance
-
-在 allowlist、签名/发布者核验、用户确认、回滚和审计下推进更强的受控卸载与外部工具治理。
-
-## v1.0 — External tool adapter + Agent ecosystem integration
-
-在 allowlist、发布者/签名校验、动作限制、用户确认和审计约束下接入可信外部工具与 Agent 生态。可信工具与 AI recommendation 都不是静默执行授权。
-
-完整愿景见 [docs/VISION.md](docs/VISION.md)。PR 不创建 tag；只有正式版本创建 tag。Commit message 使用中文。
+Legacy milestones and their original documents remain linked from
+[docs/legacy/README.md](docs/legacy/README.md). PRs do not receive tags; stable
+versions do. Commit messages remain Chinese.
