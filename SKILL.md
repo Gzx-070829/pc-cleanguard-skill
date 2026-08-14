@@ -5,7 +5,9 @@ description: Conservatively assess Windows software, startup items, services, pr
 
 # PC CleanGuard
 
-Current public version: `0.4.1`. Windows collector ingestion, canonical redacted reports, local evaluation, Persistence Chain Graph, L0-L5 governance-plan view, PUP corroboration, coverage and reporting are Level 0. AI may explain and organize review, but natural-language reasoning cannot authorize deletion, uninstall, disable, registry/service/task/browser mutation, or any other system change.
+Current public version: `0.4.2 Final Evaluation`. The v0.4.x Cleaner/PUP/Persistence product route is feature-frozen and in maintenance mode. Windows collector ingestion, canonical redacted reports, local evaluation, Persistence Chain Graph, L0-L5 governance-plan view, PUP corroboration, coverage and reporting remain Level 0. AI may explain and organize review, but natural-language reasoning cannot authorize deletion, uninstall, disable, registry/service/task/browser mutation, or any other system change.
+
+PC CleanGuard v0.4.x 已停止主动功能开发。最终 A/B 验收未证明它相对现代 Bare Codex 存在足够大的整体产品优势；不得以维护为名扩大执行范围，也不得重写 `FEATURE_FROZEN` 历史结论。
 
 Windows metadata collection is a separate, user-started PowerShell step. Python must not launch it. The collector output is metadata only: command, service path, task action and uninstall string values must never be executed. Prefer the redacted canonical report; raw output requires explicit sensitive-data acknowledgement. Process-level `ExecutionPolicy Bypass` does not permit changing user or machine policy.
 

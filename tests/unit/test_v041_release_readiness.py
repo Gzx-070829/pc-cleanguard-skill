@@ -10,11 +10,11 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class V041ReleaseReadinessTests(unittest.TestCase):
-    def test_version_is_041(self):
-        self.assertEqual("0.4.1", pc_cleanguard.__version__)
+    def test_current_version_is_042_while_v041_assets_remain(self):
+        self.assertEqual("0.4.2", pc_cleanguard.__version__)
         pyproject = ROOT / "pyproject.toml"
         if pyproject.is_file():
-            self.assertIn('version = "0.4.1"', pyproject.read_text(encoding="utf-8"))
+            self.assertIn('version = "0.4.2"', pyproject.read_text(encoding="utf-8"))
 
     def test_release_documents_exist(self):
         for name in (
