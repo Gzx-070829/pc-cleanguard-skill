@@ -1,5 +1,11 @@
 # Roadmap
 
+## 项目终态 — v0.4.2 Final Evaluation
+
+PC CleanGuard 的 v0.4.x 产品路线已进入 **Feature Frozen / Maintenance Mode**。最终真实 Windows 与 Agent A/B 验收中，PC CleanGuard 在结构化、审计、恢复规划和 Agent 输出稳定性上有明确优势，但总分只领先 Bare Codex 2.2 分，Governance 只领先 1.9 分，并且只赢得 7/12 项任务；未达到 v1.0 的全部硬门槛。
+
+不再推进旧 Cleaner/PUP/Persistence 路线中的 v1.0 功能扩张。后续仅接受严重安全修复、必要兼容性修复、数据损坏或错误授权类关键缺陷，以及事实性文档修正。历史路线保留如下，仅用于说明项目演进，不代表未来承诺。详见 [最终 A/B 报告](docs/PC-CleanGuard-Final-AB-Evaluation.md) 与 [Decision Record](docs/PC-CleanGuard-Final-Decision-Record.md)。
+
 v0.4.1：补齐 Windows PowerShell 5.1 / PowerShell 7 只读采集编排、collector manifest、canonical redacted report、正式本地 evaluation、link diagnostics，以及不放宽 Desktop 保护的 synthetic 隔离恢复验收。Python 不自动启动 PowerShell；PUP 与持久化结果仍不授权执行。
 
 v0.4.0：正式引入持久化链路图谱、L0-L5 治理 proposal、Agent fail-closed 接口、Review Pack 链路资产和 synthetic 真实感样本。当前不执行断链；优先只读检测、用户确认、可逆设计、恢复与审计。

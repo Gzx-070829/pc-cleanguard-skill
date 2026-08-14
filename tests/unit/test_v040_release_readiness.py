@@ -7,8 +7,8 @@ ROOT = Path(__file__).parents[2]
 
 
 class V040ReleaseReadinessTest(unittest.TestCase):
-    def test_current_version_is_041_while_v040_release_docs_remain(self):
-        self.assertEqual("0.4.1", pc_cleanguard.__version__)
+    def test_current_version_is_042_while_v040_release_docs_remain(self):
+        self.assertEqual("0.4.2", pc_cleanguard.__version__)
         for name in ("docs/release-v0.4.0-checklist.md", "docs/v0.4.0-public-preview.md", "docs/v0.4.0-release-notes.md", "docs/v0.4.0-safety-boundaries.md", "docs/v0.4.0-agent-integration-preview.md"):
             self.assertTrue((ROOT / name).is_file(), name)
 

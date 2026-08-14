@@ -26,15 +26,17 @@ def run_release_smoke_check() -> dict:
         seeds_ok = False
     templates = root / ".github" / "ISSUE_TEMPLATE"
     checks = {
-        "version_0_4_1": __version__ == "0.4.1",
+        "version_0_4_2": __version__ == "0.4.2",
         "readme_trial_command": "trial run --root .pcg-demo --output .pcg-trial" in readme,
         "readme_restore_command": "quarantine restore --root .pcg-quarantine" in readme,
         "showcase_complete": showcase.is_dir() and all((showcase / name).is_file() for name in showcase_files),
         "seed_records_load": seeds_ok,
         "user_trial_doc": (root / "docs/v0.3-user-trial-script.md").is_file(),
-        "public_preview_doc": (root / "docs/v0.4.1-public-preview.md").is_file(),
-        "release_checklist": (root / "docs/release-v0.4.1-checklist.md").is_file(),
-        "release_notes": (root / "docs/v0.4.1-release-notes.md").is_file(),
+        "final_ab_evaluation": (root / "docs/PC-CleanGuard-Final-AB-Evaluation.md").is_file(),
+        "final_decision_record": (root / "docs/PC-CleanGuard-Final-Decision-Record.md").is_file(),
+        "final_evaluation_summary": (root / "docs/PC-CleanGuard-Final-Evaluation-Summary.md").is_file(),
+        "final_evidence_index": (root / "docs/final-evaluation-evidence-index.md").is_file(),
+        "final_machine_result": (root / "examples/final-evaluation/final_result.json").is_file(),
         "windows_quickstart": (root / "docs/windows-real-machine-quickstart.md").is_file(),
         "trial_feedback_template": (templates / "trial_experience_feedback.yml").is_file(),
         "pup_feedback_template": (templates / "pup_reputation_feedback.yml").is_file(),

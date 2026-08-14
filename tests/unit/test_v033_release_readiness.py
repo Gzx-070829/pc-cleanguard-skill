@@ -9,11 +9,11 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class V033ReleaseReadinessTest(unittest.TestCase):
-    def test_current_version_and_cli_are_041_while_v033_assets_remain(self):
-        self.assertEqual("0.4.1", pc_cleanguard.__version__)
+    def test_current_version_and_cli_are_042_while_v033_assets_remain(self):
+        self.assertEqual("0.4.2", pc_cleanguard.__version__)
         output=io.StringIO()
         with redirect_stdout(output), self.assertRaises(SystemExit): main(["--version"])
-        self.assertEqual("PC CleanGuard Skill 0.4.1", output.getvalue().strip())
+        self.assertEqual("PC CleanGuard Skill 0.4.2", output.getvalue().strip())
 
     def test_release_docs_exist(self):
         for name in ("docs/release-v0.3.3-checklist.md", "docs/v0.3.3-public-preview.md", "docs/v0.3.3-release-notes.md", "docs/v0.3.3-preview-notes.md"):

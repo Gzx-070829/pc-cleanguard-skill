@@ -1,12 +1,22 @@
 # PC CleanGuard Skill
 
-> 当前 Public Preview：v0.4.1 Windows Integration Preview。真实 Windows metadata 可以汇流为默认脱敏的 canonical report，再进入离线 PUP、持久化链路与治理计划评估；报告和建议都不是执行授权。
+> **项目状态：Feature Frozen / Maintenance Mode。** PC CleanGuard 在真实 Windows 与 Agent A/B 验收后停止旧产品路线的主动功能开发。维护仅覆盖严重缺陷、兼容性和安全问题。
+
+PC CleanGuard is feature-frozen after real-machine and Agent A/B evaluation.
+
+The project remains available as an open-source reference implementation for auditable AI system governance, but active feature development has stopped because modern general-purpose Agents can perform much of the underlying Windows administration directly.
+
+Maintenance continues for critical bugs, compatibility and security issues.
+
+PC CleanGuard 在真实机器与 Agent A/B 验收后冻结了 v0.4.x 的大型 Windows Cleaner/PUP/Persistence 产品路线。项目继续作为“可审计 AI 系统治理”的开源参考实现保留；后续仅维护严重缺陷、兼容性和安全问题。
+
+> 最终版本：v0.4.2 Final Evaluation。A/B 总分为 Bare Codex `87.3`、Codex + PC CleanGuard `89.5`，差值仅 `2.2`，未达到发布 v1.0 所需的硬门槛。完整结果见 [最终 A/B 验收](docs/PC-CleanGuard-Final-AB-Evaluation.md)。
 
 PC CleanGuard 不是“更狠的清理器”，而是一个开源、离线、可审计的 AI PC 治理 Skill。它专注于持久化链路治理：发现软件如何通过启动项、服务、计划任务、浏览器改动、注册表线索、更新器、推广组件和残留文件持续存在，并生成可复核、可回滚、可审计的治理计划。
 
 PC CleanGuard is an open-source, offline, auditable AI PC governance Skill. It focuses on Persistence Chain Governance: discovering how unwanted software persists through startup items, services, scheduled tasks, browser changes, registry-like clues, updaters, promo components, and leftovers, then producing review-only, reversible, and auditable governance plans.
 
-**v0.4.1 Windows Integration Preview · Canonical redacted reports · Persistence diagnostics · Offline by default**
+**v0.4.2 Final Evaluation · Feature Frozen · Offline and auditable reference implementation**
 
 ## Windows 真机两步试用 / Real Windows in two steps
 
